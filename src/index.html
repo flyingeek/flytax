@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset='utf-8'>
+    <meta name='viewport' content='width=device-width,initial-scale=1'>
+
+    <title>FLYTAX</title>
+
+    <link rel='stylesheet' href='{{{CONF_BUNDLE_CSS}}}'>
+    <link rel="preconnect" href="https://fonts.gstatic.com"> 
+    <link rel="stylesheet"href="https://fonts.googleapis.com/css2?family=Abril+Fatface">
+    <script defer src='{{{CONF_BUNDLE_JS}}}'></script>
+    <link rel='icon' type='image/png' sizes="128x128" href='./favicon.png'>
+	<link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png">
+	<link rel="icon" type="image/png" sizes="32x32" href="./favicon-32x32.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="./favicon-16x16.png">
+	<link rel="manifest" href="./manifest.json">
+	<!--link rel="mask-icon" href="./safari-pinned-tab.svg" color="#5bbad5"-->
+	<meta name="msapplication-TileColor" content="#ECD444">
+	<meta name="theme-color" content="#FFFBFF">
+</head>
+
+<body>
+    <svg style="display: none;">
+        <symbol id="upload" viewBox="0 0 20 17">
+                <path d="M10 0l-5.2 4.9h3.3v5.1h3.8v-5.1h3.3l-5.2-4.9zm9.3 11.5l-3.2-2.1h-2l3.4 2.6h-3.5c-.1 0-.2.1-.2.1l-.8 2.3h-6l-.8-2.2c-.1-.1-.1-.2-.2-.2h-3.6l3.4-2.6h-2l-3.2 2.1c-.4.3-.7 1-.6 1.5l.6 3.1c.1.5.7.9 1.2.9h16.3c.6 0 1.1-.4 1.3-.9l.6-3.1c.1-.5-.2-1.2-.7-1.5z" />
+        </symbol>
+        <symbol id="alert" viewBox="0 0 24 24">
+                <path id="point" d="M11 16h2v2h-2z"/>
+                <path id="stroke" d="M13.516 10h-3l.484 5h2z"/>
+                <path id="triangle" d="M12.017 5.974l7.519 13.026h-15.04l7.521-13.026m0-2.474c-.544 0-1.088.357-1.5 1.071l-7.985 13.831c-.825 1.429-.15 2.598 1.5 2.598h15.968c1.65 0 2.325-1.169 1.5-2.599l-7.983-13.829c-.413-.715-.956-1.072-1.5-1.072z"/>
+        </symbol>
+    </svg>
+</body>
+<script>
+    class Deferred {
+        constructor() {
+            this.promise = new Promise((resolve, reject)=> {
+                this.reject = reject
+                this.resolve = resolve
+            })
+        }
+    }
+    window.isSWUpdateAvailable = new Deferred();
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function() {
+            navigator.serviceWorker.register('./sw.js')
+                .then(reg => {
+                    window.serviceWorker = reg;
+                    if (reg.waiting) window.isSWUpdateAvailable.resolve(reg);
+                    reg.onupdatefound = () => {
+                        const installingWorker = reg.installing;
+                        installingWorker.onstatechange = () => {
+                            switch (installingWorker.state) {
+                                case 'installed':
+                                    if (navigator.serviceWorker.controller) {
+                                        // new update available
+                                        window.isSWUpdateAvailable.resolve(reg);
+                                    } // else handled by sw activate event (clients.claim)
+                                    break;
+                            }
+                        };
+                    };
+                })
+                .catch(err => {
+                    console.error('[SW ERROR]', err);
+                });
+            // reload once when the new Service Worker starts activating
+            //
+            // No need to do it there, we will show a prompt and perform a manual reload
+            //
+            // let refreshing;
+            // navigator.serviceWorker.addEventListener('controllerchange', () => {
+            //     if (refreshing) return;
+            //     refreshing = true;
+            //     window.location.reload();
+            // });
+        });
+    }
+</script>
+<noscript>Javascript est requis pour lancer FLYTAX</noscript>
+</html>

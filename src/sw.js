@@ -1,0 +1,147 @@
+import {precacheAndRoute} from 'workbox-precaching';
+import {registerRoute} from 'workbox-routing';
+import {StaleWhileRevalidate, CacheFirst} from 'workbox-strategies';
+import {CacheableResponsePlugin} from 'workbox-cacheable-response';
+import {ExpirationPlugin} from 'workbox-expiration';
+
+const deprecatedCaches = [];
+
+precacheAndRoute(
+    self.__WB_MANIFEST, {
+//    "directoryIndex": null,
+//    "ignoreURLParametersMatching": []
+});
+
+const thirdPartyUrls = [
+    'CONF_PDFJS_JS',
+    'CONF_PDFJS_WORKER_JS',
+    'CONF_JSPDF_JS',
+    'CONF_JSPDF_TABLE_JS'
+];
+const flytaxUrls = [
+    'CONF_JSPDF_FONT_TTF'
+];
+const allUrls = thirdPartyUrls.concat(flytaxUrls);
+
+registerRoute(
+    /.+\/(pdf\.min\.js|pdf\.worker\.min\.js|jspdf\..+min\.js|HelveticaUTF8\.ttf)$/,
+    new CacheFirst({
+      cacheName: 'flytax-warmup',
+    })
+);
+registerRoute(
+  ({url}) => url.pathname.match(/\/data\/data[0-9]{4}\.json/),
+  new CacheFirst({
+    cacheName: 'flytax-data',
+    plugins: [
+      new ExpirationPlugin({
+        maxEntries: 6
+      })
+    ]
+  })
+);
+// Cache the Google Fonts stylesheets with a stale-while-revalidate strategy.
+registerRoute(
+    ({url}) => url.origin === 'https://fonts.googleapis.com',
+    new StaleWhileRevalidate({
+      cacheName: 'google-fonts-stylesheet',
+    })
+  );
+  
+  // Cache the underlying font files with a cache-first strategy for 1 year.
+  registerRoute(
+    ({url}) => url.origin === 'https://fonts.gstatic.com',
+    new CacheFirst({
+      cacheName: 'google-fonts',
+      plugins: [
+        new CacheableResponsePlugin({
+          statuses: [0, 200],
+        }),
+        new ExpirationPlugin({
+          maxAgeSeconds: 60 * 60 * 24 * 365,
+          maxEntries: 30,
+        }),
+      ],
+    })
+  );
+// from https://github.com/TalAter/cache.adderall
+const addAll = function(cache, immutableRequests = [], mutableRequests = []) {
+  // Verify arguments
+  if (!(cache instanceof Cache) || !Array.isArray(immutableRequests) || !Array.isArray(mutableRequests)) {
+    return Promise.reject();
+  }
+
+  let newImmutableRequests = [];
+
+  // Go over immutable requests
+  return Promise.all(
+    immutableRequests.map(function(url) {
+      return caches.match(url).then(function(response) {
+        if (response) {
+          return cache.put(url, response);
+        } else {
+          newImmutableRequests.push(url);
+          return Promise.resolve();
+        }
+      });
+    })
+  // go over mutable requests, and immutable requests not found in any cache
+  ).then(function() {
+    return cache.addAll(newImmutableRequests.concat(mutableRequests));
+  });
+};
+
+self.addEventListener('install', (event) => {
+    event.waitUntil(
+        caches.open("flytax-warmup").then((cache) => {
+          return addAll(cache, allUrls)
+        })
+    );
+});
+/**
+ * Check if we should keep the cache based on the name
+ * @param {Array} cacheName
+ * @returns {Boolean}
+ */
+const isOldCache = (cacheName) => {
+  return deprecatedCaches.includes(cacheName);
+};
+/**
+ * check entries of a cache to find 
+ * old entry (not present in thirdPartyUrls or lidoUrls)
+ * @param {Request} request 
+ * @returns {Boolean} true if should be removed from cache
+ */
+const isOldRequest = (request) => {
+  if (thirdPartyUrls.indexOf(request.url) !== -1) {
+    return false;
+  }
+  for (const url of flytaxUrls) {
+    if (url.startsWith("http")) {
+      if (request.url === url) return false;
+    } else {
+      if (request.url.indexOf(url.replace(/^\./, '')) !== -1) return false;
+    }
+  }
+  return true;
+};
+
+self.addEventListener('activate', function(event) {
+  event.waitUntil(
+    caches.keys().then(function(cacheNames) {
+      return cacheNames.filter(isOldCache).map((cacheName) => caches.delete(cacheName));
+    }).then(() => {
+      return caches.open('flytax-warmup')
+    }).then(function(cache) {
+        return cache.keys().then(function(keys) {
+          return Promise.all(keys.filter(isOldRequest).map(request => cache.delete(request)));
+        });
+    }).then(() => self.clients.claim())
+  );
+});
+
+self.addEventListener('message', (event) => {
+  if (event.data === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
+});

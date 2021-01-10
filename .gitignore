@@ -1,0 +1,9 @@
+/node_modules/
+public/
+
+.DS_Store
+.env
+workspaceConfiguration/LoadTerminal.json
+.vscode/tasks.json
+localhost-key.pem
+localhost-cert.pem
