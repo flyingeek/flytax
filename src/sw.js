@@ -1,7 +1,6 @@
 import {precacheAndRoute} from 'workbox-precaching';
 import {registerRoute} from 'workbox-routing';
 import {StaleWhileRevalidate, CacheFirst} from 'workbox-strategies';
-import {CacheableResponsePlugin} from 'workbox-cacheable-response';
 import {ExpirationPlugin} from 'workbox-expiration';
 
 const deprecatedCaches = [];
@@ -19,12 +18,14 @@ const thirdPartyUrls = [
     'CONF_JSPDF_TABLE_JS'
 ];
 const flytaxUrls = [
-    'CONF_JSPDF_FONT_TTF'
+    'CONF_JSPDF_FONT_TTF',
+    'CONF_ABRILFATFACE_WOFF2',
+    'CONF_ABRILFATFACE_WOFF'
 ];
 const allUrls = thirdPartyUrls.concat(flytaxUrls);
 
 registerRoute(
-    /.+\/(pdf\.min\.js|pdf\.worker\.min\.js|jspdf\..+min\.js|HelveticaUTF8\.ttf)$/,
+    /.+\/(pdf\.min\.js|pdf\.worker\.min\.js|jspdf\..+min\.js|HelveticaUTF8\.ttf|abril-fatface-v12-latin-ext_latin-regular\.woff2?)$/,
     new CacheFirst({
       cacheName: 'flytax-warmup',
     })
@@ -40,30 +41,7 @@ registerRoute(
     ]
   })
 );
-// Cache the Google Fonts stylesheets with a stale-while-revalidate strategy.
-registerRoute(
-    ({url}) => url.origin === 'https://fonts.googleapis.com',
-    new StaleWhileRevalidate({
-      cacheName: 'google-fonts-stylesheet',
-    })
-  );
-  
-  // Cache the underlying font files with a cache-first strategy for 1 year.
-  registerRoute(
-    ({url}) => url.origin === 'https://fonts.gstatic.com',
-    new CacheFirst({
-      cacheName: 'google-fonts',
-      plugins: [
-        new CacheableResponsePlugin({
-          statuses: [0, 200],
-        }),
-        new ExpirationPlugin({
-          maxAgeSeconds: 60 * 60 * 24 * 365,
-          maxEntries: 30,
-        }),
-      ],
-    })
-  );
+
 // from https://github.com/TalAter/cache.adderall
 const addAll = function(cache, immutableRequests = [], mutableRequests = []) {
   // Verify arguments

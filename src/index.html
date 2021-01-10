@@ -7,19 +7,29 @@
     <title>FLYTAX</title>
 
     <link rel='stylesheet' href='{{{CONF_BUNDLE_CSS}}}'>
-    <link rel="preconnect" href="https://fonts.gstatic.com"> 
-    <link rel="stylesheet"href="https://fonts.googleapis.com/css2?family=Abril+Fatface">
     <script defer src='{{{CONF_BUNDLE_JS}}}'></script>
     <link rel='icon' type='image/png' sizes="128x128" href='./favicon.png'>
-	<link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png">
-	<link rel="icon" type="image/png" sizes="32x32" href="./favicon-32x32.png">
-	<link rel="icon" type="image/png" sizes="16x16" href="./favicon-16x16.png">
-	<link rel="manifest" href="./manifest.json">
-	<!--link rel="mask-icon" href="./safari-pinned-tab.svg" color="#5bbad5"-->
-	<meta name="msapplication-TileColor" content="#ECD444">
-	<meta name="theme-color" content="#FFFBFF">
+    <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="./favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="./favicon-16x16.png">
+    <link rel="manifest" href="./manifest.json">
+    <!--link rel="mask-icon" href="./safari-pinned-tab.svg" color="#5bbad5"-->
+    <meta name="msapplication-TileColor" content="#ECD444">
+    <meta name="theme-color" content="#FFFBFF">
 </head>
+<style>
+    /* https://google-webfonts-helper.herokuapp.com/fonts/abril-fatface?subsets=latin,latin-ext */
+    /* abril-fatface-regular - latin-ext_latin */
+    @font-face {
+    font-family: 'Abril Fatface';
+    font-style: normal;
+    font-weight: 400;
+    src: local(''),
+        url('{{{CONF_ABRILFATFACE_WOFF2}}}') format('woff2'), /* Chrome 26+, Opera 23+, Firefox 39+ */
+        url('{{{CONF_ABRILFATFACE_WOFF}}}') format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+    }
 
+</style>
 <body>
     <svg style="display: none;">
         <symbol id="upload" viewBox="0 0 20 17">

@@ -24,7 +24,9 @@ const U = {
     'CONF_JSPDF_TABLE_JS': 'https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.13/jspdf.plugin.autotable.min.js',
     'CONF_JSPDF_FONT_TTF': './fonts/HelveticaUTF8.ttf',
     'CONF_BUNDLE_JS': './js/bundle.js',
-    'CONF_BUNDLE_CSS': './css/bundle.css'
+    'CONF_BUNDLE_CSS': './css/bundle.css',
+    'CONF_ABRILFATFACE_WOFF2': './fonts/abril-fatface-v12-latin-ext_latin-regular.woff2',
+    'CONF_ABRILFATFACE_WOFF': './fonts/abril-fatface-v12-latin-ext_latin-regular.woff'
 };
 function serve() {
     let server;
