@@ -1,5 +1,5 @@
-import { writable, readable} from 'svelte/store';
-import {iso2FR} from './parsers/ep5Parser';
+import { writable, readable, derived} from 'svelte/store';
+import {iso2FR, mergeRots} from './parsers/ep5Parser';
 
 export const BASES = [
     {label: "Marseille", selected: false, value: ['MRS'], tzConverter: iso2FR},
@@ -30,42 +30,41 @@ function resettable(resetValue) {
     };
 }
 
-const createLog = () => {
+const patchLog = () => {
     const { subscribe, set, update } = writable(new Array());
     const push = (store, type, values) => store.push({type, values });
-    if (typeof window !== undefined) {
-        const nativeConsoleLog = console.log;
-        const nativeConsoleError = console.error;
-        console.log = function () {
-            update((theStore) => {
-                push(theStore, 'log', [...arguments]);
-                return theStore;
-            });
-            nativeConsoleLog.apply(console, arguments);
-        };
-        console.error = function () {
-            update((theStore) => {
-                push(theStore, 'error', [...arguments]);
-                return theStore;
-            });
-            nativeConsoleError.apply(console, arguments);
-        };
+    let nativeConsoleLog, nativeConsoleError;
+    if (typeof window !== "undefined" && console) { // patch only in browser
+        nativeConsoleLog = console.log;
+        nativeConsoleError = console.error;
+    }
+    const newConsoleLog = function () {
+        update((theStore) => {
+            push(theStore, 'log', [...arguments]);
+            return theStore;
+        });
+        if (nativeConsoleLog && console) nativeConsoleLog.apply(console, arguments);
+    };
+    const newConsoleError = function () {
+        update((theStore) => {
+            push(theStore, 'error', [...arguments]);
+            return theStore;
+        });
+        if (nativeConsoleError && console) nativeConsoleError.apply(console, arguments);
+    };
+    if (typeof window !== "undefined" && console) {
+        console.log = newConsoleLog;
+        console.error = newConsoleError;
     }
     return {
         subscribe,
-        'log': (v) => update((theStore) => {
-            push(theStore, 'log', [v]);
-            return theStore;
-        }),
-        'error': (v) => update((theStore) => {
-            push(theStore, 'error', [v]);
-            return theStore;
-        }),
+        'log': newConsoleLog,
+        'error': newConsoleError,
         'reset': () => set(new Array())
     }
 }
 
-export const log = createLog();
+export const log = patchLog();
 export const viewLog = writable(false);
 export const ep5 = resettable({type: "ep5"});
 export const paySlips = resettable({type: "pay"});
@@ -76,35 +75,22 @@ const empty = () => {
     log.reset();
 }
 
-function createTaxData(defaultValue) {
-    const { subscribe, set, reset } = resettable(defaultValue);
+export const taxYear = writable(defaultYear);
+export const taxData = derived(taxYear, ($taxYear, set) => {
+    //set(undefined);
+    empty();
+    fetch(DATASET.filter(option => option.label === $taxYear).pop().url)
+    .then(res => res.json())
+    .then(data => set(data));
+}, undefined);
 
-    return {
-        subscribe,
-        fetch: (year) => {
-            set(defaultValue);
-            empty();
-            fetch(DATASET.filter(option => option.label === year).pop().url)
-            .then(res => res.json())
-            .then(data => set(data));
-        },
-        reset
-    };
-}
-export const taxData = createTaxData();
-
-function createTaxYear(defaultValue) {
-    const { subscribe, set } = writable(defaultValue);
-    taxData.fetch(defaultValue);
-    return {
-        subscribe,
-        'set': (value) => {
-            set(value);
-            taxData.fetch(value);
-        }
-    };
-}
-export const taxYear = createTaxYear(defaultYear);
+export const pairings = derived(
+    [ep5, taxYear, taxData, tzConverter],
+    ([$ep5, $taxYear, $taxData, $tzConverter]) => {
+        if ($taxData === undefined) return [];
+        return mergeRots($ep5, $taxYear, $taxData, $tzConverter);
+    }
+);
 
 export const online = readable({}, set => {
     const update_network_status = () => {

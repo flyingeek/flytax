@@ -1,7 +1,6 @@
 <script>
     import {localeRate, localeDateFormat, localeCurrency} from './utils';
-    import {taxData} from '../stores';
-    export let data;
+    import {taxData, pairings} from '../stores';
     export let tableId = "Indemnities";
 
     function* getCountriesData(dat){
@@ -37,7 +36,7 @@
         } 
 
     };
-    $: countriesData = ($taxData) ? [...getCountriesData(data)] : [];
+    $: countriesData = ($taxData) ? [...getCountriesData($pairings)] : [];
 </script>
 
 {#if countriesData.length > 1}

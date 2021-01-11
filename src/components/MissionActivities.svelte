@@ -1,22 +1,17 @@
 <script>
     import {localeCurrency} from './utils';
-    import {mergeRots} from "../parsers/ep5Parser";
     import MissionCountries from "./MissionCountries.svelte";
     import DownloadTablePDF from './DownloadTablePDF.svelte';
-    import {taxYear, taxData, tzConverter, ep5} from '../stores';
+    import {taxYear, taxData, pairings} from '../stores';
 
     export let tableId = "MissionTable";
     const tableIndemnitiesId = tableId + "Indemnities";
 
-    const mergeData = (dat) => {
-        return mergeRots(dat, $taxYear, $taxData, $tzConverter);
-    }
-    $: mergedData = ($taxData) ? mergeData($ep5) : [];
-    $: total = Object.values(mergedData).reduce((a, c) => a + c.indemnity, 0).toFixed(0);
+    $: total = Object.values($pairings).reduce((a, c) => a + c.indemnity, 0).toFixed(0);
 
 </script>
 
-{#if mergedData.length > 0}
+{#if $pairings.length > 0}
     <DownloadTablePDF tableIds={[tableId, tableIndemnitiesId]} filename={`fraisdemission${$taxYear}.pdf`}/>
     <table id="{tableId}" class="data">
         <thead>
@@ -27,7 +22,7 @@
             <tr><th>Date</th><th>Type</th><th>Description</th><th>Formule</th><th>Montant</th></tr>
         </thead>
         <tbody>
-            {#each mergedData as rot}
+            {#each $pairings as rot}
                 <tr>
                     <td>{rot.start.substring(8,10)}/{rot.start.substring(5,7)}</td>
                     <td>{rot.days.toString().padStart(2, ' ')} ON</td>
@@ -39,12 +34,12 @@
             {/each}
         </tbody>
         <tfoot>
-            {#if mergedData.reduce((a,c) => a | c.formula.includes("¹"), false)}
+            {#if $pairings.reduce((a,c) => a | c.formula.includes("¹"), false)}
                 <tr><td colspan="5">1. formule tronquée pour respecter l'année fiscale</td></tr>
             {/if}
         </tfoot>
     </table>
-    <MissionCountries data={mergedData} tableId={tableIndemnitiesId}/>
+    <MissionCountries tableId={tableIndemnitiesId}/>
 {/if}
 
 
