@@ -8,55 +8,55 @@
     "start_url": "./index.html",
     "icons": [
       {
-        "src": "icons/72px.png",
+        "src": "./flytax-icons/72px.png",
         "sizes": "72x72",
         "type": "image/png",
         "purpose": "any"
       },
       {
-        "src": "icons/96px.png",
+        "src": "./flytax-icons/96px.png",
         "sizes": "96x96",
         "type": "image/png",
         "purpose": "any"
       },
       {
-        "src": "icons/128px.png",
+        "src": "./flytax-icons/128px.png",
         "sizes": "128x128",
         "type": "image/png",
         "purpose": "any"
       },
       {
-        "src": "icons/144px.png",
+        "src": "./flytax-icons/144px.png",
         "sizes": "144x144",
         "type": "image/png",
         "purpose": "any"
       },
       {
-        "src": "icons/152px.png",
+        "src": "./flytax-icons/152px.png",
         "sizes": "152x152",
         "type": "image/png",
         "purpose": "any"
       },
       {
-        "src": "icons/192px.png",
+        "src": "./flytax-icons/192px.png",
         "sizes": "192x192",
         "type": "image/png",
         "purpose": "any"
       },
       {
-        "src": "icons/384px.png",
+        "src": "./flytax-icons/384px.png",
         "sizes": "384x384",
         "type": "image/png",
         "purpose": "any"
       },
       {
-        "src": "icons/512px.png",
+        "src": "./flytax-icons/512px.png",
         "sizes": "512x512",
         "type": "image/png",
         "purpose": "any"
       },
       {
-        "src": "icons/maskable_icon_x512.png",
+        "src": "./flytax-icons/maskable_icon_x512.png",
         "sizes": "512x512",
         "type": "image/png",
         "purpose": "maskable"

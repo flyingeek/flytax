@@ -2,7 +2,7 @@
 <browserconfig>
     <msapplication>
         <tile>
-            <square150x150logo src="/mstile-150x150.png"/>
+            <square150x150logo src="./flytax-icons/150px.png"/>
             <TileColor>#ECD444</TileColor>
         </tile>
     </msapplication>
