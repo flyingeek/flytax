@@ -76,8 +76,8 @@ export default [{
         // we'll extract any component CSS out into
         // a separate file - better for performance
 
-        //scss({ output: 'public/' + U.CONF_BUNDLE_CSS}), // scss needs public/ prefix
-        css({ output: U.CONF_BUNDLE_CSS.replace('./', '')}),
+        //scss({ output: relPath(U.CONF_BUNDLE_CSS) }), // scss needs public/ prefix
+        css({ output: U.CONF_BUNDLE_CSS.replace('./', '') }),
 
         // If you have external dependencies installed from
         // npm, you'll most likely need these plugins. In
@@ -150,7 +150,7 @@ export default [{
     resolve({
       browser: true
     }),
-    watchAssets({ assets: ['./src/index.html', 'rollup.config.js'] }),
+    watchAssets({ assets: ['./public/index.html', 'rollup.config.js', './public/css/bundle.css', './public/js/bundle.js'] }),
     workbox({
       "globDirectory": "public/",
       "globPatterns": [
@@ -162,6 +162,9 @@ export default [{
       ]
     }),
     production && terser()
-  ]
+  ],
+  watch: {
+      clearScreen: false
+  }
 }]
 ;
