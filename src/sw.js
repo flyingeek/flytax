@@ -41,7 +41,17 @@ registerRoute(
     ]
   })
 );
-
+registerRoute(
+  ({url}) => url.pathname.match(/\/flytax-icons\/.+\.png/),
+  new StaleWhileRevalidate({
+    cacheName: 'flytax-icons',
+    plugins: [
+      new ExpirationPlugin({
+        maxEntries: 20
+      })
+    ]
+  })
+);
 // from https://github.com/TalAter/cache.adderall
 const addAll = function(cache, immutableRequests = [], mutableRequests = []) {
   // Verify arguments

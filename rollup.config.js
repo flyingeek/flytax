@@ -155,8 +155,6 @@ export default [{
       "globDirectory": "public/",
       "globPatterns": [
         "index.html",
-        "flytax-icons/180px.png",
-        "flytax-icons/128px.png",
         "css/bundle.css",
         "js/bundle.js"
       ]
