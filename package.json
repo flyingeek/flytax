@@ -10,8 +10,8 @@
     "start": "sirv public --port 5001",
     "start2": "sirv public --http2 --key localhost-key.pem --cert localhost-cert.pem --host 0.0.0.0",
     "clean": "rimraf public/**",
-    "makeAirports": "node src/makeAirports.js",
-    "makeData": "node src/makeData.js"
+    "makeAirports": "node scripts/makeAirports.js",
+    "makeData": "node scripts/makeData.js"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^16.0.0",

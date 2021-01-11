@@ -15,7 +15,7 @@
  * You must build airports.json first using:
  * npm makeAirports
  */
-import {months} from "./components/utils.js";
+import {months} from "../src/components/utils.js";
 import { readFile } from 'fs/promises';
 const airports =JSON.parse(await readFile(new URL('../data/airports.json', import.meta.url)));
 let bnf;
