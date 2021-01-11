@@ -155,7 +155,8 @@ export default [{
       "globDirectory": "public/",
       "globPatterns": [
         "index.html",
-        "apple-touch-icon.png",
+        "flytax-icons/180px.png",
+        "favicon.png",
         "css/bundle.css",
         "js/bundle.js"
       ]
