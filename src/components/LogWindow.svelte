@@ -33,7 +33,7 @@
         } else if (value.toString) {
             return value.toString();
         } else {
-            return "consulter la console du navigateur pour voir cet événement";
+            return "alerte visible dans la console du navigateur";
         }
     };
     const renderLogEvent = (logEvent) => {

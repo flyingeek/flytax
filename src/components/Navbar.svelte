@@ -1,5 +1,5 @@
 <script>
-    import {taxYear, route, log, viewLog} from '../stores';
+    import {route, log, viewLog} from '../stores';
     import {htmlLogo} from '../components/utils';
     import TaxYearSelect from '../components/TaxYearSelect.svelte';
 </script>
@@ -9,7 +9,11 @@
     <a href="#/pay" class:active={$route=='/pay'}>Salaire</a>
     <a href="#/help" class:active={$route=='/help'}>Aide</a>
     <span class="flexspace"></span>
-    {#if $log.length > 0}<a href="#/log" on:click|preventDefault={() => $viewLog = !$viewLog}><svg><use xlink:href="#alert"/></svg><sup>{$log.length}</sup></a>{/if}
+    {#if $log.length > 0}
+        <a href="#/log" on:click|preventDefault={() => $viewLog = !$viewLog}>
+            <svg><use xlink:href="#alert"/></svg><sup>{$log.length}</sup>
+        </a>
+    {/if}
     <TaxYearSelect/>
 </nav>
 
