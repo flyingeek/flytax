@@ -1,18 +1,25 @@
 <script>
+  //https://www.jayfreestone.com/writing/bulletproof-flag
+  // style props: "", "large-icon", "large-title"; "large-icon; large-title"
   export let style = 'large-icon';
+  const styles = style.split().map(v => v.trim());
   export let title;
 </script>
 
 <div class="flag">{#if false}<slot />{/if}
-  <div class="flag__signifier" class:flag--large-icon={style === 'large-icon'}>
-    <slot name="icon"></slot>
-  </div>
-  <div class="flag__title">
-    <h2>{title}</h2>
-  </div>
-  <div class="flag__content">
-    <slot name="content"></slot>
-  </div>
+    <div
+        class="flag__signifier"
+        class:flag--large-icon={styles.includes('large-icon')}
+        class:flag--no-title={!title}
+        class:flag--large-title={title && styles.includes('large-title')}>
+        <slot name="icon"></slot>
+    </div>
+    <div class="flag__title">
+        <h2>{title}</h2>
+    </div>
+    <div class="flag__content">
+        <slot name="content"></slot>
+    </div>
 </div>
 
 <style>
@@ -56,24 +63,13 @@
     width: 4rem;
     height: 4rem;
 }
-
-
-/*
-.flag--large-title h2 {
-  font-size: 2.8rem;
-}
-
-.flag--no-title {
+:global(.flag--no-title) {
   font-size: 1.1rem;
 }
-.flag--no-title p {
+:global(.flag--no-title p) {
   margin: 0;
 }
-.flag--large-icon figure {
-  font-size: 4rem;
+:global(.flag--large-title) h2 {
+  font-size: 2.8rem;
 }
-figure {
-  margin: 0;
-}
-*/
 </style>
