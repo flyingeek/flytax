@@ -1,9 +1,16 @@
 <script>
     import {swDismiss} from "../stores.js";
     import { fade } from 'svelte/transition';
+    let installLabel = 'Installer';
     const install = (reg) => {
+        let refreshing;
+        navigator.serviceWorker.addEventListener('controllerchange', () => {
+            if (refreshing) return;
+            refreshing = true;
+            window.location.reload();
+        });
+        installLabel = "En cours..."
         reg.waiting.postMessage('SKIP_WAITING');
-        setTimeout(() => window.location.reload(), 500);
     }
 </script>
 
@@ -17,7 +24,7 @@
         </button>
     </div>
     <div class="toast-body">
-        <button on:click={() => install(registration)}>Installer</button>
+        <button on:click|once={() => install(registration)}>{installLabel}</button>
     </div>
 </div>
 {/if}
