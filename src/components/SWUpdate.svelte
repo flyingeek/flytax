@@ -3,7 +3,7 @@
     import { fade } from 'svelte/transition';
     const install = (reg) => {
         reg.waiting.postMessage('SKIP_WAITING');
-        window.location.reload();
+        setTimeout(() => window.location.reload(), 500);
     }
 </script>
 
