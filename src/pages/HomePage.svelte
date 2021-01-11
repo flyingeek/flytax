@@ -69,17 +69,22 @@
 
 <style>
     /* For screen > 700px */
-    @media all and (min-width: 700px) {
+    @media all and (min-width: 770px) {
         .blockquote h1 {
             font-size: 3rem;
             line-height: 1.2;
         }
         .blockquote-wrapper {
             flex-wrap: nowrap;
+            max-width: 1000px;
+            margin-left: auto;
+            margin-right: auto;
+            justify-content: left;
         }
         .logo {
             margin-right: 30px; /* to emulate column gap*/
             margin-top: 60px;
+            margin-left: 40px;
         }
         section {
                 padding: 0 40px;
