@@ -34,6 +34,7 @@ const isoStart = `${year}-01-01`;
 const isoEnd = `${year}-12-31`;
 
 const dataPath = `./data/data${year}.json`;
+const csvPath = `./data/data${year}.csv`;
 const WebpaysURL = "https://www.economie.gouv.fr/dgfip/fichiers_taux_chancellerie/txt/Webpays";
 const WebmissURL = "https://www.economie.gouv.fr/dgfip/fichiers_taux_chancellerie/txt/Webmiss";
 const apiURL = `https://api.webstat.banque-france.fr/webstat-en/v1/data/EXR/EXR.M.*.EUR.SP00.E?client_id=${process.env.BNF_CLIENT_ID}&format=json&startPeriod=${parseInt(year, 10) - 1}-12-01&endPeriod=${year}-12-31`;
@@ -115,8 +116,15 @@ const countries = {
     "SX": {"n": "SAINT-MARTIN"},
     "MF": {"n": "SAINT-MARTIN"},
     "BL": {"n": "SAINT-BARTHÉLEMY"},
+    "CD": {"n": "RÉP. DU CONGO"},//bad formatting in Webpays
+    "CF": {"n": "RÉP. CENTRAFICAINE"},//bad formatting in Webpays
+    "CZ": {"n": "RÉP. TCHEQUE"},//bad formatting in Webpays
+    "DO": {"n": "RÉP. DOMINICAINE"}, //bad formatting in Webpays
+    "MH": {"n": "ILES MARSHALL"}, //bad formatting in Webpays
+    "SB": {"n": "ILES SALOMON"}, //bad formatting in Webpays
     "SS": {"n": "SOUDAN DU SUD"}, // bad char in Webpays
     "LC": {"n": "SAINTE-LUCIE ET…"}, //bad formatting in Webpays
+    "YE": {"n": "RÉP. DU YEMEN"}, //bad formatting in Webpays
     "EU": {"n": "EUROPE (FORFAIT)"}, // custom entry for f field
     "GL": {"n": "DK-Groenland"},// defined in airports
     "GG": {"n": "GB-Guernesey"},// defined in airports
@@ -308,6 +316,59 @@ const display = ([countries, exr]) => {
     table.printTable();
 }
 
+const makeCsv = ([countries, exr]) => {
+    let rows = [];
+    const previousYear = parseInt(year, 10) - 1;
+    const separator = ',';
+    const newLine = '\n';
+    const enclose = (v) => `"${v}"`;
+    let i = 0;
+    for (const [key, value] of Object.entries(countries)) {
+        const amounts = (value.f === 1) ? countries["EU"].a : value.a || [];
+        for (const indemnity of amounts) {
+            const validity = indemnity[0].split('-').reverse().join('/');
+            const currency = indemnity[1];
+            try {
+                const zone = (v) => {
+                    if (v.f === 1 && v.z === 1) return "E+M";
+                    if (v.f === 1 && v.z !== 1) return "E+L";
+                    if (v.z === 1) return "M";
+                    return "L";
+                };
+                const row = {
+                    "Code": enclose(key),
+                    "Pays": enclose((value.n.length <= 21) ? value.n : value.n.substring(0, 20) + '…'),
+                    "Validité": enclose(validity),
+                    "Indemnité": indemnity[2],
+                    "Monnaie": currency,
+                    ["Taux 31/12/" + previousYear]: exr[currency][0],
+                    ["Taux 31/12/" + year]: exr[currency][1],
+                    "Taux moyen": exr[currency][2],
+                    "Zone": enclose(zone(value)),
+                    "Montant €": (parseFloat(indemnity[2]) / exr[currency][2]).toFixed(2)
+                }
+                if (indemnity[2] !== "0") rows.push(row);
+            } catch(err) {
+                log(`Error processing country ${key}, currency ${currency}`, "red");
+                throw err;
+            }
+        }
+        i++;
+    }
+    const csvLines = [];
+    for (const [i,row] of Object.entries(rows.sort((a, b) => a.Code.localeCompare(b.Code)))) {
+        if (i==="0") csvLines.push(Object.keys(row).join(separator));
+        csvLines.push(Object.values(row).join(separator));
+    };
+    rows = [];
+    fs.writeFile(csvPath, csvLines.join(newLine), (err) => {
+        if (err) {
+          throw err;
+        } else {
+          log(`Saved ${csvPath}`, "green");
+        }
+    });
+}
 // promisify https and Papa parse
 const parseCsvStream = (url, options) => {
     const opt = Object.assign({}, options); // clone
@@ -479,6 +540,7 @@ const make = async () => {
 
         if (errors.length === 0) {
             save({countries, exr, year, zoneForfaitEuro});
+            makeCsv([countries, exr]);
         } else {
             errors.map(v => log(v, "red"));
         }
