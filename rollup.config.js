@@ -107,6 +107,10 @@ export default [{
                 {
                     src: './data/data*.json',
                     dest: './public/data'
+                },
+                {
+                    src: './data/data*.csv',
+                    dest: './public/data'
                 }
             ],
             copyOnce: true,
