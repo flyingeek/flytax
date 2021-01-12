@@ -11,6 +11,7 @@ const {markdown} = require('svelte-preprocess-markdown');
 const workbox = require('rollup-plugin-workbox-inject');
 import {version} from './package.json';
 import watchAssets from 'rollup-plugin-watch-assets';
+import html from '@open-wc/rollup-plugin-html';
 const Mustache = require('mustache');
 
 const production = !process.env.ROLLUP_WATCH;
@@ -116,14 +117,15 @@ export default [{
             copyOnce: true,
             verbose: true
         }),
-        copy({
-            targets: [{ 
-                src: 'src/index.html',
-                dest: 'public',
-                transform: (contents) => Mustache.render(contents.toString(), U)
-            }],
-            verbose: true
-        }),
+        // copy({
+        //     targets: [{ 
+        //         src: 'src/index.html',
+        //         dest: 'public',
+        //         transform: (contents) => Mustache.render(contents.toString(), U)
+        //     }],
+        //     copyOnce: true,
+        //     verbose: true
+        // }),
         // In dev mode, call `npm run start` once
         // the bundle has been generated
         !production && serve(),
@@ -139,8 +141,16 @@ export default [{
     watch: {
         clearScreen: false
     }
-},
-{
+},{
+    input: 'src/index.html',
+    output: { dir: 'public'},
+    plugins: [html({
+        minify: false,
+        transform: [
+          html => Mustache.render(html.toString(), U)
+        ],
+    })],
+},{
   input: 'src/sw.js',
   output: {
     sourcemap: true,
@@ -156,7 +166,7 @@ export default [{
     resolve({
       browser: true
     }),
-    watchAssets({ assets: ['./src/index.html', 'rollup.config.js', './public/css/bundle.css', './public/js/bundle.js'] }),
+    watchAssets({ assets: ['rollup.config.js', './public/css/bundle.css', './public/js/bundle.js'] }),
     workbox({
       "globDirectory": "public/",
       "globPatterns": [
@@ -168,7 +178,7 @@ export default [{
     production && terser()
   ],
   watch: {
-      clearScreen: false
+      clearScreen: false,
+      include: []
   }
-}]
-;
+}];
