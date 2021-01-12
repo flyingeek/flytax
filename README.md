@@ -1,7 +1,8 @@
-# FLYTAX
+# <span style="color:#002157">FLY</span><span style="color:#FA3C35">TAX</span>
 
-Le site est accessible à
-<https://flyingeek.github.io/flytax/index.html>
+Une aide au calcul des impôts pour les PNT AF qui ne transfère aucune données sur Internet. L'app calcule notamment les frais réels à partir des EP4/EP5.
+
+Rendez-vous sur [FLYTAX](https://flyingeek.github.io/flytax/) pour utiliser l'app. Mais continuez à lire si vous êtes un développeur ou si vous souhaitez accèder aux données brutes.
 
 ## Installation
 
