@@ -156,7 +156,7 @@ export default [{
     resolve({
       browser: true
     }),
-    watchAssets({ assets: ['./public/index.html', 'rollup.config.js', './public/css/bundle.css', './public/js/bundle.js'] }),
+    watchAssets({ assets: ['./src/index.html', 'rollup.config.js', './public/css/bundle.css', './public/js/bundle.js'] }),
     workbox({
       "globDirectory": "public/",
       "globPatterns": [
