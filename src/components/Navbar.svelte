@@ -63,6 +63,8 @@
     }
     a[href="#/log"] {
         padding-right: 2px;
+        padding-top: 8px;
+        padding-bottom: 0;
     }
     :global(.flexspace) {
         display: inline-block;
