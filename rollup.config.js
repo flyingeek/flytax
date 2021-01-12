@@ -12,10 +12,12 @@ const workbox = require('rollup-plugin-workbox-inject');
 import {version} from './package.json';
 import watchAssets from 'rollup-plugin-watch-assets';
 const Mustache = require('mustache');
-//import scss from 'rollup-plugin-scss';
 
 const production = !process.env.ROLLUP_WATCH;
 const relPath = (url) => url.replace('./', './public/'); // public path for a local url
+
+//For adding/remove year, change DATASET is src/stores.js
+
 const U = {
     //'CONF_BOOTSTRAP_CSS': 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/css/bootstrap.min.css',
     'CONF_PDFJS_WORKER_JS': 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.4.456/pdf.worker.min.js',
