@@ -48,20 +48,25 @@ const zoneDOM = ["YT", "PM", "GP", "MQ", "GF", "RE", "SX", "MF", "BL"]; //SXM es
 // URSSAF https://www.urssaf.fr/portail/home/taux-et-baremes/frais-professionnels/indemnite-de-grand-deplacement/deplacements-en-metropole.html
 //        https://www.urssaf.fr/portail/home/taux-et-baremes/frais-professionnels/indemnite-de-grand-deplacement/deplacements-en-outre-mer.html
 // Indemnités Frais de mission https://www.legifrance.gouv.fr/loda/id/LEGIARTI000042212803
+// Abattement fiscal maximum au forfait: https://www.service-public.fr/particuliers/vosdroits/F1989
 
 // data adjustment per year
 const specificities = {
     "2020": {
-        "URSSAF": {"Paris": [68.10, 19.00], "Province": [50.50, 19.00], "DOM": 90.00} // used to compute forfaitEU
+        "URSSAF": {"Paris": [68.10, 19.00], "Province": [50.50, 19.00], "DOM": 90.00}, // used to compute forfaitEU
+        "MAXFORFAIT10": 12652
     },
     "2019": {
-        "URSSAF": {"Paris": [67.40, 18.80], "Province": [50.00, 18.80], "DOM": 90.00}// used to compute forfaitEU
+        "URSSAF": {"Paris": [67.40, 18.80], "Province": [50.00, 18.80], "DOM": 90.00},// used to compute forfaitEU
+        "MAXFORFAIT10": 12627
     },
     "2018": {
-        "URSSAF": {"Paris": [66.50, 18.60], "Province": [49.40, 18.60], "DOM": 90.00} // not used
+        "URSSAF": {"Paris": [66.50, 18.60], "Province": [49.40, 18.60], "DOM": 90.00}, // not used
+        "MAXFORFAIT10": 12502
     },
     "2017": {
         "URSSAF": {"Paris": [65.80, 18.40], "Province": [48.90, 18.40], "DOM": 90.00}, // not used
+        "MAXFORFAIT10%": 12305,
         "FEU": [["2017-01-01","EUR","156"]], // forfait Euro (computed from 2019 and beyond)
         "FOM": [["2017-01-01","EUR","120"]], // forfait OM
         "EURO": zoneEuroMC.concat(zoneEuroLC), // zone Euro pour calcul du forfait Euro
@@ -539,7 +544,7 @@ const make = async () => {
         log(`found ${Object.keys(countries).length} countries in ${WebpaysURL.split('/').pop()}`);
 
         if (errors.length === 0) {
-            save({countries, exr, year, zoneForfaitEuro});
+            save({countries, exr, year, zoneForfaitEuro, 'maxForfait10': specificity('MAXFORFAIT10')});
             makeCsv([countries, exr]);
         } else {
             errors.map(v => log(v, "red"));

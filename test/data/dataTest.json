@@ -36,5 +36,6 @@
         "USD":["1.1234","1.1980","1.1607"]
     },
     "year": "2020",
-    "zoneForfaitEuro": ["AT","BE","BL","CY","DE","EE","ES","FI","FR","GF","GP","GR","IE","IT","LT","LU","LV","MF","MQ","MT","NL","PM","PT","RE","SI","SK","SX","YT"]
+    "zoneForfaitEuro": ["AT","BE","BL","CY","DE","EE","ES","FI","FR","GF","GP","GR","IE","IT","LT","LU","LV","MF","MQ","MT","NL","PM","PT","RE","SI","SK","SX","YT"],
+    "maxForfait10":12652
 }
