@@ -18,7 +18,6 @@ const defaultYear = DATASET.filter(option => option.selected).pop().label;
 
 export const base = writable(BASES.filter(option => option.selected).pop().value);
 export const tzConverter = writable(BASES.filter(option => option.selected).pop().tzConverter);
-export const swDismiss = writable(false);
 
 function resettable(resetValue) {
     const { subscribe, set, update } = writable(resetValue);
