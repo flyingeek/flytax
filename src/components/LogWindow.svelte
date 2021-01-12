@@ -1,6 +1,11 @@
+<script context="module">
+    import {writable} from 'svelte/store';
+    export const viewLog = writable(false);
+</script>
+
 <script>
-    import { log, viewLog } from "../stores";
-    import {onMount} from 'svelte';
+    import { log } from "../stores";
+
     const text2html = (text) => text.replace(/\n/g, "<br/>");
     const renderText = (text) => `<p>${text2html(text)}</p>`;
     const renderStyledText = (logEvent) => {
@@ -56,13 +61,11 @@
     const clear = () => {
         log.reset();
         $viewLog = false;
-    }
-    onMount(async () => {
-        try {
-            const element = document.querySelector(".window");
-            element.scrollTop = element.scrollHeight;
-        } catch (err) {console.error(err)};
-    });
+    };
+    const scrollToBottom = (node) => {
+        node.scrollTop = node.scrollHeight;
+    };
+
 </script>
 
 <style>
@@ -140,7 +143,7 @@
         color: var(--redaf);
     }
 </style>
-
+{#if $viewLog}
 <div class="window-wrapper">
     <div class="head">
         <div>Alertes reçues</div>
@@ -148,7 +151,7 @@
         <span class="flexspace" />
         <button on:click={() => ($viewLog = false)}><b>Ｘ</b></button>
     </div>
-    <div class="window">
+    <div class="window" use:scrollToBottom>
         <div class="console"><ol>
             {#each $log as logEvent}
                 {@html renderLogEvent(logEvent)}
@@ -156,3 +159,4 @@
         </ol></div>
     </div>
 </div>
+{/if}

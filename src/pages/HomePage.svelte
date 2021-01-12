@@ -4,7 +4,7 @@
     import {htmlLogo, Deferred} from '../components/utils';
     const fontObserver = (document.fonts) ? document.fonts.load("3em Abril Fatface") : (new Deferred()).resolve(true);
     import { fly } from 'svelte/transition';
-    import { viewLog } from '../stores';
+    import { viewLog } from '../components/LogWindow.svelte';
 </script>
 
 <main>

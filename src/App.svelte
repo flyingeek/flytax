@@ -4,27 +4,28 @@
     import PayPage from './pages/PayPage.svelte';
     import HelpPage from './pages/HelpPage.svelte';
     import LogWindow from './components/LogWindow.svelte';
-    import {route, viewLog} from './stores';
+    import {route} from './stores';
     import NavBar from './components/Navbar.svelte';
     import SWUpdate from './components/SWUpdate.svelte';
 
 </script>
-    <SWUpdate/>
-    <NavBar/>
-    {#if $viewLog}<LogWindow />{/if}
-    {#if $route === '/'}
-    <HomePage/>
-    {:else if $route === '/mission'}
-    <MissionPage/>
-    {:else if $route === '/pay'}
-    <PayPage/>
-    {:else if $route === '/help'}
-    <HelpPage/>
-    {:else}
-    <!-- redirect -->
-    { window.location.hash = '#/'}
-    {/if}
 
+<SWUpdate/>
+<NavBar/>
+<LogWindow />
+
+{#if $route === '/'}
+<HomePage/>
+{:else if $route === '/mission'}
+<MissionPage/>
+{:else if $route === '/pay'}
+<PayPage/>
+{:else if $route === '/help'}
+<HelpPage/>
+{:else}
+<!-- redirect -->
+{ window.location.hash = '#/'}
+{/if}
 
 <style>
     :global(html, body) {

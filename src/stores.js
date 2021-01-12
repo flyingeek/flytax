@@ -14,6 +14,7 @@ export const DATASET = [
     {label: "2019", selected: false, url: "./data/data2019.json"},
     {label: "2018", selected: false, url: "./data/data2018.json"}
 ].sort((a, b) => (b.label.localeCompare(a.label)));
+
 const defaultYear = DATASET.filter(option => option.selected).pop().label;
 
 export const base = writable(BASES.filter(option => option.selected).pop().value);
@@ -64,7 +65,6 @@ const patchLog = () => {
 }
 
 export const log = patchLog();
-export const viewLog = writable(false);
 export const ep5 = resettable({type: "ep5"});
 export const paySlips = resettable({type: "pay"});
 

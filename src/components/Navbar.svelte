@@ -1,5 +1,6 @@
 <script>
-    import {route, log, viewLog} from '../stores';
+    import {route, log} from '../stores';
+    import {viewLog} from '../components/LogWindow.svelte';
     import {htmlLogo} from '../components/utils';
     import TaxYearSelect from '../components/TaxYearSelect.svelte';
 </script>
