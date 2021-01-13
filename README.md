@@ -73,23 +73,16 @@ const iata2country = (iata) => {
 
 #### CSV / Excel
 
-FLYTAX propose un export des données au format UTF8, c'est un csv séparé par des virgules. Pour l'utiliser dans Excel, et avoir un formattage correct des données, utilisez le menu Fichier/Importer:
+FLYTAX propose un export des barèmes au format csv et au format tsv.
 
-Dans l'assistant d'importation, choisir sur le premier écran "Fichier CSV", chargez le fichier csv puis:
+Les fichiers .tsv peuvent être ouvert directement dans Excel ou être importé comme fichier CSV avec les options d'importation par défaut. L'app Numbers d'Apple lit aussi directement ces fichiers.
 
-- 2ème écran, choisir "Délimité" et dans Origine du fichier, choisir "Unicode (UTF-8)"
-- 3ème écran, choisir en délimiteur uniquement la virgule et laisser " comme identificateur de texte
-- 4ème écran, vous devez cliquer sur chaque colonne et associer un format. Il faut appliquer **Texte** aux colonnes _Code_, _Pays_, _Monnaie_ et _Zone_. Il faut appliquer **Date JMA** à la colonne _Validité_. Pour finir il est important de cliquer sur le **bouton "Avancé..."** et de choisir le point "." en séparateur de décimale. Vous pouvez à présent cliquer sur le bouton "Fin".
 
-Si vous utilisez Numbers d'Apple, il suffit après avoir ouvert le fichier d'ajuster les réglages dans "Réglages Avancés" et d'indiquer le point comme séparateur décimal.
-
-Il est aussi possible d'afficher un aperçu de ce fichier rendu dans une table:
-
-| Année | Lien CSV | Aperçu |
-| :---: | :---: | :---: |
-| 2020| [data2020.csv](https://flyingeek.github.io/flytax/data/data2020.csv) | [voir](https://github.com/flyingeek/flytax/blob/gh-pages/data/data2020.csv) |
-| 2019| [data2019.csv](https://flyingeek.github.io/flytax/data/data2019.csv) | [voir](https://github.com/flyingeek/flytax/blob/gh-pages/data/data2019.csv) |
-| 2018| [data2018.csv](https://flyingeek.github.io/flytax/data/data2018.csv) | [voir](https://github.com/flyingeek/flytax/blob/gh-pages/data/data2018.csv) |
+| Année | CSV | TSV | Aperçu |
+| :---: | :---: | :---: | :---: |
+| 2020| [2020.csv](https://flyingeek.github.io/flytax/data/flytax-baremes2020.csv) | [2020.tsv](https://flyingeek.github.io/flytax/data/flytax-baremes2020.tsv) | [voir](https://github.com/flyingeek/flytax/blob/gh-pages/data/flytax-baremes2020.tsv) |
+| 2019| [2019.csv](https://flyingeek.github.io/flytax/data/flytax-baremes2019.csv) | [2019.tsv](https://flyingeek.github.io/flytax/data/flytax-baremes2019.tsv) | [voir](https://github.com/flyingeek/flytax/blob/gh-pages/data/flytax-baremes2019.tsv) |
+| 2018| [2018.csv](https://flyingeek.github.io/flytax/data/flytax-baremes2018.csv) | [2018.tsv](https://flyingeek.github.io/flytax/data/flytax-baremes2018.tsv) | [voir](https://github.com/flyingeek/flytax/blob/gh-pages/data/flytax-baremes2018.tsv) |
 
 #### JSON
 

@@ -27,6 +27,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 import fs from 'fs';
 import got from 'got';
+import iconv from 'iconv-lite';
 
 const scriptArgs = process.argv.slice(2);
 const year = (scriptArgs.length === 1) ? scriptArgs[0] : new Date().getFullYear().toString();
@@ -34,7 +35,7 @@ const isoStart = `${year}-01-01`;
 const isoEnd = `${year}-12-31`;
 
 const dataPath = `./data/data${year}.json`;
-const csvPath = `./data/data${year}.csv`;
+const csvPath = `./data/flytax-baremes${year}.csv`;
 const WebpaysURL = "https://www.economie.gouv.fr/dgfip/fichiers_taux_chancellerie/txt/Webpays";
 const WebmissURL = "https://www.economie.gouv.fr/dgfip/fichiers_taux_chancellerie/txt/Webmiss";
 const apiURL = `https://api.webstat.banque-france.fr/webstat-en/v1/data/EXR/EXR.M.*.EUR.SP00.E?client_id=${process.env.BNF_CLIENT_ID}&format=json&startPeriod=${parseInt(year, 10) - 1}-12-01&endPeriod=${year}-12-31`;
@@ -321,12 +322,21 @@ const display = ([countries, exr]) => {
     table.printTable();
 }
 
-const makeCsv = ([countries, exr]) => {
+const makeCsv = ([countries, exr], {separator=',', decimalSeparator='.', encoding="ascii"} = {}) => {
     let rows = [];
     const previousYear = parseInt(year, 10) - 1;
-    const separator = ',';
     const newLine = '\n';
-    const enclose = (v) => `"${v}"`;
+    let enclose;
+    if (encoding === 'utf-8') {
+        enclose = (v) => `"${v.replace(/"/g,"'")}"`;
+    } else {
+        enclose = (v) => `"${iconv.encode(v.replace(/[éèê]/g,'e').replace(/[ÉÈÊ]/g,'E').replace('…', '...').replace(/"/g,"'"), "ascii")}"`;
+    }
+    const decimal = (v) => {
+        if (decimalSeparator === ".") return v;
+        const replaced =  v.toString().replace('.', decimalSeparator);
+        return (decimalSeparator === separator) ? enclose(replaced) : replaced; 
+    };
     let i = 0;
     for (const [key, value] of Object.entries(countries)) {
         const amounts = (value.f === 1) ? countries["EU"].a : value.a || [];
@@ -342,15 +352,15 @@ const makeCsv = ([countries, exr]) => {
                 };
                 const row = {
                     "Code": enclose(key),
-                    "Pays": enclose((value.n.length <= 21) ? value.n : value.n.substring(0, 20) + '…'),
-                    "Validité": enclose(validity),
-                    "Indemnité": indemnity[2],
-                    "Monnaie": currency,
-                    ["Taux 31/12/" + previousYear]: exr[currency][0],
-                    ["Taux 31/12/" + year]: exr[currency][1],
-                    "Taux moyen": exr[currency][2],
+                    "Pays": enclose(value.n),
+                    "Date": enclose(validity),
+                    "Montant": decimal(indemnity[2]),
+                    "Monnaie": enclose(currency),
+                    ["Taux 31/12/" + previousYear]: decimal(exr[currency][0]),
+                    ["Taux 31/12/" + year]: decimal(exr[currency][1]),
+                    "Taux moyen": decimal(exr[currency][2]),
                     "Zone": enclose(zone(value)),
-                    "Montant €": (parseFloat(indemnity[2]) / exr[currency][2]).toFixed(2)
+                    "Montant EUR": decimal((parseFloat(indemnity[2]) / exr[currency][2]).toFixed(2))
                 }
                 if (indemnity[2] !== "0") rows.push(row);
             } catch(err) {
@@ -362,15 +372,16 @@ const makeCsv = ([countries, exr]) => {
     }
     const csvLines = [];
     for (const [i,row] of Object.entries(rows.sort((a, b) => a.Code.localeCompare(b.Code)))) {
-        if (i==="0") csvLines.push(Object.keys(row).join(separator));
+        if (i==="0") csvLines.push(Object.keys(row).map(v => enclose(v)).join(separator));
         csvLines.push(Object.values(row).join(separator));
     };
     rows = [];
-    fs.writeFile(csvPath, csvLines.join(newLine), (err) => {
+    const outputPath = (separator === '\t') ? csvPath.replace('.csv', '.tsv') : csvPath
+    fs.writeFile(outputPath, csvLines.join(newLine), (err) => {
         if (err) {
           throw err;
         } else {
-          log(`Saved ${csvPath}`, "green");
+          log(`Saved ${outputPath}`, "green");
         }
     });
 }
@@ -546,6 +557,7 @@ const make = async () => {
         if (errors.length === 0) {
             save({countries, exr, year, zoneForfaitEuro, 'maxForfait10': specificity('MAXFORFAIT10'), 'urssaf': specificity('URSSAF')});
             makeCsv([countries, exr]);
+            makeCsv([countries, exr], {separator: '\t', decimalSeparator: ','});
         } else {
             errors.map(v => log(v, "red"));
         }
