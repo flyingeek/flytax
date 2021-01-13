@@ -544,7 +544,7 @@ const make = async () => {
         log(`found ${Object.keys(countries).length} countries in ${WebpaysURL.split('/').pop()}`);
 
         if (errors.length === 0) {
-            save({countries, exr, year, zoneForfaitEuro, 'maxForfait10': specificity('MAXFORFAIT10')});
+            save({countries, exr, year, zoneForfaitEuro, 'maxForfait10': specificity('MAXFORFAIT10'), 'urssaf': specificity('URSSAF')});
             makeCsv([countries, exr]);
         } else {
             errors.map(v => log(v, "red"));
