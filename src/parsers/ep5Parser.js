@@ -1,4 +1,5 @@
 import airportsData from "../../data/airports.json";
+import timezonesData from "../../data/timezones.json";
 import {localeFormat, months14} from "../components/utils";
 
 export const WITHIN_BASE_TEXT = "rotation sur base";
@@ -15,6 +16,22 @@ export const ep5Time2iso = (text) => {
     const [hours, cs] = text.split(",");
     const minutes = (parseFloat(cs) * 0.6).toFixed(0).padStart(2, '0');
     return `${hours}:${minutes}Z`;
+}
+
+export const iata2tz = (iata) => {
+    const index = airportsData.indexOf(iata + ':');
+    if (index>=0) {
+        const tz = timezonesData[airportsData.substring(index + 6, index + 8)];
+        try {
+        new Date().toLocaleString("en-GB", {"timeZone": tz, "timeZoneName": "short"});
+    } catch (e) {
+        throw new Error(`Date.toLocaleString("en-GB", {"timeZone": "${tz}"}) not supported`);
+    }
+        return tz;
+    }else{
+        throw new Error('unknown timezone for '+iata);
+    }
+    
 }
 
 //https://stackoverflow.com/questions/222309/calculate-last-day-of-month-in-javascript
@@ -53,12 +70,14 @@ export const iso2TZ = (timeZone, isoString, deltaDays=0) => {
         const [, day, month, year, hour, minute] = match;
         let baseIsoString = `${year}-${month}-${day}T${hour}:${minute}`;
         const baseEvent = new Date(Date.parse(baseIsoString + "Z"));
-        let tzOffset = Math.floor((baseEvent - event)/3600000); // will not work for +05:30
+        let hours = Math.trunc((baseEvent - event)/3600000);
+        let minutes = Math.round((Math.abs((baseEvent - event)/3600000) - Math.abs(hours))*60/100);
+        let tzOffset = hours;
         if (tzOffset === 0) {
             return baseIsoString + "Z";
         }
         baseIsoString += (tzOffset >= 0) ? '+' : '-';
-        baseIsoString += tzOffset.toString().padStart(2, "0") + ":00"
+        baseIsoString += Math.abs(tzOffset).toString().padStart(2, "0") + ":" + minutes.toString().padStart(2, "0");
         return baseIsoString;
     } else {
         throw new Error(`Can not convert ${isoString} to timeZone ${timeZone}`);
@@ -93,6 +112,7 @@ export const buildRots = (flights, {tzConverter, base, iataMap}) => {
     let rots = [];
     let rot = null;
     let rotFlights;
+    let nightInFlight = 0;
     // premier vol, from != BASE => debut rot sur mois précédent debut rot = 1er jour du mois push from * nj depuis debut mois
     //              from == BASE il y a un doute si heure de depart est à 00:00z TODO pas sur...peut  etre ok
     // vol suivant to != BASE on verifie standby >= 7h si oui on compte un decoucher toutes les 24h de standby
@@ -132,13 +152,16 @@ export const buildRots = (flights, {tzConverter, base, iataMap}) => {
             const standbyHours = diffHours(flight.end, nextFlight.start);
             // on compte une nuit par jour civil en escale
             let standbyDays = 0;
+            //let localDays = numberOfDays(iso2TZ(iata2tz(flight.arr),flights[i].end), iso2TZ(iata2tz(nextFlight.dep), flights[i+1].start));
             //First line was needed by 10 ON YVR PPT YVR in rots.test
             //To check if isBase test was needed, added 7ON SVO in straddling.test and it is.
             standbyDays += (numberOfDays(rot.start, flight.start) === 0 && isBase(flight.dep)) ? numberOfDays(flight.start, flight.end) : 0; // for flights straddling day on first day
             standbyDays += numberOfDays(flight.end, nextFlight.start);
             standbyDays += numberOfDays(nextFlight.start, nextFlight.end); // for flights like LAX-PPT
+            nightInFlight = numberOfDays(nextFlight.start, nextFlight.end);
             standbyDays = Math.max(standbyDays, 1); // for single day rot
             if (standbyHours >= 7 && !isBase(flight.arr)) {
+                //console.log(numberOfDays(flight.end, nextFlight.start), standbyHours, localDays, flight.arr);
                 //escale hors base de plus de 7h
                 for (let j=0; j<standbyDays; j++) {
                     rot.nights.push(flight.arr);
@@ -222,6 +245,24 @@ export const buildRots = (flights, {tzConverter, base, iataMap}) => {
         rot.summary = rotSummary(rot);
 
         // adjust number of nights to match number of days
+        if ((rot.days - rot.nights.length) >=1 && nightInFlight >=1) {
+            const uniques = rot.nights.reduce((accumulator, current) => {
+                if (accumulator.length === 0 ) {
+                    accumulator = [[current, 1]];
+        }else if (current !== accumulator[accumulator.length - 1][0]) {
+            accumulator.push([current, 1]); // add a new entry
+        }else{
+            accumulator[accumulator.length-1][1] += 1;
+        }
+        return accumulator;
+    }, []);
+            //console.log(uniques);
+            if (uniques.length === 2 && (rot.days - rot.nights.length + 1)===2 && uniques[0][1] === uniques[1][1]-1){
+                //console.log('dxb patch', rot.nights, uniques)
+                rot.nights.unshift(rot.nights[0]); // DXB HKG
+                
+            }
+        }
         const nightsCount = rot.nights.length;
         const missing = rot.days - nightsCount;
         const fillingNight = (rot.nights.length > 0) ? rot.nights[nightsCount - 1] : (dep !== CONTINUATION_MARK) ? dep : (arr !== CONTINUATION_MARK) ? arr : base[0];

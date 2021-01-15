@@ -364,7 +364,7 @@ test("5 ON BKK", () => {
 //Memento Fiscal Exemple13
 test("6 ON DXB HKG", () => {
     const flights = [
-        {"stop":"xx,xx", "dep": "CDG", "start": "2019-07-03T08:00Z", "arr": "DXB" ,"end": "2019-07-03T21:00Z"},
+        {"stop":"xx,xx", "dep": "CDG", "start": "2019-07-03T08:00Z", "arr": "DXB" ,"end": "2019-07-03T19:00Z"},
         {"stop":"xx,xx", "dep": "DXB", "start": "2019-07-05T08:00Z", "arr": "HKG" ,"end": "2019-07-05T19:00Z"},
         {"stop":"xx,xx", "dep": "HKG", "start": "2019-07-07T19:00Z", "arr": "CDG" ,"end": "2019-07-08T05:00Z"}
     ];
@@ -379,8 +379,8 @@ test("6 ON DXB HKG", () => {
     expect(rots[0]).toEqual({
         isComplete: '<>',
         // nights: [ 'DXB', 'DXB', 'DXB', 'HKG', 'HKG', 'HKG' ], //-> solution SNPL (je ne comprends pas)
-        nights: [ 'DXB', 'DXB', 'HKG', 'HKG', 'HKG', 'HKG' ], //-> solution SNPNC
-        countries: [ 'AE', 'AE', 'HK', 'HK', 'HK', 'HK' ], //-> solution SNPNC
+        nights: [ 'DXB', 'DXB', 'DXB', 'HKG', 'HKG', 'HKG' ], //-> solution SNPNC
+        countries: [ 'AE', 'AE', 'AE', 'HK', 'HK', 'HK' ], //-> solution SNPNC
         start: '2019-07-03T10:00+02:00',
         end: '2019-07-08T07:00+02:00',
         days: 6,
@@ -390,8 +390,8 @@ test("6 ON DXB HKG", () => {
     });
     rots = addIndemnities("2019", rots, taxData, iso2FR);
     //solution SNPNC
-    expect(rots[0].formula).toBe('2 x AE + 4 x HK');
-    expect(rots[0].indemnity).toBeCloseTo((2 * 300) + (4 * 2200/ 9.0167), 1);
+    expect(rots[0].formula).toBe('3 x AE + 3 x HK');
+    expect(rots[0].indemnity).toBeCloseTo((3 * 300) + (3 * 2200/ 9.0167), 1);
     // solution SNPL
     // expect(rots[0].formula).toBe('3 x AE + 3 x HK');
     // expect(rots[0].indemnity).toBeCloseTo((3 * 300) + (3 * 2200/ 9.0167), 1);
