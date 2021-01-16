@@ -364,7 +364,6 @@ test("5 ON BKK", () => {
 
 //Memento Fiscal Exemple13
 test("6 ON DXB HKG", () => {
-    console.log = jest.fn();
     const flights = [
         {"stop":"xx,xx", "dep": "CDG", "start": "2019-07-03T15:00Z", "arr": "DXB" ,"end": "2019-07-03T21:00Z"},
         {"stop":"xx,xx", "dep": "DXB", "start": "2019-07-05T08:00Z", "arr": "HKG" ,"end": "2019-07-05T19:00Z"},
@@ -376,6 +375,7 @@ test("6 ON DXB HKG", () => {
     // 6 HKG
     // 7 HKG (en vol donc nuit précédente)
     // 8 HKG (dernière nuitée)
+    console.log = jest.fn();
     let rots = buildRots(flights, {"base": ["CDG", "ORY"], "tzConverter": iso2FR, "iataMap": iata2country});
     expect(rots.length).toBe(1);
     expect(rots[0]).toEqual({
@@ -390,14 +390,17 @@ test("6 ON DXB HKG", () => {
         dep: 'CDG',
         arr:'CDG'
     });
-    expect(console.log.mock.calls[0][0].startsWith('Optimisation')).toBeTruthy();
     rots = addIndemnities("2019", rots, taxData, iso2FR);
     //solution SNPNC
+    //expect(rots[0].formula).toBe('2 x AE + 4 x HK');
+    //expect(rots[0].indemnity).toBeCloseTo((2 * 300) + (4 * 2200/ 9.0167), 1);
+    // solution SNPL
     expect(rots[0].formula).toBe('3 x AE + 3 x HK');
     expect(rots[0].indemnity).toBeCloseTo((3 * 300) + (3 * 2200/ 9.0167), 1);
-    // solution SNPL
-    // expect(rots[0].formula).toBe('3 x AE + 3 x HK');
-    // expect(rots[0].indemnity).toBeCloseTo((3 * 300) + (3 * 2200/ 9.0167), 1);
+    
+    //Test du message de log d'optimisation
+
+    expect(console.log.mock.calls[0][0].startsWith('Optimisation')).toBeTruthy();
 });
 
 //Memento Fiscal Exemple14
