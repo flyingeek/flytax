@@ -292,9 +292,10 @@ export const buildRots = (flights, {tzConverter, base, iataMap}) => {
 };
 
 export const optimizeNightsRepartition = (rot, stays, remaining) => {
-        const nights = rot.nights;
-        const countries = rot.countries; // optional
-        const uniques = stays.reduce((accumulator, current) => {
+    const nights = rot.nights;
+    const countries = rot.countries; // optional
+    if (remaining === 2 && Array.isArray(stays)) {
+        const tuples = stays.reduce((accumulator, current) => {
             if (accumulator.length === 0 ) {
                 accumulator = [[current, 1]];
             }else if (current !== accumulator[accumulator.length - 1][0]) {
@@ -304,16 +305,23 @@ export const optimizeNightsRepartition = (rot, stays, remaining) => {
             }
             return accumulator;
         }, []);
-        if (uniques.length === 2 && remaining === 2 && uniques[0][1] === uniques[1][1]) {
-            const optimized = [].concat(nights[0], ...nights.slice(0,-1));
-            let optimizedCountries = countries; 
-            if (countries!== undefined) {
-                optimizedCountries = [].concat(countries[0], ...countries.slice(0,-1));
+        if (tuples.length === 2){
+            //extra safety check (should not be needed but...)
+            const first = tuples[0][0];
+            const second = tuples[1][0];
+            const expected = first.repeat(2) + second.repeat(4);
+            if (nights.join('') === expected){
+                const optimized = [].concat(nights[0], ...nights.slice(0,-1));
+                let optimizedCountries = countries; 
+                if (countries!== undefined) {
+                    optimizedCountries = [].concat(countries[0], ...countries.slice(0,-1));
+                }
+                console.log(`Optimisation des nuits sur ${rot.summary} du ${rot.start.substring(0,10).split('-').reverse().join('/')}\n(conformément à l'exemple 13 du mémento fiscal)\n${nights} -> ${optimized}`);
+                return [optimized, optimizedCountries];
             }
-            console.log(`Optimisation des nuits sur ${rot.summary} du ${rot.start.substring(0,10).split('-').reverse().join('/')}\n(conformément à l'exemple 13 du mémento fiscal)\n${nights} -> ${optimized}`);
-            return [optimized, optimizedCountries];
         }
-        return [nights, countries];   
+    }
+    return [nights, countries];   
 };
 
 export const iata2country = (iata) => {
