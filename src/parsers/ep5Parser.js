@@ -276,6 +276,7 @@ export const optimizeNightsRepartition = (rot, stays) => {
             }
             return accumulator;
         }, []);
+        // We look for rots with 2 stays and with indentical stay length
         if (tuples.length === 2 && tuples[0][1] === tuples[1][1]){
             const optimized = [].concat(nights[0], ...nights.slice(0,-1));
             let optimizedCountries = countries; 
