@@ -492,22 +492,18 @@ export const mergeRots = (data, taxYear, taxData, tzConverter) => {
         const next = nextIt.next().value;
         if (next && rot.isComplete === '<' && next.isComplete === '>' && rot.end.substring(0, 7) === next.end.substring(0, 7)) {
             const merged = {...rot}; // clone
-            let mergedStays;
             merged.isComplete = '<>';
             merged.nights = rot.nights.concat(next.nights);
             // countries is optional in buildRots
             merged.countries = (rot.countries && next.countries) ? rot.countries.concat(next.countries): undefined;
-            if (next.stays && rot.stays) {
-                mergedStays = rot.stays.concat(next.stays);
-            }
             merged.end = `${next.end}`;
             merged.days += next.days;
             merged.arr = `${next.arr}`;
-            merged.summary = rotSummary(merged);
-            if(mergedStays) {
-                [merged.nights, merged.countries] = optimizeNightsRepartition(merged, mergedStays);
+            if(next.stays && rot.stays) {
+                [merged.nights, merged.countries] = optimizeNightsRepartition(merged, rot.stays.concat(next.stays));
             }
             if ('stays' in merged) delete merged.stays;
+            merged.summary = rotSummary(merged);
             const [mergedWithIndemnities] = addIndemnities(taxYear,[merged], taxData, tzConverter);
             mergedRots.push(mergedWithIndemnities);
             // skip next
