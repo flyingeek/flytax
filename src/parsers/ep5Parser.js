@@ -1,5 +1,4 @@
 import airportsData from "../../data/airports.json";
-//import timezonesData from "../../data/timezones.json";
 import {localeFormat, months14} from "../components/utils";
 
 export const WITHIN_BASE_TEXT = "rotation sur base";
@@ -16,22 +15,6 @@ export const ep5Time2iso = (text) => {
     const [hours, cs] = text.split(",");
     const minutes = (parseFloat(cs) * 0.6).toFixed(0).padStart(2, '0');
     return `${hours}:${minutes}Z`;
-}
-
-export const iata2tz = (iata) => {
-    const index = airportsData.indexOf(iata + ':');
-    if (index>=0) {
-        const tz = timezonesData[airportsData.substring(index + 6, index + 8)];
-        try {
-        new Date().toLocaleString("en-GB", {"timeZone": tz, "timeZoneName": "short"});
-    } catch (e) {
-        throw new Error(`Date.toLocaleString("en-GB", {"timeZone": "${tz}"}) not supported`);
-    }
-        return tz;
-    }else{
-        throw new Error('unknown timezone for '+iata);
-    }
-    
 }
 
 //https://stackoverflow.com/questions/222309/calculate-last-day-of-month-in-javascript
@@ -70,9 +53,9 @@ export const iso2TZ = (timeZone, isoString, deltaDays=0) => {
         const [, day, month, year, hour, minute] = match;
         let baseIsoString = `${year}-${month}-${day}T${hour}:${minute}`;
         const baseEvent = new Date(Date.parse(baseIsoString + "Z"));
-        let hours = Math.trunc((baseEvent - event)/3600000);
-        let minutes = Math.round((Math.abs((baseEvent - event)/3600000) - Math.abs(hours))*60/100);
-        let tzOffset = hours;
+        const delta = (baseEvent - event)/3600000;
+        let tzOffset = Math.trunc(delta);
+        let minutes = Math.round((Math.abs(delta) - Math.abs(tzOffset))*60/100);
         if (tzOffset === 0) {
             return baseIsoString + "Z";
         }
@@ -113,15 +96,6 @@ export const buildRots = (flights, {tzConverter, base, iataMap}) => {
     let rot = null;
     let rotFlights;
     let rotStays;
-    // premier vol, from != BASE => debut rot sur mois précédent debut rot = 1er jour du mois push from * nj depuis debut mois
-    //              from == BASE il y a un doute si heure de depart est à 00:00z TODO pas sur...peut  etre ok
-    // vol suivant to != BASE on verifie standby >= 7h si oui on compte un decoucher toutes les 24h de standby
-    //             to == BASE si standby > 12h new rot
-    // dernier vol to != Base => fin rot dernier jour du mois push to * nj fin mois
-    //             to == Base rotation complete voir si fin 24:00z
-    // fonctionne aussi dans une timeZone différente pour peu que la nouvelle
-    // timeZone soit positive (GMT+1, GMT+2...)
-    // PS: pourquoi cette remarque ? +05:30 ne fonctionnera pas mais -01:00 demande à être testé.
     
     for (const [i, flightGMT] of flights.entries()) {
         const year = flightGMT.start.substring(0,4);
@@ -156,7 +130,6 @@ export const buildRots = (flights, {tzConverter, base, iataMap}) => {
             const standbyHours = diffHours(flight.end, nextFlight.start);
             // on compte une nuit par jour civil en escale
             let standbyDays = 0;
-            //let localDays = numberOfDays(iso2TZ(iata2tz(flight.arr),flights[i].end), iso2TZ(iata2tz(nextFlight.dep), flights[i+1].start));
             //First line was needed by 10 ON YVR PPT YVR in rots.test
             //To check if isBase test was needed, added 7ON SVO in straddling.test and it is.
             standbyDays += (numberOfDays(rot.start, flight.start) === 0 && isBase(flight.dep)) ? numberOfDays(flight.start, flight.end) : 0; // for flights straddling day on first day
