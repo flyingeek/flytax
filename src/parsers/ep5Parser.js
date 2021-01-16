@@ -268,12 +268,11 @@ export const optimizeNightsRepartition = (rot, stays) => {
     const countries = rot.countries; // optional
     if (Array.isArray(stays)) {
         const tuples = stays.reduce((accumulator, current) => {
-            if (accumulator.length === 0 ) {
-                accumulator = [[current, 1]];
-            }else if (current !== accumulator[accumulator.length - 1][0]) {
-                accumulator.push([current, 1]); // add a new entry
+            const index = accumulator.length - 1;
+            if (index > -1 && current === accumulator[index][0]) {
+                accumulator[index][1] += 1;
             }else{
-                accumulator[accumulator.length-1][1] += 1;
+                accumulator.push([current, 1]); // add a new entry
             }
             return accumulator;
         }, []);
