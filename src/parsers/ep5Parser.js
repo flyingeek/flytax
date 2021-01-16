@@ -267,13 +267,12 @@ export const buildRots = (flights, {tzConverter, base, iataMap}) => {
         const mayNeedOptimization = (missing >=1 && nightInFlight >=1);
         if (mayNeedOptimization && rot.isComplete === '<>') {
             // We have to check if we can have a better night repartition
-            [rot.nights,] = optimizeNightsRepartition(rot, rotStays, missing+nightInFlight);
+            [rot.nights,] = optimizeNightsRepartition(rot, rotStays);
         } else if (mayNeedOptimization && rot.isComplete === '>') {
             //adds data to optimize at merge time
             rot.stays = rotStays;
-            rot.remaining = missing + nightInFlight;
         } else if(rot.isComplete === '<'){
-            //always adds data to optimize at merge time
+            //always adds data, mergeRots will use it if needed.
             rot.stays = rotStays;
         }
         
@@ -291,10 +290,10 @@ export const buildRots = (flights, {tzConverter, base, iataMap}) => {
     return rots
 };
 
-export const optimizeNightsRepartition = (rot, stays, remaining) => {
+export const optimizeNightsRepartition = (rot, stays) => {
     const nights = rot.nights;
     const countries = rot.countries; // optional
-    if (remaining === 2 && Array.isArray(stays)) {
+    if (Array.isArray(stays)) {
         const tuples = stays.reduce((accumulator, current) => {
             if (accumulator.length === 0 ) {
                 accumulator = [[current, 1]];
@@ -305,20 +304,14 @@ export const optimizeNightsRepartition = (rot, stays, remaining) => {
             }
             return accumulator;
         }, []);
-        if (tuples.length === 2){
-            //extra safety check (should not be needed but...)
-            const first = tuples[0][0];
-            const second = tuples[1][0];
-            const expected = first.repeat(2) + second.repeat(4);
-            if (nights.join('') === expected){
-                const optimized = [].concat(nights[0], ...nights.slice(0,-1));
-                let optimizedCountries = countries; 
-                if (countries!== undefined) {
-                    optimizedCountries = [].concat(countries[0], ...countries.slice(0,-1));
-                }
-                console.log(`Optimisation des nuits sur ${rot.summary} du ${rot.start.substring(0,10).split('-').reverse().join('/')}\n(conformément à l'exemple 13 du mémento fiscal)\n${nights} -> ${optimized}`);
-                return [optimized, optimizedCountries];
+        if (tuples.length === 2 && tuples[0][1] === tuples[1][1]){
+            const optimized = [].concat(nights[0], ...nights.slice(0,-1));
+            let optimizedCountries = countries; 
+            if (countries!== undefined) {
+                optimizedCountries = [].concat(countries[0], ...countries.slice(0,-1));
             }
+            console.log(`Optimisation des nuits sur ${rot.summary} du ${rot.start.substring(0,10).split('-').reverse().join('/')}\n(conformément à l'exemple 13 du mémento fiscal)\n${nights} -> ${optimized}`);
+            return [optimized, optimizedCountries];
         }
     }
     return [nights, countries];   
@@ -526,23 +519,22 @@ export const mergeRots = (data, taxYear, taxData, tzConverter) => {
         const next = nextIt.next().value;
         if (next && rot.isComplete === '<' && next.isComplete === '>' && rot.end.substring(0, 7) === next.end.substring(0, 7)) {
             const merged = {...rot}; // clone
+            let mergedStays;
             merged.isComplete = '<>';
             merged.nights = rot.nights.concat(next.nights);
             // countries is optional in buildRots
             merged.countries = (rot.countries && next.countries) ? rot.countries.concat(next.countries): undefined;
             if (next.stays && rot.stays) {
-                merged.stays = rot.stays.concat(next.stays);
-            }else if (merged.stays !== undefined){
-                delete merged.stays;
+                mergedStays = rot.stays.concat(next.stays);
             }
             merged.end = `${next.end}`;
             merged.days += next.days;
             merged.arr = `${next.arr}`;
             merged.summary = rotSummary(merged);
-            if(next.remaining && merged.stays) {
-                [merged.nights, merged.countries] = optimizeNightsRepartition(merged, merged.stays, next.remaining);
-                delete merged.stays
+            if(mergedStays) {
+                [merged.nights, merged.countries] = optimizeNightsRepartition(merged, mergedStays);
             }
+            if ('stays' in merged) delete merged.stays;
             const [mergedWithIndemnities] = addIndemnities(taxYear,[merged], taxData, tzConverter);
             mergedRots.push(mergedWithIndemnities);
             // skip next
