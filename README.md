@@ -52,10 +52,6 @@ npm run makeData 2020
 
 ```
 
-## Publication du site sur GitHub Pages
-
-`.github/workflows/main.yml` publie automatiquement sur la branche gh-pages à chaque push sur la branche main.
-
 ## Utilisation des fichiers de données dans une autre app
 
 ### conversion des codes IATA en code pays
@@ -168,3 +164,7 @@ const findAmountEuros = (countryData, isoDate, exrData) => {
     }
 };
 ```
+
+## Publication du site sur GitHub Pages
+
+`.github/workflows/main.yml` publie automatiquement sur la branche gh-pages à chaque push sur la branche main.
