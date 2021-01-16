@@ -1,5 +1,5 @@
 import airportsData from "../../data/airports.json";
-import timezonesData from "../../data/timezones.json";
+//import timezonesData from "../../data/timezones.json";
 import {localeFormat, months14} from "../components/utils";
 
 export const WITHIN_BASE_TEXT = "rotation sur base";
@@ -112,7 +112,7 @@ export const buildRots = (flights, {tzConverter, base, iataMap}) => {
     let rots = [];
     let rot = null;
     let rotFlights;
-    let nightInFlight = 0;
+    let rotStays;
     // premier vol, from != BASE => debut rot sur mois précédent debut rot = 1er jour du mois push from * nj depuis debut mois
     //              from == BASE il y a un doute si heure de depart est à 00:00z TODO pas sur...peut  etre ok
     // vol suivant to != BASE on verifie standby >= 7h si oui on compte un decoucher toutes les 24h de standby
@@ -132,6 +132,7 @@ export const buildRots = (flights, {tzConverter, base, iataMap}) => {
         }
         if (rot === null) {
             rotFlights = [];
+            rotStays = [];
             rot = {"isComplete": "<>", "nights": [], "start": flight.start};
         }
         if (i === 0 && ((isBase(flight.dep) && flight.stop === "0,00") || !isBase(flight.dep))) {
@@ -142,6 +143,7 @@ export const buildRots = (flights, {tzConverter, base, iataMap}) => {
             const stopover = (isBase(flight.dep)) ? flight.arr : flight.dep;
             for (let j=0; j<days; j++) {
                 rot.nights.push(stopover);
+                if (!isBase(flight.dep)) rotStays.push(stopover);
             }
         }
         const nextFlight = (flights[i + 1]) ? Object.assign({}, flights[i + 1]) : undefined;
@@ -158,13 +160,15 @@ export const buildRots = (flights, {tzConverter, base, iataMap}) => {
             standbyDays += (numberOfDays(rot.start, flight.start) === 0 && isBase(flight.dep)) ? numberOfDays(flight.start, flight.end) : 0; // for flights straddling day on first day
             standbyDays += numberOfDays(flight.end, nextFlight.start);
             standbyDays += numberOfDays(nextFlight.start, nextFlight.end); // for flights like LAX-PPT
-            nightInFlight = numberOfDays(nextFlight.start, nextFlight.end);
             standbyDays = Math.max(standbyDays, 1); // for single day rot
             if (standbyHours >= 7 && !isBase(flight.arr)) {
                 //console.log(numberOfDays(flight.end, nextFlight.start), standbyHours, localDays, flight.arr);
                 //escale hors base de plus de 7h
                 for (let j=0; j<standbyDays; j++) {
                     rot.nights.push(flight.arr);
+                }
+                for (let j=0; j <numberOfDays(flight.end, nextFlight.start); j++){
+                    rotStays.push(flight.arr);
                 }
                 rotFlights.push(flight);
                 continue; //do not push new rot yet
@@ -194,6 +198,7 @@ export const buildRots = (flights, {tzConverter, base, iataMap}) => {
                         // also adjust night count if start is also next month
                         if (flight.start.substring(5,7) !== month) {
                             rot.nights.pop();
+                            rotStays.pop(); // TODO check this
                         }
                     }
                 }
@@ -210,10 +215,14 @@ export const buildRots = (flights, {tzConverter, base, iataMap}) => {
                 const days = numberOfDays(flight.end, rot.end) + 1;
                 for (let j=0; j<days; j++) {
                     rot.nights.push(flight.arr);
+                    rotStays.push(flight.arr);
                 }
                 if (rot.end.substring(5,7) !== month) {
                     // also adjust night count if flight.end is on current month
-                    if (flight.end.substring(5,7) === month) rot.nights.pop();
+                    if (flight.end.substring(5,7) === month){
+                        rot.nights.pop();
+                        rotStays.pop();
+                    }
                     rot.days = numberOfDays(rot.start, rot.end);
                 }
                 // last flight, will push new rot
@@ -245,30 +254,24 @@ export const buildRots = (flights, {tzConverter, base, iataMap}) => {
         rot.summary = rotSummary(rot);
 
         // adjust number of nights to match number of days
-        if ((rot.days - rot.nights.length) >=1 && nightInFlight >=1) {
-            const uniques = rot.nights.reduce((accumulator, current) => {
-                if (accumulator.length === 0 ) {
-                    accumulator = [[current, 1]];
-        }else if (current !== accumulator[accumulator.length - 1][0]) {
-            accumulator.push([current, 1]); // add a new entry
-        }else{
-            accumulator[accumulator.length-1][1] += 1;
-        }
-        return accumulator;
-    }, []);
-            //console.log(uniques);
-            if (uniques.length === 2 && (rot.days - rot.nights.length + 1)===2 && uniques[0][1] === uniques[1][1]-1){
-                //console.log('dxb patch', rot.nights, uniques)
-                rot.nights.unshift(rot.nights[0]); // DXB HKG
-                
-            }
-        }
         const nightsCount = rot.nights.length;
         const missing = rot.days - nightsCount;
         const fillingNight = (rot.nights.length > 0) ? rot.nights[nightsCount - 1] : (dep !== CONTINUATION_MARK) ? dep : (arr !== CONTINUATION_MARK) ? arr : base[0];
         for (let j=0; j<missing; j++) {
             rot.nights.push(fillingNight);
         }
+        const nightInFlight = numberOfDays(flight.start, flight.end);
+        if ((missing) >=1 && nightInFlight >=1) {
+            // We have to check if we can have a better night repartition
+            if (rot.isComplete === '<>'){
+                //do the check
+                [rot.nights,] = optimizeNightsRepartition(rot, rotStays, missing+nightInFlight);
+            } else {
+                rot.stays = rotStays;
+                if (rot.isComplete === '>') rot.remaining = missing + nightInFlight;
+            }
+        }
+        
         //outOfBase is > 0 if rot have at least one stopover out of base
         //If not outOfBase, indemnities are zero so we reset nights
         const outOfBase = rotFlights.reduce((a, c) => a + ((!isBase(c.dep) || !isBase(c.arr)) ? 1 : 0), 0);
@@ -281,6 +284,31 @@ export const buildRots = (flights, {tzConverter, base, iataMap}) => {
         rot = null;
     }
     return rots
+};
+
+export const optimizeNightsRepartition = (rot, stays, remaining) => {
+        const nights = rot.nights;
+        const countries = rot.countries; // optional
+        const uniques = stays.reduce((accumulator, current) => {
+            if (accumulator.length === 0 ) {
+                accumulator = [[current, 1]];
+            }else if (current !== accumulator[accumulator.length - 1][0]) {
+                accumulator.push([current, 1]); // add a new entry
+            }else{
+                accumulator[accumulator.length-1][1] += 1;
+            }
+            return accumulator;
+        }, []);
+        if (uniques.length === 2 && remaining === 2 && uniques[0][1] === uniques[1][1]) {
+            const optimized = [].concat(nights[0], ...nights.slice(0,-1));
+            let optimizedCountries = countries; 
+            if (countries!== undefined) {
+                optimizedCountries = [].concat(countries[0], ...countries.slice(0,-1));
+            }
+            console.log(`Optimisation des nuits sur ${rot.summary} du ${rot.start.substring(0,10).split('-').reverse().join('/')}\n(conformément à l'exemple 13 du mémento fiscal)\n${nights} -> ${optimized}`);
+            return [optimized, optimizedCountries];
+        }
+        return [nights, countries];   
 };
 
 export const iata2country = (iata) => {
@@ -488,11 +516,19 @@ export const mergeRots = (data, taxYear, taxData, tzConverter) => {
             merged.isComplete = '<>';
             merged.nights = rot.nights.concat(next.nights);
             // countries is optional in buildRots
-            merged.countries = (rot.countries && next.countries) ? rot.countries.concat(next.countries): undefined; 
+            merged.countries = (rot.countries && next.countries) ? rot.countries.concat(next.countries): undefined;
+            if (next.stays && rot.stays) {
+                merged.stays = rot.stays.concat(next.stays);
+            }else if (merged.stays !== undefined){
+                delete merged.stays;
+            }
             merged.end = `${next.end}`;
             merged.days += next.days;
             merged.arr = `${next.arr}`;
             merged.summary = rotSummary(merged);
+            if(next.remaining && merged.stays) {
+                [merged.nights, merged.countries] = optimizeNightsRepartition(merged, merged.stays, next.remaining);
+            }
             const [mergedWithIndemnities] = addIndemnities(taxYear,[merged], taxData, tzConverter);
             mergedRots.push(mergedWithIndemnities);
             // skip next

@@ -303,6 +303,7 @@ test("7ON SVO du soir", () => {
         isComplete: '<',
         error: false,
         nights: [ 'SVO', 'SVO'],
+        stays: ['SVO'],
         countries: ["RU", "RU"],
         start: '2019-01-30T23:00+01:00',
         end: '2019-02-01T01:00+01:00',
@@ -327,6 +328,7 @@ test("7ON SVO du soir", () => {
         error: false,
         nights: [ 'SVO', 'BOD', 'BOD', 'TLS', 'TLS'],
         countries: ["RU", "FR", "FR", "FR", "FR"],
+        // note there is no stays prop here
         start: '2019-02-01T01:00+01:00',
         end: '2019-02-05T10:30+01:00',
         days: 5,
