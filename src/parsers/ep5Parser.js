@@ -264,7 +264,7 @@ export const buildRots = (flights, {tzConverter, base, iataMap}) => {
             rot.nights.push(fillingNight);
         }
         const nightInFlight = numberOfDays(flight.start, flight.end);
-        const mayNeedOptimization = (missing >=1 && nightInFlight >=1);
+        const mayNeedOptimization = (missing === 1 && nightInFlight === 1);
         if (mayNeedOptimization && rot.isComplete === '<>') {
             // We have to check if we can have a better night repartition
             [rot.nights,] = optimizeNightsRepartition(rot, rotStays);
