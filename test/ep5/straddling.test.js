@@ -45,6 +45,7 @@ test("2 ON SVO BOD straddling check not MC", () => {
     expect(rots1[0]).toEqual({
         isComplete: '<',
         nights: [ 'SVO', 'BOD'],
+        stays: ['SVO', 'BOD'],
         countries: [ 'RU', 'FR'],
         start: '2019-01-30T09:00+01:00',
         end: '2019-02-01T01:00+01:00',

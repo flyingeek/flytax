@@ -143,7 +143,9 @@ export const buildRots = (flights, {tzConverter, base, iataMap}) => {
             const stopover = (isBase(flight.dep)) ? flight.arr : flight.dep;
             for (let j=0; j<days; j++) {
                 rot.nights.push(stopover);
-                if (!isBase(flight.dep)) rotStays.push(stopover);
+                if (!isBase(flight.dep)){
+                     rotStays.push(stopover);
+                }
             }
         }
         const nextFlight = (flights[i + 1]) ? Object.assign({}, flights[i + 1]) : undefined;
@@ -215,6 +217,7 @@ export const buildRots = (flights, {tzConverter, base, iataMap}) => {
                 const days = numberOfDays(flight.end, rot.end) + 1;
                 for (let j=0; j<days; j++) {
                     rot.nights.push(flight.arr);
+                    //console.log(j, '< end night push', flight.arr)
                     rotStays.push(flight.arr);
                 }
                 if (rot.end.substring(5,7) !== month) {
@@ -261,15 +264,17 @@ export const buildRots = (flights, {tzConverter, base, iataMap}) => {
             rot.nights.push(fillingNight);
         }
         const nightInFlight = numberOfDays(flight.start, flight.end);
-        if ((missing) >=1 && nightInFlight >=1) {
+        const mayNeedOptimization = (missing >=1 && nightInFlight >=1);
+        if (mayNeedOptimization && rot.isComplete === '<>') {
             // We have to check if we can have a better night repartition
-            if (rot.isComplete === '<>'){
-                //do the check
-                [rot.nights,] = optimizeNightsRepartition(rot, rotStays, missing+nightInFlight);
-            } else {
-                rot.stays = rotStays;
-                if (rot.isComplete === '>') rot.remaining = missing + nightInFlight;
-            }
+            [rot.nights,] = optimizeNightsRepartition(rot, rotStays, missing+nightInFlight);
+        } else if (mayNeedOptimization && rot.isComplete === '>') {
+            //adds data to optimize at merge time
+            rot.stays = rotStays;
+            rot.remaining = missing + nightInFlight;
+        } else if(rot.isComplete === '<'){
+            //always adds data to optimize at merge time
+            rot.stays = rotStays;
         }
         
         //outOfBase is > 0 if rot have at least one stopover out of base
@@ -528,6 +533,7 @@ export const mergeRots = (data, taxYear, taxData, tzConverter) => {
             merged.summary = rotSummary(merged);
             if(next.remaining && merged.stays) {
                 [merged.nights, merged.countries] = optimizeNightsRepartition(merged, merged.stays, next.remaining);
+                delete merged.stays
             }
             const [mergedWithIndemnities] = addIndemnities(taxYear,[merged], taxData, tzConverter);
             mergedRots.push(mergedWithIndemnities);
