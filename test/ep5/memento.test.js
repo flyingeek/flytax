@@ -1,11 +1,17 @@
 /*
  * All examples found in the Memento Fiscal SNPL
  *
- * SNPNC rules:
+ * règles SNPNC:
  * Comptabiliser le nombre de jours « ON » de la rotation.
  * Compter 1 indemnité du pays de destination pour la 1ère journée
  * + 1 indemnité du pays dans lequel on découche pour chaque journée d’engagement supplémentaire.
  * Pour la dernière journée d’engagement compter 1 indemnité du pays du dernier découché.
+ * Ceci entraine par exemple une surreprésentation des nuits à PPT.
+ * 
+ * Pour le SNPL, les règles essayent d'être plus réalistes et typiquement on aura :
+ * - pour les nuits en vol en cours de rotation: nuit à l'escale de départ
+ * - en cas de déséquilibre entre nuits réelles et nuits décomptées : réaffectation (exemple 13)
+ * Au final il y a un meilleur équilibre entre les nuits décomptées et les nuits passées à l'hotel
  */
 
 import {buildRots, iso2FR, addIndemnities, iata2country} from '../../src/parsers/ep5Parser';

@@ -52,6 +52,10 @@ npm run makeData 2020
 
 ```
 
+## Conformité aux conventions de calcul du SNPL
+
+Il a été porté une attention particulière au respect de la méthodologie du SNPL. Retrouvez les tests unitaires du mémento fiscal [ici](https://github.com/flyingeek/flytax/blob/main/test/ep5/memento.test.js).
+
 ## Utilisation des fichiers de données dans une autre app
 
 ### conversion des codes IATA en code pays
