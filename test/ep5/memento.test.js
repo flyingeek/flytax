@@ -10,6 +10,7 @@
 
 import {buildRots, iso2FR, addIndemnities, iata2country} from '../../src/parsers/ep5Parser';
 import taxData from "../data/dataTest.json";
+import {jest} from '@jest/globals';
 
 //Memento Fiscal Exemple1
 test("1 ON France", () => {
@@ -364,7 +365,7 @@ test("5 ON BKK", () => {
 //Memento Fiscal Exemple13
 test("6 ON DXB HKG", () => {
     const flights = [
-        {"stop":"xx,xx", "dep": "CDG", "start": "2019-07-03T08:00Z", "arr": "DXB" ,"end": "2019-07-03T21:00Z"},
+        {"stop":"xx,xx", "dep": "CDG", "start": "2019-07-03T15:00Z", "arr": "DXB" ,"end": "2019-07-03T21:00Z"},
         {"stop":"xx,xx", "dep": "DXB", "start": "2019-07-05T08:00Z", "arr": "HKG" ,"end": "2019-07-05T19:00Z"},
         {"stop":"xx,xx", "dep": "HKG", "start": "2019-07-07T19:00Z", "arr": "CDG" ,"end": "2019-07-08T05:00Z"}
     ];
@@ -374,14 +375,15 @@ test("6 ON DXB HKG", () => {
     // 6 HKG
     // 7 HKG (en vol donc nuit précédente)
     // 8 HKG (dernière nuitée)
+    console.log = jest.fn();
     let rots = buildRots(flights, {"base": ["CDG", "ORY"], "tzConverter": iso2FR, "iataMap": iata2country});
     expect(rots.length).toBe(1);
     expect(rots[0]).toEqual({
         isComplete: '<>',
-        // nights: [ 'DXB', 'DXB', 'DXB', 'HKG', 'HKG', 'HKG' ], //-> solution SNPL (je ne comprends pas)
-        nights: [ 'DXB', 'DXB', 'HKG', 'HKG', 'HKG', 'HKG' ], //-> solution SNPNC
-        countries: [ 'AE', 'AE', 'HK', 'HK', 'HK', 'HK' ], //-> solution SNPNC
-        start: '2019-07-03T10:00+02:00',
+        nights: [ 'DXB', 'DXB', 'DXB', 'HKG', 'HKG', 'HKG' ], //-> solution SNPL (utilise optimizeNightsRepartition)
+        // nights: [ 'DXB', 'DXB', 'HKG', 'HKG', 'HKG', 'HKG' ], //-> solution SNPNC
+        countries: [ 'AE', 'AE', 'AE', 'HK', 'HK', 'HK' ], //-> solution SNPNC
+        start: '2019-07-03T17:00+02:00',
         end: '2019-07-08T07:00+02:00',
         days: 6,
         summary: 'CDG-DXB-HKG-CDG',
@@ -390,11 +392,15 @@ test("6 ON DXB HKG", () => {
     });
     rots = addIndemnities("2019", rots, taxData, iso2FR);
     //solution SNPNC
-    expect(rots[0].formula).toBe('2 x AE + 4 x HK');
-    expect(rots[0].indemnity).toBeCloseTo((2 * 300) + (4 * 2200/ 9.0167), 1);
+    //expect(rots[0].formula).toBe('2 x AE + 4 x HK');
+    //expect(rots[0].indemnity).toBeCloseTo((2 * 300) + (4 * 2200/ 9.0167), 1);
     // solution SNPL
-    // expect(rots[0].formula).toBe('3 x AE + 3 x HK');
-    // expect(rots[0].indemnity).toBeCloseTo((3 * 300) + (3 * 2200/ 9.0167), 1);
+    expect(rots[0].formula).toBe('3 x AE + 3 x HK');
+    expect(rots[0].indemnity).toBeCloseTo((3 * 300) + (3 * 2200/ 9.0167), 1);
+    
+    //Test du message de log d'optimisation
+
+    expect(console.log.mock.calls[0][0].startsWith('Optimisation')).toBeTruthy();
 });
 
 //Memento Fiscal Exemple14

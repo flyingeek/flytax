@@ -52,10 +52,6 @@ npm run makeData 2020
 
 ```
 
-## Publication du site sur GitHub Pages
-
-`.github/workflows/main.yml` publie automatiquement sur la branche gh-pages à chaque push sur la branche main.
-
 ## Utilisation des fichiers de données dans une autre app
 
 ### conversion des codes IATA en code pays
@@ -86,14 +82,16 @@ Les fichiers .tsv peuvent être ouvert directement dans Excel ou être importé 
 
 #### JSON
 
-[data2020.json](https://flyingeek.github.io/flytax/data/data2020.json) est un fichier json qui contient 4 propriétés.
+[data2020.json](https://flyingeek.github.io/flytax/data/data2020.json) est un fichier json qui contient 6 propriétés.
 
 ```javascript
 {
     "countries": /* ....*/,
     "exr": /* ....*/,
     "year": "2020", /* l'année fiscale */
-    "zoneForfaitEuro": ["AT","BE","BL","CY", /* ... */] /* liste des pays du forfait zoneEuro
+    "zoneForfaitEuro": ["AT","BE","BL","CY", /* ... */], /* liste des pays du forfait zoneEuro */
+    "maxForfait10":12652, /* plafond abattement fiscal forfait */
+    "urssaf":{"Paris":[68.1,19],"Province":[50.5,19],"DOM":90} /* données URSSAF pour calcul du forfait Euro */
 }
 ```
 
@@ -166,3 +164,7 @@ const findAmountEuros = (countryData, isoDate, exrData) => {
     }
 };
 ```
+
+## Publication du site sur GitHub Pages
+
+`.github/workflows/main.yml` publie automatiquement sur la branche gh-pages à chaque push sur la branche main.

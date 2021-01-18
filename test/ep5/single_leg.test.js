@@ -33,6 +33,7 @@ test("single day rotation, first straddling flight of an EP5 with a base arrival
     expect(rots[0]).toEqual({
         isComplete: '>',
         nights: ['BOD'],
+        stays: [],
         countries: ['FR'],
         start: '2019-01-01T01:00+01:00',
         end: '2019-01-01T02:00+01:00',
@@ -56,6 +57,7 @@ test("single day rotation, only one leg straddling gmt month, stopover", () => {
     expect(rots[0]).toEqual({
         isComplete: '<',
         nights: ['JFK'],
+        stays: ['JFK'],
         countries: ['NY'],
         start: '2019-01-31T22:00+01:00',
         end: '2019-02-01T01:00+01:00',
@@ -78,6 +80,7 @@ test("single day rotation, only one leg straddling civil month (but not gmt mont
     expect(rots[0]).toEqual({
         isComplete: '<',
         nights: ['JFK'],
+        stays: ['JFK'],
         countries: ['NY'],
         start: '2019-01-31T22:00+01:00',
         end: '2019-02-01T01:00+01:00',
@@ -122,6 +125,7 @@ test("stopover 3 days before the end of the month", () => {
     expect(rots[0]).toEqual({
         isComplete: '<',
         nights: ['JFK', 'JFK', 'JFK'],
+        stays: ['JFK', 'JFK', 'JFK'],
         countries: ['NY', 'NY', 'NY'],
         start: '2019-01-29T13:00+01:00',
         end: '2019-02-01T01:00+01:00',
