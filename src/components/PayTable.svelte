@@ -7,9 +7,6 @@
     export let data;
     export let tableId="PayTable";
     const computeTotalImposable = (data) => {
-        if (data["12"] && data["12"].cumul !== "0") {
-            return cents2decimal(decimal2cents(data["12"].cumul));
-        }
         let total = 0;
         for (const month of months) {
             total += (data[month]) ? decimal2cents(data[month].imposable) : 0;
@@ -35,6 +32,7 @@
         return data[month].repas.concat(data[month].transport).map(decimal2cents).reduce((a, b) => a + b);
     };
     $: totalImposable = computeTotalImposable(data);
+    $: cumulImposable12 = (data["12"] && data["12"].cumul !== "0") ? cents2decimal(decimal2cents(data["12"].cumul)) : undefined;
     $: totalDecouchersFPRO = computeTotalDecouchersFPRO(data);
 
 </script>

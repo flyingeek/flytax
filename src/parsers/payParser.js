@@ -67,11 +67,29 @@ const matchFirst = (text, re, bydefault) => {
         return bydefault;
     }
 };
-    
+
+// returns first group of last match
+// Throws if no match found
+// returns string
+const matchLast = (text, re, bydefault) => {
+    let match;
+    let lastMatch;
+    while (null !== (match = re.exec(text))) {
+        lastMatch = match;
+    }
+    if (lastMatch) return lastMatch[1];
+    if (bydefault === undefined) {
+        throw new Error(`No match found for ${re}`);
+    } else {
+        return bydefault;
+    }
+};
+
+const sum = (decimals) => cents2decimal(decimals.map(decimal2cents).reduce((a, b) => a + b));
 // Parse PaySlip
 export const payParser = (text, fileName, fileOrder) => {
     //console.log(text);
-    let result = {"type": "pay", fileName, fileOrder};
+    let result = {"type": "pay", fileName, fileOrder, errors: []};
     let re = /(?:IND\.REPAS_+|INDEMNITE REPAS_+)([\-0-9, ]+)/g;
     result.repas = matchAll(text, re, "0").map(decimal);
     re = /(?:IND\. TRANSPORT_+|FRAIS REELS TRANSP_+)([\-0-9, ]+)/g;
@@ -79,21 +97,24 @@ export const payParser = (text, fileName, fileOrder) => {
     re = /(?:_I.DECOUCHERS F.PRO_+)([\-0-9, ]+)/g;
     result.decouchers_fpro = matchAll(text, re, "0").map(decimal);
     try {
-        result.imposable = decimal(matchFirst(text, /_Mensuel_[\-0-9, ]+_{1,2}([\-0-9, ]+)_/));
+        const net = matchAll(text, /_Mensuel_[\-0-9, ]+_{1,2}([\-0-9, ]+)_/g);
+        result.imposable = sum(net.map(decimal));
+        if (net.length > 1) result.errors.push({"type": "warning", "message":"Plusieurs bulletins de salaire trouvés"});
     } catch (err) {
-        console.error(`Net imposable not found in ${fileName}`);
+        result.errors.push({"type": "error", "message":"Net imposable non trouvé"});
         result.imposable = "0";
     }
     try {
-        result.cumul = decimal(matchFirst(text, /_Annuel_[\-0-9, ]+_{1,2}([\-0-9, ]+)_/));
+        result.cumul = decimal(matchLast(text, /_Annuel_[\-0-9, ]+_{1,2}([\-0-9, ]+)_/g));
     } catch (err) {
-        console.error(`Cumul Net imposable not found in ${fileName}`);
+        result.errors.push({"type": "error", "msg":"Cumul Net imposable non trouvé"});
         result.cumul = "0";
     }
     try {
-        result.date = matchFirst(text, /PERIODE DU \d{2}\/(\d{2}\/\d{4})/).split('/').reverse().join('-');
+        result.date = matchLast(text, /PERIODE DU \d{2}\/(\d{2}\/\d{4})/g).split('/').reverse().join('-');
+        if(result.date.endsWith("00")) throw new Error(`Date invalide: ${result.date}`);
     } catch (err) {
-        throw new Error(`Date not found in ${fileName}`);
+        throw new Error(`Date non trouvée`);
     }
     return result;
 }

@@ -62,7 +62,7 @@ export default [{
         entryFileNames: U.CONF_BUNDLE_JS.replace('./', '')
     },
     plugins: [
-        watchAssets({ assets: ['./src/index.html'] }),
+        watchAssets({ assets: ['./src/index.html', './package.json'] }),
         replace({...U, ...{
             'APP_VERSION': version
         }}),
