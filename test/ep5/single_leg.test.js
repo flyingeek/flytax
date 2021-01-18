@@ -33,6 +33,7 @@ test("single day rotation, first straddling flight of an EP5 with a base arrival
     expect(rots[0]).toEqual({
         isComplete: '>',
         nights: ['BOD'],
+        stays: [],
         countries: ['FR'],
         start: '2019-01-01T01:00+01:00',
         end: '2019-01-01T02:00+01:00',
