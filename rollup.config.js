@@ -110,7 +110,7 @@ export default [{
                     dest: './public/data'
                 },
                 {
-                    src: './data/data*.csv',
+                    src: './data/*.?sv',
                     dest: './public/data'
                 }
             ],
