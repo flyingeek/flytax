@@ -19,8 +19,8 @@ Calculer rapidement, facilement, et sans partage de données:
 
 - Le décompte des frais de mission conformément à la méthodologie et aux conventions de calcul du SNPL
 - Les frais d'emploi des PN qui doivent s'ajouter aux revenus
-- Le montants des nuitées payées par AF qui sera grossièrement estimé si non disponible ¹
-- La différence entre (Nuitées + Frais d'emploi - Frais de Mission) et un abattement de 10% plafonné ¹
+- Le montants des nuitées payées par AF qui sera estimé si non disponible
+- La différence entre (Frais de Mission - Nuitées - Frais d'emploi) et un abattement de 10% plafonné
 
 ## Utilisation / Astuces
 
@@ -29,11 +29,11 @@ Calculer rapidement, facilement, et sans partage de données:
 - Le symbole ▶ signale des informations additionnelles accessibles soit au survol de la souris, soit en cliquant sur la ligne
 - Changer d'année fiscale efface les résultats
 - L'application peut être installée sur l'écran d'accueil du PilotPad
-- {@html htmlLogo} peut fonctionner en mode déconnecté après avoir effectué un premier calcul
+- __{@html htmlLogo}__ peut fonctionner en mode déconnecté après avoir effectué un premier calcul
 
 En cas d'anomalie, un pictogramme rouge apparaîtra en haut à droite, le cliquer affichera les détails. Si un message d'erreur apparaissait dans la table des résultats, merci de me contacter.
 
-## Fonctionnement du choix de la base
+## Choix de la base
 
 La base peut être modifiée pour chaque mois: on choisit une base, on dépose les EP5 de cette base;
 on change de base et on peut déposer les EP5 pour cette nouvelle base. En cas d'erreur il est possible de changer de base et de recharger un EP5.
@@ -47,7 +47,7 @@ apparaître 👨🏻‍✈️ vous demandant d'autoriser cette mise à jour. Ins
 
 ## Données fiscales
 
-Sur <Link href="https://github.com/flyingeek/flytax">GitHub</Link> ² vous trouverez les liens vers les barêmes au format .csv et .tsv (Excel/Numbers) mais aussi
+Sur <Link href="https://github.com/flyingeek/flytax">GitHub</Link> ¹vous trouverez les liens vers les barêmes au format .csv et .tsv (Excel/Numbers) mais aussi
 les données .json. En installant le code source sur votre ordinateur, vous pourrez en plus générer ces fichiers. Lors
 de la compilation de l'application, les api de la Banque de France et des impôts sont utilisées.
 
@@ -55,9 +55,8 @@ de la compilation de l'application, les api de la Banque de France et des impôt
 
 - Le mémento fiscal du SNPL et Bernard Pédamon pour son aide sur son interprétation
 - Le site est développé en Javascript à l'aide du framework SVELTE
-- Éric Delord CDB 777 est l'auteur. Le code source est disponible sur <Link href="https://github.com/flyingeek/flytax">GitHub</Link> ²
+- Éric Delord CDB 777 est l'auteur. Le code source est disponible sur <Link href="https://github.com/flyingeek/flytax">GitHub</Link> ¹
 
 Vous pouvez me joindre sur l'email AF (erdelord@...) ou mon compte twitter @flyingeek.
 
-<small>1: En cours de développement</small>  
-<small>2: Code source disponible à la fin de la version beta</small>
+<small>1: Code source disponible à la fin de la version beta</small>

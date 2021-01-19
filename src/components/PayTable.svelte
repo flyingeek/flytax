@@ -1,8 +1,10 @@
 <script>
     import {decimal2cents, cents2decimal} from '../parsers/payParser';
-    import { taxYear } from '../stores';
+    import { taxYear, taxData, fraisDeMission, nuiteesInput, disableTransition} from '../stores';
     import {months, monthsfr, localeCurrency} from './utils';
     import DownloadTablePDF from './DownloadTablePDF.svelte';
+    import {slide} from 'svelte/transition';
+    import { linear } from 'svelte/easing';
 
     export let data;
     export let tableId="PayTable";
@@ -27,6 +29,7 @@
         }
         return cents2decimal(total);
     };
+
     $: totalFrais = computeTotalFrais(data);
     const sumFrais = (month) => {
         return data[month].repas.concat(data[month].transport).map(decimal2cents).reduce((a, b) => a + b);
@@ -34,10 +37,53 @@
     $: totalImposable = computeTotalImposable(data);
     $: cumulImposable12 = (data["12"] && data["12"].cumul !== "0") ? cents2decimal(decimal2cents(data["12"].cumul)) : undefined;
     $: totalDecouchersFPRO = computeTotalDecouchersFPRO(data);
+    $: nightsCostEstimate = (Math.ceil(parseFloat(totalDecouchersFPRO) * 3.31/100) * 100).toFixed(0);
+    $: fraisReels = parseFloat($fraisDeMission) - parseFloat($nuiteesInput || nightsCostEstimate) - parseFloat(totalFrais);
+    $: abbattement = ($taxData && $taxData.maxForfait10) ? Math.min((cumulImposable12||totalImposable)*0.1, $taxData.maxForfait10) : 0;
+
+
 
 </script>
 {#if Object.keys(data).length > 1}
 <DownloadTablePDF tableIds={[tableId]} filename={`revenus${$taxYear}.pdf`}/>
+{#if ($fraisDeMission > 0)}
+<table class="data summary" id={tableId + 'Summary'}>
+<thead>
+    <tr>
+        <th colspan="2">Comparatif {$taxYear}</th>
+    </tr>
+    {#if (!$nuiteesInput)}
+    <tr>
+        <td colspan="2"><div class:no-transition={$disableTransition} transition:slide="{{easing: linear}}">Vos frais de nuitées sont estimés à {nightsCostEstimate} € <small>(±10%)</small><br/><small>vous pouvez indiquer une autre valeur en haut ou déposer votre relevé de nuitées dans la zone</small></div></td>
+    </tr>
+    {/if}
+    <tr>
+        <th>Frais de Mission - Nuitées - Frais d'emploi</th>
+        <th>Abattement de 10% plafonné</th>
+    </tr>
+    {#if $taxYear !== $taxData.year}
+    <tr class="warning"><th colspan="2">Attention les montants sont basés sur les données fiscales de {$taxData.year}</th></tr>
+    {/if}
+</thead>
+<tbody>
+    <tr>
+        <td>{$fraisDeMission} - {$nuiteesInput || nightsCostEstimate} - {parseFloat(totalFrais).toFixed(0)} = {fraisReels.toFixed(0)} €</td>
+        <td>{abbattement.toFixed(0)} €</td>
+    </tr>
+</tbody>
+<tfoot>
+    <tr>
+        {#if (fraisReels >= abbattement)}
+        <td colspan="2">Sans tenir compte de vos autres frais, vous serez déjà gagnant de <b>{(fraisReels - abbattement).toFixed(0)} €</b> en passant aux frais réels.</td>
+        {:else}
+        <td colspan="2">Il faudra que vos autres frais atteignent <b>{(abbattement - fraisReels).toFixed(0)} €</b> pour qu'une déclaration aux frais réels soit plus avantageuse.</td>
+        {/if}
+    </tr>
+</tfoot>
+</table>
+{:else}
+<p>Merci de charger vos EP4/EP5 pour afficher le comparatif</p>
+{/if}
 <table class="data" id={tableId}>
     <thead>
         <tr><th colspan="5">Détails des salaires {$taxYear}</th></tr>
@@ -73,6 +119,13 @@
 {/if}
 
 <style>
+    table.data.summary {
+        table-layout: fixed;
+    }
+    thead td {
+        background-color: var(--background-color);
+        text-align: center;
+    }
     tbody th { /* Total bottom line */
         font-family: monospace;
         font-size: 1.3rem;

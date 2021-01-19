@@ -185,4 +185,7 @@
     :global(span.logo > span){
         color: var(--redaf);
     }
+    :global(.no-transition){
+        animation: none !important;
+    }
 </style>

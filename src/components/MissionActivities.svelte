@@ -2,20 +2,17 @@
     import {localeCurrency} from './utils';
     import MissionCountries from "./MissionCountries.svelte";
     import DownloadTablePDF from './DownloadTablePDF.svelte';
-    import {taxYear, taxData, pairings} from '../stores';
+    import {taxYear, taxData, pairings, fraisDeMission} from '../stores';
 
     export let tableId = "MissionTable";
     const tableIndemnitiesId = tableId + "Indemnities";
-
-    $: total = Object.values($pairings).reduce((a, c) => a + c.indemnity, 0).toFixed(0);
-
 </script>
 
 {#if $pairings.length > 0}
     <DownloadTablePDF tableIds={[tableId, tableIndemnitiesId]} filename={`fraisdemission${$taxYear}.pdf`}/>
     <table id="{tableId}" class="data">
         <thead>
-            <tr><th colspan="5">Frais de Mission {$taxYear} : <strong>{total} €</strong></th></tr>
+            <tr><th colspan="5">Frais de Mission {$taxYear} : <strong>{$fraisDeMission} €</strong></th></tr>
             {#if $taxYear !== $taxData.year}
                 <tr class="warning"><th colspan="5">Attention les montants sont basés sur les données fiscales de {$taxData.year}</th></tr>
             {/if}

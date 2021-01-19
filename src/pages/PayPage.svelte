@@ -2,10 +2,13 @@
     import DropZone from '../components/DropZone.svelte';
     import MonthStatus from "../components/MonthStatus.svelte";
     import PayTable from '../components/PayTable.svelte';
-    import {paySlips} from '../stores';
+    import {paySlips, nuiteesInput, fraisDeMission, disableTransition} from '../stores';
+    import {fade} from 'svelte/transition';
 </script>
 <main>
-    <div class="header"></div>
+    <div class="header">
+        {#if ($fraisDeMission > 0)}<label class:no-transition={$disableTransition} in:fade for="nuitees">Frais de nuitées: <input name="nuitees" type="number" bind:value="{$nuiteesInput}" min="0" step="100"/></label>{/if}
+    </div>
     <DropZone>
         <div slot="top">
             Déposez vos <strong>bulletins</strong> dans la zone ou Cliquez
