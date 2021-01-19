@@ -8,7 +8,7 @@
 <main>
     <!-- {#if $online !== undefined}<p>Browser is {($online) ? 'online': 'offline'}</p>{/if} -->
 
-    <section>
+    <section class='markdown'>
         <HelpMarkup/>
     </section>
     <div class="footer">
@@ -22,12 +22,19 @@
         font-size: xx-small;
         margin-top: 2rem;
     }
-    section {
+    :global(section.markdown) {
         margin: 0 auto;
         max-width: 800px;
         text-align: justify;
     }
-    section a {
+    :global(section.markdown a) {
         white-space: nowrap;
+    }
+    :global(section.markdown ul){
+        list-style-type: square;
+        padding-inline-start: 25px;
+    }
+    :global(section.markdown li){
+        margin: 3px 0;
     }
 </style>

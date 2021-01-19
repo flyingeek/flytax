@@ -13,43 +13,51 @@ La documentation est en cours de rédaction
 Cette app a été conçue pour le PilotPad. Elle nécessite des navigateurs récents pour fonctionner. Safari 14 iOS/Mac est compatible, Chrome 87 fonctionne aussi.
 Les PDF utilisés ne transitent sur aucun serveur, tout est calculé localement dans votre navigateur. L'app ne collecte aucune donnée. Tout est __100% SECURE__.
 
-L'application est conforme à la méthodologie et aux conventions de calcul du SNPL.
+## Objectifs
+
+Calculer rapidement, facilement, et sans partage de données:
+
+- Le décompte des frais de mission conformément à la méthodologie et aux conventions de calcul du SNPL
+- Les frais d'emploi des PN qui doivent s'ajouter aux revenus
+- Le montants des nuitées payées par AF qui sera grossièrement estimé si non disponible ¹
+- La différence entre (Nuitées + Frais d'emploi - Frais de Mission) et un abattement de 10% plafonné ¹
 
 ## Utilisation / Astuces
 
-- Il est possible de glisser-déposer un dossier
-- Il est possible de déposer les PDF indifféremment sur la page Salaire ou la page Frais de mission
+- Vous pouvez glisser-déposer un dossier ou des fichiers
+- Vous pouvez déposer les PDF indifféremment sur la page Salaire ou la page Frais de mission
+- Le symbole ▶ signale des informations additionnelles accessibles soit au survol de la souris, soit en cliquant sur la ligne
+- Changer d'année fiscale efface les résultats
 - L'application peut être installée sur l'écran d'accueil du PilotPad
-- L'application peut fonctionner en mode déconnecté (sans réseau Internet)
+- {@html htmlLogo} peut fonctionner en mode déconnecté après avoir effectué un premier calcul
 
-## Alertes
-
-En cas d'anomalie, un pictogramme rouge apparaîtra en haut à droite. En le cliquant, une fenêtre affichera le détails des messages, il est possible
-de fermer la fenêtre ou d'effacer les messages.
-
-Il est également possible de voir un message d'erreur dans le tableau des résultats. Dans ce cas, les montants concernés seraient forcés à zéro.
-Si cela vous arrivait merci de prendre contact avec moi.
+En cas d'anomalie, un pictogramme rouge apparaîtra en haut à droite, le cliquer affichera les détails. Si un message d'erreur apparaissait dans la table des résultats, merci de me contacter.
 
 ## Fonctionnement du choix de la base
 
 La base peut être modifiée pour chaque mois: on choisit une base, on dépose les EP5 de cette base;
-on change de base et on peut déposer les EP5 pour cette nouvelle base.
+on change de base et on peut déposer les EP5 pour cette nouvelle base. En cas d'erreur il est possible de changer de base et de recharger un EP5.
 
 Le choix de la base se fait au-dessus de la zone de dépôt sur la page Frais de mission.
 
-En cas d'erreur il est possible de changer de base et de recharger un EP5.
-
-À terme la détection de base pourra être automatisée mais j'ai besoin du code de la base d'affection présent sur vos EP4/EP5.
-
 ## Mise à jour
 
-L'app détecte les mises à jour automatiquement, normalement vous n'avez rien à faire. Éventuellement un prompt peut
-apparaître vous demandant d'autoriser cette mise à jour.
+L'app détecte les mises à jour automatiquement, normalement vous n'avez rien à faire. Éventuellement une popup peut
+apparaître 👨🏻‍✈️ vous demandant d'autoriser cette mise à jour. Installer la mise à jour efface les résultats.
+
+## Données fiscales
+
+Sur [GitHub](https://github.com/flyingeek/flytax) ² vous trouverez les liens vers les barêmes au format .csv et .tsv (Excel/Numbers) mais aussi
+les données .json. En installant le code source sur votre ordinateur, vous pourrez en plus générer ces fichiers. Lors
+de la compilation de l'application, les api de la Banque de France et des impôts sont utilisées.
 
 ## Crédits
 
 - Le mémento fiscal du SNPL et Bernard Pédamon pour son aide sur son interprétation
 - Le site est développé en Javascript à l'aide du framework SVELTE
-- Éric Delord CDB 777 est l'auteur. Le code source est disponible sur [GitHub](https://github.com/flyingeek/flytax)
+- Éric Delord CDB 777 est l'auteur. Le code source est disponible sur [GitHub](https://github.com/flyingeek/flytax) ²
 
 Vous pouvez me joindre sur l'email AF (erdelord@...) ou mon compte twitter @flyingeek.
+
+<small>1: En cours de développement</small>  
+<small>2: Code source disponible à la fin de la version beta</small>
