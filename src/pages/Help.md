@@ -47,7 +47,7 @@ apparaître 👨🏻‍✈️ vous demandant d'autoriser cette mise à jour. Ins
 
 ## Données fiscales
 
-Sur [GitHub](https://github.com/flyingeek/flytax) ² vous trouverez les liens vers les barêmes au format .csv et .tsv (Excel/Numbers) mais aussi
+Sur <Link href="https://github.com/flyingeek/flytax">GitHub</Link> ² vous trouverez les liens vers les barêmes au format .csv et .tsv (Excel/Numbers) mais aussi
 les données .json. En installant le code source sur votre ordinateur, vous pourrez en plus générer ces fichiers. Lors
 de la compilation de l'application, les api de la Banque de France et des impôts sont utilisées.
 
@@ -55,7 +55,7 @@ de la compilation de l'application, les api de la Banque de France et des impôt
 
 - Le mémento fiscal du SNPL et Bernard Pédamon pour son aide sur son interprétation
 - Le site est développé en Javascript à l'aide du framework SVELTE
-- Éric Delord CDB 777 est l'auteur. Le code source est disponible sur [GitHub](https://github.com/flyingeek/flytax) ²
+- Éric Delord CDB 777 est l'auteur. Le code source est disponible sur <Link href="https://github.com/flyingeek/flytax">GitHub</Link> ²
 
 Vous pouvez me joindre sur l'email AF (erdelord@...) ou mon compte twitter @flyingeek.
 
