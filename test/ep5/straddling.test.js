@@ -42,33 +42,29 @@ test("2 ON SVO BOD straddling check not MC", () => {
     ];
     let rots1 = buildRots(flights1, {"base": ["CDG", "ORY"], "tzConverter": iso2FR, "iataMap": iata2country});
     expect(rots1.length).toBe(1);
-    expect(rots1[0]).toEqual({
-        isComplete: '<',
-        nights: [ 'SVO', 'BOD'],
-        stays: ['SVO', 'BOD'],
-        countries: [ 'RU', 'FR'],
-        start: '2019-01-30T09:00+01:00',
-        end: '2019-02-01T01:00+01:00',
-        days: 2,
-        summary: 'CDG-SVO-BOD' + CONTINUATION_MARK,
-        dep: 'CDG',
-        arr: CONTINUATION_MARK
-    });
+    expect(rots1[0].isComplete).toBe('<');
+    expect(rots1[0].days).toBe(2);
+    expect(rots1[0].nights).toEqual([ 'SVO', 'BOD']);
+    expect(rots1[0].countries).toEqual([ 'RU', 'FR']);
+    //expect(rots1[0].stays).toEqual(['SVO', 'BOD']);
+    expect(rots1[0].start).toBe('2019-01-30T09:00+01:00');
+    expect(rots1[0].end).toBe('2019-02-01T01:00+01:00');
+    expect(rots1[0].summary).toBe('CDG-SVO-BOD' + CONTINUATION_MARK);
+    expect(rots1[0].dep).toBe('CDG');
+    expect(rots1[0].arr).toBe(CONTINUATION_MARK);
     rots1 = addIndemnities("2019", rots1, taxData, iso2FR);
     
     let rots2 = buildRots(flights2, {"base": ["CDG", "ORY"], "tzConverter": iso2FR, "iataMap": iata2country});
     expect(rots2.length).toBe(1);
-    expect(rots2[0]).toEqual({
-        isComplete: '>',
-        nights: ['BOD'],
-        countries: ['FR'],
-        start: '2019-02-01T01:00+01:00',
-        end: '2019-02-01T10:00+01:00',
-        days: 1,
-        summary: CONTINUATION_MARK + "BOD-CDG",
-        arr: 'CDG',
-        dep: CONTINUATION_MARK
-    });
+    expect(rots2[0].isComplete).toBe('>');
+    expect(rots2[0].days).toBe(1);
+    expect(rots2[0].nights).toEqual(['BOD']);
+    expect(rots2[0].countries).toEqual(['FR']);
+    expect(rots2[0].start).toBe('2019-02-01T01:00+01:00');
+    expect(rots2[0].end).toBe('2019-02-01T10:00+01:00');
+    expect(rots2[0].summary).toBe(CONTINUATION_MARK + "BOD-CDG");
+    expect(rots2[0].dep).toBe(CONTINUATION_MARK);
+    expect(rots2[0].arr).toBe('CDG');
     rots2 = addIndemnities("2019", rots2, taxData, iso2FR);
     
     let rots = mergeRots([rots1, rots2], "2019", taxData, iso2FR);
@@ -300,23 +296,16 @@ test("7ON SVO du soir", () => {
     //31 SVO
     let rots1 = buildRots(flights1, {"base": ["CDG", "ORY"], "tzConverter": iso2FR, "iataMap": iata2country});
     rots1 = addIndemnities("2019", rots1, taxData, iso2FR);
-    expect(rots1[0]).toEqual({
-        isComplete: '<',
-        error: false,
-        nights: [ 'SVO', 'SVO'],
-        stays: ['SVO'],
-        countries: ["RU", "RU"],
-        start: '2019-01-30T23:00+01:00',
-        end: '2019-02-01T01:00+01:00',
-        days: 2,
-        summary: 'CDG-SVO' + CONTINUATION_MARK,
-        dep: 'CDG',
-        arr: CONTINUATION_MARK,
-        "currencyFormula": "2 x 230EUR",
-        "indemnity": 460,
-        "formula": "2 x RU"
-
-    });
+    expect(rots1[0].isComplete).toBe('<');
+    expect(rots1[0].days).toBe(2);
+    expect(rots1[0].nights).toEqual(['SVO', 'SVO']);
+    expect(rots1[0].countries).toEqual(['RU', 'RU']);
+    //expect(rots1[0].stays).toEqual(['SVO']);
+    expect(rots1[0].start).toBe('2019-01-30T23:00+01:00');
+    expect(rots1[0].end).toBe('2019-02-01T01:00+01:00');
+    expect(rots1[0].summary).toBe('CDG-SVO' + CONTINUATION_MARK);
+    expect(rots1[0].dep).toBe('CDG');
+    expect(rots1[0].arr).toBe(CONTINUATION_MARK);
     //01 SVO
     //02 BOD
     //03 BOD
@@ -324,23 +313,16 @@ test("7ON SVO du soir", () => {
     //05 TLS
     let rots2 = buildRots(flights2, {"base": ["CDG", "ORY"], "tzConverter": iso2FR, "iataMap": iata2country});
     rots2 = addIndemnities("2019", rots2, taxData, iso2FR);
-    expect(rots2[0]).toEqual({
-        isComplete: '>',
-        error: false,
-        nights: [ 'SVO', 'BOD', 'BOD', 'TLS', 'TLS'],
-        countries: ["RU", "FR", "FR", "FR", "FR"],
-        // note there is no stays prop here
-        start: '2019-02-01T01:00+01:00',
-        end: '2019-02-05T10:30+01:00',
-        days: 5,
-        summary: CONTINUATION_MARK + 'SVO-BOD-TLS-CDG',
-        arr: 'CDG',
-        dep: CONTINUATION_MARK,
-        "currencyFormula": "1 x 230EUR + 4 x 156EUR",
-        "indemnity": 854,
-        "formula": "1 x RU + 4 x FR"
+    expect(rots2[0].isComplete).toBe('>');
+    expect(rots2[0].days).toBe(5);
+    expect(rots2[0].nights).toEqual([ 'SVO', 'BOD', 'BOD', 'TLS', 'TLS']);
+    expect(rots2[0].countries).toEqual(["RU", "FR", "FR", "FR", "FR"]);
+    expect(rots2[0].start).toBe('2019-02-01T01:00+01:00');
+    expect(rots2[0].end).toBe('2019-02-05T10:30+01:00');
+    expect(rots2[0].summary).toBe(CONTINUATION_MARK + 'SVO-BOD-TLS-CDG');
+    expect(rots2[0].dep).toBe(CONTINUATION_MARK);
+    expect(rots2[0].arr).toBe('CDG');
 
-    });
     let rots = mergeRots([rots1, rots2], "2019", taxData, iso2FR);
     expect(rots.length).toBe(1);
     expect(rots[0]).toEqual({
@@ -424,4 +406,104 @@ test("2ON SVO check 0,00 SVO straddling", () => {
     });
     expect(rots[0].indemnity).toBeCloseTo(2 * 230);
     expect(rots[0].formula).toBe('2 x RU');
+});
+
+
+test("single day rotation, last straddling flight of an EP5 with a base arrival", () => {
+    const flights = [
+        {"stop":"xx,xx", "dep": "CDG", "start": "2019-01-31T21:00Z", "arr": "BOD" ,"end": "2019-01-31T22:00Z"},
+        {"stop":"xx,xx", "dep": "BOD", "start": "2019-01-31T23:00Z", "arr": "CDG" ,"end": "2019-01-31T24:00Z"}
+    ];
+    let rots = buildRots(flights, {"base": ["CDG", "ORY"], "tzConverter": iso2FR, "iataMap": iata2country});
+    expect(rots.length).toBe(1);
+    expect(rots[0].isComplete).toBe('<');
+    expect(rots[0].days).toBe(1);
+    expect(rots[0].nights).toEqual(['CDG']);
+    expect(rots[0].countries).toEqual(['FR']);
+    //expect(rots[0].stays).toEqual([]);
+    expect(rots[0].start).toBe('2019-01-31T22:00+01:00');
+    expect(rots[0].end).toBe('2019-02-01T01:00+01:00');
+    expect(rots[0].summary).toBe('CDG' + CONTINUATION_MARK);
+    expect(rots[0].dep).toBe('CDG');
+    expect(rots[0].arr).toBe(CONTINUATION_MARK);
+    rots = addIndemnities("2019", rots, taxData, iso2FR);
+    expect(rots[0].indemnity).toBe(156/2);
+    expect(rots[0].formula).toBe("0.5 x FR");
+});
+
+test("single day rotation, last straddling flight of an EP5 with a base arrival SVO before", () => {
+    const flights1 = [
+        {"stop":"xx,xx", "dep": "CDG", "start": "2019-01-30T18:00Z", "arr": "SVO" ,"end": "2019-01-30T22:00Z"},
+        {"stop":"xx,xx", "dep": "SVO", "start": "2019-01-31T15:00Z", "arr": "CDG" ,"end": "2019-01-31T19:00Z"},
+        {"stop":"xx,xx", "dep": "CDG", "start": "2019-01-31T21:00Z", "arr": "BOD" ,"end": "2019-01-31T22:00Z"},
+        {"stop":"xx,xx", "dep": "BOD", "start": "2019-01-31T23:00Z", "arr": "CDG" ,"end": "2019-01-31T24:00Z"}
+    ];
+    let rots1 = buildRots(flights1, {"base": ["CDG", "ORY"], "tzConverter": iso2FR, "iataMap": iata2country});
+    expect(rots1.length).toBe(1);
+    expect(rots1[0].isComplete).toBe('<');
+    expect(rots1[0].days).toBe(2);
+    expect(rots1[0].nights).toEqual(['SVO', 'SVO']);
+    expect(rots1[0].countries).toEqual(['RU', 'RU']);
+    //expect(rots1[0].stays).toEqual(['SVO']);
+    expect(rots1[0].start).toBe('2019-01-30T19:00+01:00');
+    expect(rots1[0].end).toBe('2019-02-01T01:00+01:00');
+    expect(rots1[0].summary).toBe('CDG-SVO' + CONTINUATION_MARK);
+    expect(rots1[0].dep).toBe('CDG');
+    expect(rots1[0].arr).toBe(CONTINUATION_MARK);
+    rots1 = addIndemnities("2019", rots1, taxData, iso2FR);
+    expect(rots1[0].indemnity).toBe(460);
+    expect(rots1[0].formula).toBe("2 x RU");
+    const flights2 = [
+        {"stop":"0,00", "dep": "BOD", "start": "2019-02-01T00:00Z", "arr": "CDG" ,"end": "2019-02-01T04:00Z"}
+    ];
+    let rots2 = buildRots(flights2, {"base": ["CDG", "ORY"], "tzConverter": iso2FR, "iataMap": iata2country});
+    expect(rots2[0].isComplete).toBe('>');
+    expect(rots2[0].days).toBe(1);
+    expect(rots2[0].nights).toEqual(['BOD']);
+    expect(rots2[0].countries).toEqual(['FR']);
+    //expect(rots2[0].stays).toEqual([]);
+    expect(rots2[0].start).toBe('2019-02-01T01:00+01:00');
+    expect(rots2[0].end).toBe('2019-02-01T05:00+01:00');
+    expect(rots2[0].summary).toBe(CONTINUATION_MARK + 'BOD-CDG');
+    expect(rots2[0].dep).toBe(CONTINUATION_MARK);
+    expect(rots2[0].arr).toBe('CDG');
+    let rots = mergeRots([rots1, rots2], "2019", taxData, iso2FR);
+    expect(rots[0]).toEqual({
+        isComplete: '<>',
+        error: false,
+        nights: [ 'SVO', 'SVO', 'SVO'],
+        countries: ["RU", "RU", "RU"],
+        start: '2019-01-30T19:00+01:00',
+        end: '2019-02-01T05:00+01:00',
+        days: 3,
+        summary: 'CDG-SVO-CDG',
+        dep: 'CDG',
+        arr: 'CDG',
+        "currencyFormula": "3 x 230EUR",
+        "formula": "3 x RU",
+        "indemnity": 690,
+    });
+});
+
+test("single day rotation, last straddling flight of an EP5 with a base arrival and accross civil month", () => {
+    const flights = [
+        {"stop":"xx,xx", "dep": "CDG", "start": "2019-01-31T21:00Z", "arr": "BOD" ,"end": "2019-01-31T22:00Z"},
+        {"stop":"xx,xx", "dep": "BOD", "start": "2019-01-31T23:00Z", "arr": "CDG" ,"end": "2019-01-31T23:30Z"}
+    ];
+    let rots = buildRots(flights, {"base": ["CDG", "ORY"], "tzConverter": iso2FR, "iataMap": iata2country});
+    expect(rots.length).toBe(1);
+    expect(rots[0]).toEqual({
+        isComplete: '<>',
+        nights: ['CDG', 'CDG'],
+        countries: ['FR', 'FR'],
+        start: '2019-01-31T22:00+01:00',
+        end: '2019-02-01T00:30+01:00',
+        days: 2,
+        summary: 'CDG-CDG',
+        dep: 'CDG',
+        arr: 'CDG'
+    });
+    rots = addIndemnities("2019", rots, taxData, iso2FR);
+    expect(rots[0].indemnity).toBe(156+78);
+    expect(rots[0].formula).toBe("1.5 x FR");
 });

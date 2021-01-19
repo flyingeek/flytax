@@ -3,7 +3,7 @@
  *
  */
 
-import {buildRots, iso2FR, addIndemnities, iata2country, numberOfDays, lastDayInMonthISO, mergeRots} from '../../src/parsers/ep5Parser';
+import {buildRots, iso2FR, addIndemnities, iata2country, numberOfDays, lastDayInMonthISO, mergeRots, mergeFlights} from '../../src/parsers/ep5Parser';
 import taxData from "../data/dataTest.json";
 import {jest} from '@jest/globals';
 test("memento13 arrival dxb next day", () => {
@@ -81,12 +81,12 @@ test("memento13 mergeRots #1", () => {
         { stop: 'xx,xx', dep: 'HKG', start: '2019-06-30T19:00Z', arr: 'CDG', end: '2019-06-30T24:00Z' }
     ];
     const flights2 = [
-        { stop: 'xx,xx', dep: 'HKG', start: '2019-07-01T00:00Z', arr: 'CDG', end: '2019-07-01T05:00Z' }
+        { stop: '0,00', dep: 'HKG', start: '2019-07-01T00:00Z', arr: 'CDG', end: '2019-07-01T05:00Z' }
     ];
     let rots1 = buildRots(flights1, {"base": ["CDG", "ORY"], "tzConverter": iso2FR, "iataMap": iata2country});
-    expect(rots1[0].stays).toEqual(['DXB', 'DXB', 'HKG', 'HKG']);
+    //expect(rots1[0].stays).toEqual(['DXB', 'DXB', 'HKG', 'HKG']);
     let rots2 = buildRots(flights2, {"base": ["CDG", "ORY"], "tzConverter": iso2FR, "iataMap": iata2country});
-    expect(rots2[0].stays).toEqual([]);
+    //expect(rots2[0].stays).toEqual([]);
     const originalLog = console.log;
     console.log = jest.fn();
     let rots = mergeRots([rots1, rots2], "2019", taxData, iso2FR);
@@ -107,9 +107,9 @@ test("memento13 mergeRots #2", () => {
         { stop: 'xx,xx', dep: 'HKG', start: '2019-07-01T19:00Z', arr: 'CDG', end: '2019-07-02T05:00Z' }
     ];
     let rots1 = buildRots(flights1, {"base": ["CDG", "ORY"], "tzConverter": iso2FR, "iataMap": iata2country});
-    expect(rots1[0].stays).toEqual(['DXB', 'DXB', 'HKG', 'HKG']);
+    //expect(rots1[0].stays).toEqual(['DXB', 'DXB', 'HKG', 'HKG']);
     let rots2 = buildRots(flights2, {"base": ["CDG", "ORY"], "tzConverter": iso2FR, "iataMap": iata2country});
-    expect(rots2[0].stays).toEqual([]);
+    //expect(rots2[0].stays).toEqual([]);
     const originalLog = console.log;
     console.log = jest.fn();
     let rots = mergeRots([rots1, rots2], "2019", taxData, iso2FR);
@@ -131,9 +131,9 @@ test("memento13 mergeRots #3", () => {
         stop: 'xx,xx', dep: 'HKG', start: '2019-07-02T19:00Z', arr: 'CDG', end: '2019-07-03T05:00Z' }
     ];
     let rots1 = buildRots(flights1, {"base": ["CDG", "ORY"], "tzConverter": iso2FR, "iataMap": iata2country});
-    expect(rots1[0].stays).toEqual(['DXB', 'DXB', 'HKG']);
+    //expect(rots1[0].stays).toEqual(['DXB', 'DXB', 'HKG']);
     let rots2 = buildRots(flights2, {"base": ["CDG", "ORY"], "tzConverter": iso2FR, "iataMap": iata2country});
-    expect(rots2[0].stays).toEqual(['HKG']);
+    //expect(rots2[0].stays).toEqual(['HKG']);
     const originalLog = console.log;
     console.log = jest.fn();
     let rots = mergeRots([rots1, rots2], "2019", taxData, iso2FR);
@@ -154,10 +154,10 @@ test("memento13 mergeRots #4", () => {
         { stop: 'xx,xx', dep: 'HKG', start: '2019-07-03T19:00Z', arr: 'CDG', end: '2019-07-04T05:00Z' }
     ];
     let rots1 = buildRots(flights1, {"base": ["CDG", "ORY"], "tzConverter": iso2FR, "iataMap": iata2country});
-    expect(rots1[0].stays).toEqual(['DXB', 'DXB']);
+    //expect(rots1[0].stays).toEqual(['DXB', 'DXB']);
     expect(rots1[0].nights).toEqual(['DXB', 'DXB']);
     let rots2 = buildRots(flights2, {"base": ["CDG", "ORY"], "tzConverter": iso2FR, "iataMap": iata2country});
-    expect(rots2[0].stays).toEqual(['HKG', 'HKG']);
+    //expect(rots2[0].stays).toEqual(['HKG', 'HKG']);
     expect(rots2[0].nights).toEqual(['HKG', 'HKG', 'HKG', 'HKG']);
     const originalLog = console.log;
     console.log = jest.fn();
@@ -179,9 +179,9 @@ test("memento13 mergeRots #5", () => {
         { stop: 'xx,xx', dep: 'HKG', start: '2019-07-04T19:00Z', arr: 'CDG', end: '2019-07-05T05:00Z' }
     ];
     let rots1 = buildRots(flights1, {"base": ["CDG", "ORY"], "tzConverter": iso2FR, "iataMap": iata2country});
-    expect(rots1[0].stays).toEqual(['DXB']);
+    //expect(rots1[0].stays).toEqual(['DXB']);
     let rots2 = buildRots(flights2, {"base": ["CDG", "ORY"], "tzConverter": iso2FR, "iataMap": iata2country});
-    expect(rots2[0].stays).toEqual(['DXB', 'HKG', 'HKG']);
+    //expect(rots2[0].stays).toEqual(['DXB', 'HKG', 'HKG']);
     const originalLog = console.log;
     console.log = jest.fn();
     let rots = mergeRots([rots1, rots2], "2019", taxData, iso2FR);
@@ -193,3 +193,27 @@ test("memento13 mergeRots #5", () => {
     expect(rots[0].formula).toBe('3 x AE + 3 x HK');
 });
 
+
+test("memento13 with dxb next day mergeRots #1", () => {
+    const flights1 = [
+        { stop: 'xx,xx', dep: 'CDG', start: '2019-06-30T19:00Z', arr: 'DXB', end: '2019-06-30T24:00Z' }
+    ];
+  const flights2 = [
+        { stop: '0,00', dep: 'CDG', start: '2019-07-01T00:00Z', arr: 'DXB', end: '2019-07-01T01:00Z' },
+        { stop: 'xx,xx', dep: 'DXB', start: '2019-07-02T08:00Z', arr: 'HKG', end: '2019-07-02T19:00Z' },
+        { stop: 'xx,xx', dep: 'HKG', start: '2019-07-04T19:00Z', arr: 'CDG', end: '2019-07-05T05:00Z' }
+    ];
+    let rots1 = buildRots(flights1, {"base": ["CDG", "ORY"], "tzConverter": iso2FR, "iataMap": iata2country});
+    //expect(rots1[0].stays).toEqual([]);
+    let rots2 = buildRots(flights2, {"base": ["CDG", "ORY"], "tzConverter": iso2FR, "iataMap": iata2country});
+    //expect(rots2[0].stays).toEqual(['DXB', 'HKG', 'HKG']);
+    const originalLog = console.log;
+    console.log = jest.fn();
+    let rots = mergeRots([rots1, rots2], "2019", taxData, iso2FR);
+    expect(console.log.mock.calls.length).toBe(0);
+    console.log = originalLog;
+    expect(rots.length).toBe(1);
+    expect(rots[0].nights).toEqual([ 'DXB', 'DXB', 'HKG', 'HKG', 'HKG', 'HKG' ]);
+    rots = addIndemnities("2019", rots, taxData, iso2FR);
+    expect(rots[0].formula).toBe('2 x AE + 4 x HK');
+});
