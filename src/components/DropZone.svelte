@@ -2,6 +2,7 @@
     import loader from "./async-script-loader.js";
     import { Deferred } from "./utils.js";
     import { onMount} from "svelte";
+    import {nuiteesAF} from '../stores';
     const pdfjsWorkerSrc = "CONF_PDFJS_WORKER_JS";
     let pdfWorker;
     let seqOrder = 0;
@@ -111,6 +112,8 @@
                                         Object.assign(batchPaySlips, {[month]: result}); // this method of saving result does not refresh svelte
                                     }else if (result.type === "ep5") {
                                         Object.assign(batchEp5, {[month]: result}); // this method of saving result does not refresh svelte
+                                    }else if (result.type === "nights") {
+                                        $nuiteesAF = result.total;
                                     }
                                 }
                             });

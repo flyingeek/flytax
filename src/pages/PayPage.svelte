@@ -2,12 +2,17 @@
     import DropZone from '../components/DropZone.svelte';
     import MonthStatus from "../components/MonthStatus.svelte";
     import PayTable from '../components/PayTable.svelte';
-    import {paySlips, nuiteesInput, fraisDeMission, disableTransition} from '../stores';
+    import {paySlips, nuiteesInput, fraisDeMission, disableTransition, nuiteesAF} from '../stores';
+    import {localeCurrency} from '../components/utils';
     import {fade} from 'svelte/transition';
 </script>
 <main>
     <div class="header">
-        {#if ($fraisDeMission > 0)}<label class:no-transition={$disableTransition} in:fade for="nuitees">Frais de nuitées: <input name="nuitees" type="number" bind:value="{$nuiteesInput}" min="0" step="100"/></label>{/if}
+        {#if ($nuiteesAF !== undefined)}
+            <div class:no-transition={$disableTransition} in:fade >Frais de nuitées: {localeCurrency($nuiteesAF)}</div>
+        {:else if ($nuiteesAF === undefined && $fraisDeMission > 0 && Object.keys($paySlips).length > 1)}
+            <label class:no-transition={$disableTransition} in:fade for="nuitees">Frais de nuitées: <input name="nuitees" type="number" bind:value="{$nuiteesInput}" min="0" step="100"/></label>
+        {/if}
     </div>
     <DropZone>
         <div slot="top">

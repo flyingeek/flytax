@@ -1,6 +1,6 @@
 <script>
     import {decimal2cents, cents2decimal} from '../parsers/payParser';
-    import { taxYear, taxData, fraisDeMission, nuiteesInput, disableTransition} from '../stores';
+    import { taxYear, taxData, fraisDeMission, nuiteesInput, disableTransition, nuiteesAF} from '../stores';
     import {months, monthsfr, localeCurrency} from './utils';
     import DownloadTablePDF from './DownloadTablePDF.svelte';
     import {slide} from 'svelte/transition';
@@ -38,7 +38,7 @@
     $: cumulImposable12 = (data["12"] && data["12"].cumul !== "0") ? cents2decimal(decimal2cents(data["12"].cumul)) : undefined;
     $: totalDecouchersFPRO = computeTotalDecouchersFPRO(data);
     $: nightsCostEstimate = (Math.ceil(parseFloat(totalDecouchersFPRO) * 3.31/100) * 100).toFixed(0);
-    $: fraisReels = parseFloat($fraisDeMission) - parseFloat($nuiteesInput || nightsCostEstimate) - parseFloat(totalFrais);
+    $: fraisReels = parseFloat($fraisDeMission) - parseFloat($nuiteesAF || $nuiteesInput || nightsCostEstimate) - parseFloat(totalFrais);
     $: abbattement = ($taxData && $taxData.maxForfait10) ? Math.min((cumulImposable12||totalImposable)*0.1, $taxData.maxForfait10) : 0;
 
 
@@ -52,9 +52,13 @@
     <tr>
         <th colspan="2">Comparatif {$taxYear}</th>
     </tr>
-    {#if (!$nuiteesInput)}
+    {#if (!$nuiteesInput && $nuiteesAF === undefined)}
     <tr>
-        <td colspan="2"><div class:no-transition={$disableTransition} transition:slide="{{easing: linear}}">Vos frais de nuitées sont estimés à {nightsCostEstimate} € <small>(±10%)</small><br/><small>vous pouvez indiquer une autre valeur en haut ou déposer votre relevé de nuitées dans la zone</small></div></td>
+        <td colspan="2">
+            <div class:no-transition={$disableTransition} transition:slide="{{easing: linear}}">Vos frais de nuitées sont estimés à {nightsCostEstimate} € <small>(±10%)</small><br/>
+                <small>vous pouvez indiquer une autre valeur en haut ou déposer votre attestation de nuitées dans la zone</small>
+            </div>
+        </td>
     </tr>
     {/if}
     <tr>
@@ -67,7 +71,7 @@
 </thead>
 <tbody>
     <tr>
-        <td>{$fraisDeMission} - {$nuiteesInput || nightsCostEstimate} - {parseFloat(totalFrais).toFixed(0)} = {fraisReels.toFixed(0)} €</td>
+        <td>{$fraisDeMission} - {parseFloat($nuiteesAF || $nuiteesInput || nightsCostEstimate).toFixed(0)} - {parseFloat(totalFrais).toFixed(0)} = {fraisReels.toFixed(0)} €</td>
         <td>{abbattement.toFixed(0)} €</td>
     </tr>
 </tbody>

@@ -68,6 +68,7 @@ export const log = patchLog();
 export const ep5 = resettable({type: "ep5"});
 export const paySlips = resettable({type: "pay"});
 export const nuiteesInput = resettable();
+export const nuiteesAF = resettable();
 export const disableTransition = writable(false);
 
 const empty = () => {
@@ -75,6 +76,7 @@ const empty = () => {
     paySlips.reset();
     log.reset();
     nuiteesInput.reset();
+    nuiteesAF.reset();
 }
 
 export const taxYear = writable(defaultYear);

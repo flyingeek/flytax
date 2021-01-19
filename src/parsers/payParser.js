@@ -53,21 +53,6 @@ const matchAll = (text, re, bydefault) => {
     }
 };
 
-// returns first group of first match
-// Throws if no match found
-// returns string
-const matchFirst = (text, re, bydefault) => {
-    let match;
-    if (null !== (match = re.exec(text))) {
-        return match[1];
-    }
-    if (bydefault === undefined) {
-        throw new Error(`No match found for ${re}`);
-    } else {
-        return bydefault;
-    }
-};
-
 // returns first group of last match
 // Throws if no match found
 // returns string
