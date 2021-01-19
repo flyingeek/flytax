@@ -3,7 +3,7 @@ import {registerRoute} from 'workbox-routing';
 import {StaleWhileRevalidate, CacheFirst} from 'workbox-strategies';
 import {ExpirationPlugin} from 'workbox-expiration';
 
-const deprecatedCaches = [];
+const deprecatedCaches = ['flytax-data'];
 
 precacheAndRoute(
     self.__WB_MANIFEST, {
@@ -33,7 +33,7 @@ registerRoute(
 registerRoute(
   ({url}) => url.pathname.match(/\/data\/data[0-9]{4}\.json/),
   new CacheFirst({
-    cacheName: 'flytax-data',
+    cacheName: 'flytax-data2',
     plugins: [
       new ExpirationPlugin({
         maxEntries: 6
