@@ -184,7 +184,8 @@
             }
         }
         if ((acceptedType !== undefined && acceptedType !== null)) {
-            processFiles(files.filter(f => f.type === acceptedType));
+            const isFirefox = navigator && navigator.userAgent && navigator.userAgent.indexOf("Firefox") > -1;
+            processFiles(files.filter(f => f.type === acceptedType || (f.type === '' && isFirefox)));
         } else {
             processFiles(files);
         }
@@ -267,7 +268,7 @@
     {name}
     type="file"
     multiple
-    accept="application/pdf"
+    accept="{acceptedType}"
     disabled={disabled || !$taxData}
     on:change={processChange}
     on:click|once={preload}

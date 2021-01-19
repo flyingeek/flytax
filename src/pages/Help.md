@@ -10,7 +10,7 @@ La documentation est en cours de rédaction
 
 ## Préambule
 
-Cette app a été conçue pour le PilotPad. Elle nécessite des navigateurs récents pour fonctionner. Safari 14 iOS/Mac est compatible, Chrome 87 fonctionne aussi.
+Cette app a été conçue pour le PilotPad. Elle nécessite des navigateurs récents pour fonctionner: Safari 14 iOS/Mac, Firefox 86, Chrome 87 et Microsoft Edge 87 sont compatibles.
 Les PDF utilisés ne transitent sur aucun serveur, tout est calculé localement dans votre navigateur. L'app ne collecte aucune donnée. Tout est __100% SECURE__.
 
 ## Objectifs
@@ -19,7 +19,7 @@ Calculer rapidement, facilement, et sans partage de données:
 
 - Le décompte des frais de mission conformément à la méthodologie et aux conventions de calcul du SNPL
 - Les frais d'emploi des PN qui doivent s'ajouter aux revenus
-- Le montants des nuitées payées par AF qui sera estimé si non disponible
+- Une estimation du montant des nuitées payées par AF
 - La différence entre (Frais de Mission - Nuitées - Frais d'emploi) et un abattement de 10% plafonné
 
 ## Utilisation / Astuces
