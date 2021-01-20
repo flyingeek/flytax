@@ -41,6 +41,7 @@ const WebmissURL = "https://www.economie.gouv.fr/dgfip/fichiers_taux_chancelleri
 const apiURL = `https://api.webstat.banque-france.fr/webstat-en/v1/data/EXR/EXR.M.*.EUR.SP00.E?client_id=${process.env.BNF_CLIENT_ID}&format=json&startPeriod=${parseInt(year, 10) - 1}-12-01&endPeriod=${year}-12-31`;
 //pays du memento fiscal SNPL + Estonie, Lettonie, Lituanie. 
 //DOM:  Martinique, Guadeloupe, Guyanne, La Réunion et aussi Mayotte et Saint-Pierre et Miquelon, St Martin, St Barth
+//      St Martin, St Barth ne sont plus des DOM depuis 2007 mais ils figurent toujours dans l'arrêté de 2006 mis à jour en 2020
 const zoneMC = ["AL", "DZ", "AD", "BA", "BG", "DK", "HR", "HU", "MK", "MA", "NO", "RO", "GB", "SE", "CH", "CZ", "TN", "YU", "PL"];
 const zoneEuroMC = ["DE", "AT", "BE", "CY", "ES", "FI", "FR", "GR", "IE", "IT", "LU", "MT", "NL", "PT", "SK", "SI"];
 const zoneEuroLC = ["EE", "LV", "LT"]; // Estonie, Lettonie, Lituanie
@@ -48,13 +49,22 @@ const zoneDOM = ["YT", "PM", "GP", "MQ", "GF", "RE", "SX", "MF", "BL"]; //SXM es
 // pour le calcul de l'indemnité Euro:
 // URSSAF https://www.urssaf.fr/portail/home/taux-et-baremes/frais-professionnels/indemnite-de-grand-deplacement/deplacements-en-metropole.html
 //        https://www.urssaf.fr/portail/home/taux-et-baremes/frais-professionnels/indemnite-de-grand-deplacement/deplacements-en-outre-mer.html
-// Indemnités Frais de mission https://www.legifrance.gouv.fr/loda/id/LEGIARTI000042212803
+// Indemnités Frais de mission (arrêté de 2006) https://www.legifrance.gouv.fr/loda/id/LEGIARTI000042212803
 // Abattement fiscal maximum au forfait: https://www.service-public.fr/particuliers/vosdroits/F1989
 
 // data adjustment per year
 const specificities = {
+    "2021": {
+        "URSSAF": {"Base": [70.00, 17.50], "Paris": [110.00, 17.50], "Province": [90.00, 17.50], "DOM": 105}, // used to compute forfaitEU
+        //"URSSAF": {"Paris": [68.50, 19.10], "Province": [50.80, 19.10], "DOM": 105.00}, // moins interressant que l'arrêté ?
+        "FOM": [["2021-01-01","EUR","132"]], // forfait OM
+        "MAXFORFAIT10": 12652
+    },
     "2020": {
-        "URSSAF": {"Paris": [68.10, 19.00], "Province": [50.50, 19.00], "DOM": 90.00}, // used to compute forfaitEU
+         // arrêté 2006 utilise 3 zones en metropole 70€/90€/110€ moyennne 90€
+        "URSSAF": {"Base": [70.00, 17.50], "Paris": [110.00, 17.50], "Province": [90.00, 17.50], "DOM": 105}, // used to compute forfaitEU
+        //"URSSAF": {"Paris": [68.50, 19.10], "Province": [50.80, 19.10], "DOM": 105.00}, // moins interressant que l'arrêté
+        "FOM": [["2020-01-01","EUR","132"]], // forfait OM
         "MAXFORFAIT10": 12652
     },
     "2019": {
@@ -67,9 +77,9 @@ const specificities = {
     },
     "2017": {
         "URSSAF": {"Paris": [65.80, 18.40], "Province": [48.90, 18.40], "DOM": 90.00}, // not used
-        "MAXFORFAIT10%": 12305,
+        "MAXFORFAIT10": 12305,
         "FEU": [["2017-01-01","EUR","156"]], // forfait Euro (computed from 2019 and beyond)
-        "FOM": [["2017-01-01","EUR","120"]], // forfait OM
+        "FOM": [["2017-01-01","EUR","120"]], // forfait OM (PPT, Nouvelle Calédonie et Wallis et Futuna)
         "EURO": zoneEuroMC.concat(zoneEuroLC), // zone Euro pour calcul du forfait Euro
         "EU": zoneEuroMC.concat(zoneEuroLC, zoneDOM), // forfait Euro
         "MC": zoneEuroMC.concat(zoneMC, zoneDOM), //TODO ZoneEuroLC ?
@@ -446,7 +456,12 @@ const computeForfaitEU = () => {
     const urssaf = specificity("URSSAF");
     const paris = urssaf["Paris"][0] + (2 * urssaf["Paris"][1]);
     const province = urssaf["Province"][0] + (2 * urssaf["Province"][1]);
-    results.push((paris + province) / 2);
+    if ("Base" in urssaf) {
+        const base = urssaf["Base"][0] + (2 * urssaf["Base"][1]);
+        results.push((paris + province + base) / 3);
+    }else{
+        results.push((paris + province) / 2);
+    }
     results.push(urssaf["DOM"]);
     const average = results.reduce((a, b) => a + b) / results.length;
     return [[`${year}-01-01`, "EUR", average.toFixed(0)]];
@@ -492,7 +507,7 @@ const make = async () => {
     // add OM forfait
     for (const c of zoneForfaitOM) {
         try {
-            countries[c].a = forfaitOM; 
+            countries[c].a = forfaitOM;
         } catch (err) {
             log(`countries['${c}'] is undefined`, "red");
             throw err;
