@@ -12,27 +12,30 @@
     };
 </script>
 <main>
-    <div class='header'>
-        <label class="select">Indiquez votre base
-            <!-- svelte-ignore a11y-no-onchange -->
-            <select on:change={baseChange}>
-                {#each Object.values(BASES) as option}
-                    <option value={option.label} selected={$base.join('') === option.value.join('')}>{option.label}</option>
-                {/each}
-            </select>
-        </label>
+    <div class="wrapper">
+        <div class='header'>
+            <label class="select">Indiquez votre base
+                <!-- svelte-ignore a11y-no-onchange -->
+                <select on:change={baseChange}>
+                    {#each Object.values(BASES) as option}
+                        <option value={option.label} selected={$base.join('') === option.value.join('')}>{option.label}</option>
+                    {/each}
+                </select>
+            </label>
+        </div>
+        
+        <DropZone>
+            <div slot="top">
+                Déposez vos <strong>EP5</strong> dans la zone ou Cliquez
+            </div>
+            <div slot="bottom">
+            <MonthStatus data={$ep5} name="EP5" />
+            </div>
+        </DropZone>
+        <MissionActivities />
     </div>
-    
-    <DropZone>
-        <div slot="top">
-            Déposez vos <strong>EP5</strong> dans la zone ou Cliquez
-        </div>
-        <div slot="bottom">
-        <MonthStatus data={$ep5} name="EP5" />
-        </div>
-    </DropZone>
-    <MissionActivities />
 </main>
 <style>
     .header{min-height: 50px}
+    .wrapper{max-width:1200px; margin: 0 auto;}
 </style>
