@@ -77,7 +77,7 @@ export const payParser = (text, fileName, fileOrder) => {
     let result = {"type": "pay", fileName, fileOrder, errors: []};
     let re = /(?:IND\.REPAS_+|INDEMNITE REPAS_+)([\-0-9, ]+)/g;
     result.repas = matchAll(text, re, "0").map(decimal);
-    re = /(?:IND\. TRANSPORT_+|FRAIS REELS TRANSP_+)([\-0-9, ]+)/g;
+    re = /(?:IND\. TRANSPORT_+|FRAIS REELS TRANSP_|R\. FRAIS DE TRANSPORT_+)([\-0-9, ]+)/g;
     result.transport = matchAll(text, re, "0").map(decimal);
     re = /(?:_I.DECOUCHERS F.PRO_+)([\-0-9, ]+)/g;
     result.decouchers_fpro = matchAll(text, re, "0").map(decimal);
