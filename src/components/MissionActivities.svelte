@@ -3,7 +3,7 @@
     import MissionCountries from "./MissionCountries.svelte";
     import DownloadTablePDF from './DownloadTablePDF.svelte';
     import {taxYear, taxData, pairings, fraisDeMission} from '../stores';
-
+    import {REFNOTE1} from '../parsers/ep5Parser';
     export let tableId = "MissionTable";
     const tableIndemnitiesId = tableId + "Indemnities";
 </script>
@@ -31,7 +31,7 @@
             {/each}
         </tbody>
         <tfoot>
-            {#if $pairings.reduce((a,c) => a | c.formula.includes("¹"), false)}
+            {#if $pairings.reduce((a,c) => a | c.formula.includes(REFNOTE1), false)}
                 <tr><td colspan="5">1. formule tronquée pour respecter l'année fiscale</td></tr>
             {/if}
         </tfoot>

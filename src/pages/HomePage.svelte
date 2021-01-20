@@ -34,7 +34,7 @@
 
             <ol slot="content">
                 <li>Récupérez vos EP4/EP5 et vos bulletins de salaire sur <Link href="https://www.mypeopledoc.com">MyPeopleDoc</Link></li>
-                <li>Choisissez l'année en haut à droite sur <b>{@html htmlLogo}</b></li>
+                <li>Choisissez l’année en haut à droite sur <b>{@html htmlLogo}</b></li>
                 <li>Déposez vos fichiers dans <a href="#/mission" >Frais de Mission</a>
                     ou dans <a href="#/pay" >Salaire</a></li>
             </ol>
@@ -46,8 +46,8 @@
                 H34.451z M18.026,10.958c0-3.023,2.452-5.481,5.47-5.481s5.47,2.458,5.47,5.481v7.893h-10.94V10.958z M21.817,41.934l-10.171-7.216
                 l3.188-5.985l7.277,6.119l10.479-10.27l2.761,4.82L21.817,41.934z"/>
             </svg>
-            <p slot="content">Inutile de partager son calendrier ou d'envoyer des données sur Internet: <b>{@html htmlLogo}</b> 
-                fonctionne directement dans votre navigateur, aucun fichier n'est transmis sur le réseau, aucune donnée n'est collectée. </p>
+            <p slot="content">Inutile de partager son calendrier ou d’envoyer des données sur Internet&#8239;: <b>{@html htmlLogo}</b> 
+                fonctionne directement dans votre navigateur, aucun fichier n’est transmis sur le réseau, aucune donnée n’est collectée. </p>
         </FlagSignifier>
         <FlagSignifier title="Des sources fiables">
             <svg slot="icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -56,12 +56,12 @@
                 <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path>
             </svg>
             <div slot="content">
-                <p>Chaque année <b>{@html htmlLogo}</b> récupère les données à la source: le montant des indemnités provient du
-                    <strong>Ministère de l'Économie</strong>, les taux de change sont ceux de la <strong>Banque de France</strong>,
-                    le forfait Euro est calculé en fonction des dernières informations de <strong>l'URSSAF</strong>.</p>
+                <p>Chaque année <b>{@html htmlLogo}</b> récupère les données à la source&#8239;: le montant des indemnités provient du
+                    <strong>Ministère de l’Économie</strong>, les taux de change sont ceux de la <strong>Banque de France</strong>,
+                    le forfait Euro est calculé en fonction des dernières informations de <strong>l’URSSAF</strong>.</p>
                 <p>Le programme en lui même inclus des tests permettant de fiabiliser les résultats 
                     et les erreurs détectées sont clairement affichées. Les exemples du <strong>Mémento fiscal du SNPL</strong>
-                    ont été utilisés pour tester et valider les résultats de l'application.</p>
+                    ont été utilisés pour tester et valider les résultats de l’application.</p>
             </div>
         </FlagSignifier>
     </section>

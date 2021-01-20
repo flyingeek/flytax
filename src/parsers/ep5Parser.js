@@ -4,7 +4,7 @@ import {localeFormat, months14} from "../components/utils";
 export const WITHIN_BASE_TEXT = "rotation sur base";
 export const NIGHT_OVERFLOW_TEXT = "Erreur: nuitées > nb de jours";
 export const CONTINUATION_MARK = "...";
-export const REFNOTE1 = " ¹";
+export const REFNOTE1 = "\u202f¹";
 export const FORMULA_ERROR = "!ERREUR!"
 //months as written in EP5
 const EP5MONTHS = ['JANVIER', 'FEVRIER', 'MARS', 'AVRIL', 'MAI', 'JUIN', 'JUILLET', 'AOUT', 'SEPTEMBRE', 'OCTOBRE', 'NOVEMBRE', 'DECEMBRE'];

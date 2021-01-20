@@ -1,4 +1,4 @@
-import {buildRots, iso2FR, iata2country, addIndemnities, CONTINUATION_MARK, mergeRots} from '../../src/parsers/ep5Parser';
+import {buildRots, iso2FR, iata2country, addIndemnities, CONTINUATION_MARK, mergeRots, REFNOTE1} from '../../src/parsers/ep5Parser';
 import taxData from "../data/dataTest.json";
 
 test('mergeRots', () => {
@@ -144,7 +144,7 @@ test('2 0N ending at 00:30+01:00 next year for 2019', () => {
         dep: 'CDG',
         arr: 'CDG',
         "currencyFormula": "1 x 156EUR",
-        "formula": "1 x FR ¹",
+        "formula": "1 x FR" + REFNOTE1,
         "indemnity": 156
     });
 });
@@ -167,7 +167,7 @@ test('2 0N short stop SVO ending at 00:30+01:00 next year for 2020', () => {
         dep: 'CDG',
         arr: 'CDG',
         "currencyFormula": "0.5 x 156EUR",
-        "formula": "0.5 x FR ¹",
+        "formula": "0.5 x FR" + REFNOTE1,
         "indemnity": 78
     });
 });
@@ -190,7 +190,7 @@ test('3 0N SVO ending at 00:30+01:00 next year for 2019', () => {
         dep: 'CDG',
         arr: 'CDG',
         "currencyFormula": "2 x 230EUR",
-        "formula": "2 x RU ¹",
+        "formula": "2 x RU" + REFNOTE1,
         "indemnity": 460
     });
 });
@@ -213,7 +213,7 @@ test('3 0N SVO ending at 00:30+01:00 next year for 2020', () => {
         dep: 'CDG',
         arr: 'CDG',
         "currencyFormula": "1 x 230EUR",
-        "formula": "1 x RU ¹",
+        "formula": "1 x RU" + REFNOTE1,
         "indemnity": 230
     });
 });
@@ -244,7 +244,7 @@ test("2 ON SVO BOD straddling years check not MC for 2020", () => {
         dep: 'CDG',
         arr: 'CDG',
         "currencyFormula": "1 x 156EUR",
-        "formula": "1 x FR ¹",
+        "formula": "1 x FR" + REFNOTE1,
         "indemnity": 156,
     });
 });
@@ -275,7 +275,7 @@ test("2 ON SVO BOD straddling years check for 2019", () => {
         dep: 'CDG',
         arr: 'CDG',
         "currencyFormula": "1 x 230EUR + 1 x 156EUR",
-        "formula": "1 x RU + 1 x FR ¹",
+        "formula": "1 x RU + 1 x FR" + REFNOTE1,
         "indemnity": 386,
     });
 });
