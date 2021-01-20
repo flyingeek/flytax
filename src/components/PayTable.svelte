@@ -1,10 +1,9 @@
 <script>
     import {decimal2cents, cents2decimal} from '../parsers/payParser';
-    import { taxYear, taxData, fraisDeMission, nuiteesInput, disableTransition, nuiteesAF} from '../stores';
+    import { taxYear, taxData, fraisDeMission, nuiteesInput, nuiteesAF} from '../stores';
     import {months, monthsfr, localeCurrency} from './utils';
     import DownloadTablePDF from './DownloadTablePDF.svelte';
-    import {slide} from 'svelte/transition';
-    import { linear } from 'svelte/easing';
+    import {fade} from 'svelte/transition';
 
     export let data;
     export let tableId="PayTable";
@@ -29,6 +28,13 @@
         }
         return cents2decimal(total);
     };
+    const updateNuiteesInput = (real, estimated) => {
+        if (real !== undefined) {
+            $nuiteesInput = real;
+        }else if (estimated){
+            $nuiteesInput = estimated;
+        }
+    } 
 
     $: totalFrais = computeTotalFrais(data);
     const sumFrais = (month) => {
@@ -40,7 +46,7 @@
     $: nightsCostEstimate = (Math.ceil(parseFloat(totalDecouchersFPRO) * 3.31/100) * 100).toFixed(0);
     $: fraisReels = parseFloat($fraisDeMission) - parseFloat($nuiteesAF || $nuiteesInput || nightsCostEstimate) - parseFloat(totalFrais);
     $: abbattement = ($taxData && $taxData.maxForfait10) ? Math.min((cumulImposable12||totalImposable)*0.1, $taxData.maxForfait10) : 0;
-
+    $: updateNuiteesInput($nuiteesAF, nightsCostEstimate);
 
 
 </script>
@@ -48,29 +54,30 @@
 <DownloadTablePDF tableIds={[tableId]} filename={`revenus${$taxYear}.pdf`}/>
 {#if ($fraisDeMission > 0)}
 <table class="data summary" id={tableId + 'Summary'}>
+    <col class="col1" />
+    <col class="col2" />
+    <col class="col3" />
 <thead>
     <tr>
-        <th colspan="2">Comparatif {$taxYear}</th>
+        <th colspan="3">Comparatif {$taxYear}</th>
     </tr>
-    {#if (!$nuiteesInput && $nuiteesAF === undefined)}
     <tr>
-        <td colspan="2">
-            <div class:no-transition={$disableTransition} transition:slide="{{easing: linear}}">Vos frais de nuitées sont estimés à {nightsCostEstimate} € <small>(±10%)</small><br/>
-                <small>vous pouvez indiquer une autre valeur en haut ou déposer votre attestation de nuitées dans la zone</small>
-            </div>
-        </td>
-    </tr>
-    {/if}
-    <tr>
-        <th>Frais de Mission - Nuitées - Frais d'emploi</th>
+        <th>Nuitées AF</th>
+        <th>Frais&nbsp;de&nbsp;Mission -&nbsp;Nuitées -&nbsp;Frais&nbsp;d'emploi</th>
         <th>Abattement de 10% plafonné</th>
     </tr>
     {#if $taxYear !== $taxData.year}
-    <tr class="warning"><th colspan="2">Attention les montants sont basés sur les données fiscales de {$taxData.year}</th></tr>
+    <tr class="warning"><th colspan="3">Attention les montants sont basés sur les données fiscales de {$taxData.year}</th></tr>
     {/if}
 </thead>
 <tbody>
     <tr>
+        <td>
+            <input name="nuitees" type="number" disabled={!!$nuiteesAF} bind:value="{$nuiteesInput}" min="0" step="100" placeholder="{($nuiteesAF) ? $nuiteesAF : nightsCostEstimate}"/>
+            {#if ($nuiteesInput == nightsCostEstimate)}
+            <div class="estimate" transition:fade|local><small>estimation à ±10%</small></div>
+            {/if}
+        </td>
         <td>{$fraisDeMission} - {parseFloat($nuiteesAF || $nuiteesInput || nightsCostEstimate).toFixed(0)} - {parseFloat(totalFrais).toFixed(0)} = {fraisReels.toFixed(0)} €</td>
         <td>{abbattement.toFixed(0)} €</td>
     </tr>
@@ -78,9 +85,9 @@
 <tfoot>
     <tr>
         {#if (fraisReels >= abbattement)}
-        <td colspan="2">Sans tenir compte de vos autres frais, vous serez déjà gagnant de <b>{(fraisReels - abbattement).toFixed(0)} €</b> en passant aux frais réels.</td>
+        <td colspan="3">Sans tenir compte de vos autres frais, vous serez déjà gagnant de <b>{(fraisReels - abbattement).toFixed(0)} €</b> en passant aux frais réels.</td>
         {:else}
-        <td colspan="2">Il faudra que vos autres frais atteignent <b>{(abbattement - fraisReels).toFixed(0)} €</b> pour qu'une déclaration aux frais réels soit plus avantageuse.</td>
+        <td colspan="3">Il faudra que vos autres frais atteignent <b>{(abbattement - fraisReels).toFixed(0)} €</b> pour qu'une déclaration aux frais réels soit plus avantageuse.</td>
         {/if}
     </tr>
 </tfoot>
@@ -125,10 +132,35 @@
 <style>
     table.data.summary {
         table-layout: fixed;
+        position: relative;
     }
-    thead td {
-        background-color: var(--background-color);
+    :global(table.data.summary tfoot td) {
+        font-size: initial;
+    }
+    .col1 {
+        width: 130px;
+    }
+    .col2 {
+        width: 50%;
+    }
+    .estimate{
+        position: absolute;
+        top: 10px;
+        left: 0px;
+    }
+    .estimate small {
+        border-radius: 2px;
+        padding: 2px;
+        display: block;
+        color: var(--background-color);
+        background-color: var(--green);
+        font-size: small;
+        min-width: 126px;
         text-align: center;
+    }
+    td input {
+        margin-bottom: 0;
+        width: 120px;
     }
     tbody th { /* Total bottom line */
         font-family: monospace;

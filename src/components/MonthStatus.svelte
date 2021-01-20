@@ -65,7 +65,7 @@
     $: requestedMonths = computeRequestedMonths(data);
 </script>
 <div>
-    <div>{nameLabel}</div>
+    <div>{nameLabel}<slot></slot></div>
     <ul>
     {#each requestedMonths as [month, optional]}
     <li class:loaded="{data[month] !== undefined}" class:optional="{optional === true}">{label(month)}</li>

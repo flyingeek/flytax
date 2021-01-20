@@ -28,6 +28,13 @@ Calculer rapidement, facilement, et sans partage de données&#8239;:
 
 En cas d’anomalie, un pictogramme rouge apparaîtra en haut à droite, le cliquer affichera les détails. Si un message d’erreur apparaissait dans la table des résultats, merci de me contacter.
 
+## Attestation des nuitées AF
+
+Air France fournit cette attestation soit dans le pdf de l’EP4 soit dans un fichier annexe. La publication de fait en général au mois de février,
+mais un correctif est susceptible d’être diffusé jusqu’en avril. En attendant ce document, __{@html htmlLogo}__ calcule une estimée du montant
+ce qui permet de donner un ordre de grandeur. L’estimation est modifiable. Une fois votre attestation reçue, vous pouvez soit indiquer son
+montant directement, soit glisser l’attestation dans la zone de dépôt. Merci sur vos retours concernant la fiabilité de l’estimation.
+
 ## Choix de la base
 
 La base peut être modifiée pour chaque mois&#8239;: on choisit une base, on dépose les EP5 de cette base&#8239;;

@@ -69,7 +69,6 @@ export const ep5 = resettable({type: "ep5"});
 export const paySlips = resettable({type: "pay"});
 export const nuiteesInput = resettable();
 export const nuiteesAF = resettable();
-export const disableTransition = writable(false);
 
 const empty = () => {
     ep5.reset();
@@ -127,17 +126,13 @@ export const online = readable({}, set => {
 export const route = readable(null, set => {
     let myTimeOut;
     const hashchange = (e) => {
-        disableTransition.set(true);
         set(window.location.hash.substr(1) || "/");
-        myTimeOut = setTimeout(() => disableTransition.set(false), 500);
     };
     hashchange();
     window.addEventListener('hashchange', hashchange);
 
     return () => {
         window.removeEventListener('hashchange', hashchange);
-        clearTimeout(myTimeOut);
-        disableTransition.set(false);
     };
 });
 

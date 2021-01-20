@@ -1,6 +1,7 @@
 <script context="module">
     import {writable} from 'svelte/store';
     export const viewLog = writable(false);
+    import {fade} from 'svelte/transition';
 </script>
 
 <script>
@@ -76,6 +77,7 @@
         position: fixed;
         right: 0px;
         z-index: 15;
+        opacity: 0.96;
     }
     .window {
         height: 100%;
@@ -127,7 +129,7 @@
         right: 7px;
         position: absolute;
         top: 0;
-        color: rgba(var(--blueaf_rgb), 0.1);
+        color: rgba(var(--blueaf_rgb), 0.2);
     }
     :global(.console p, .console ol) {
         margin-block-end: 0px;
@@ -144,7 +146,7 @@
     }
 </style>
 {#if $viewLog}
-<div class="window-wrapper">
+<div class="window-wrapper" transition:fade="{{duration: 200}}">
     <div class="head">
         <div>Alertes reçues</div>
         <button on:click={clear}>Effacer</button>
