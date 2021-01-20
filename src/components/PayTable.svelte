@@ -36,17 +36,18 @@
         }
     } 
 
-    $: totalFrais = computeTotalFrais(data);
     const sumFrais = (month) => {
         return data[month].repas.concat(data[month].transport).map(decimal2cents).reduce((a, b) => a + b);
     };
+
+    $: totalFrais = computeTotalFrais(data);
     $: totalImposable = computeTotalImposable(data);
     $: cumulImposable12 = (data["12"] && data["12"].cumul !== "0") ? cents2decimal(decimal2cents(data["12"].cumul)) : undefined;
+    $: abbattement = ($taxData && $taxData.maxForfait10) ? Math.min((cumulImposable12||totalImposable)*0.1, $taxData.maxForfait10) : 0;
     $: totalDecouchersFPRO = computeTotalDecouchersFPRO(data);
     $: nightsCostEstimate = (Math.ceil(parseFloat(totalDecouchersFPRO) * 3.31/100) * 100).toFixed(0);
-    $: fraisReels = parseFloat($fraisDeMission) - parseFloat($nuiteesAF || $nuiteesInput || nightsCostEstimate) - parseFloat(totalFrais);
-    $: abbattement = ($taxData && $taxData.maxForfait10) ? Math.min((cumulImposable12||totalImposable)*0.1, $taxData.maxForfait10) : 0;
     $: updateNuiteesInput($nuiteesAF, nightsCostEstimate);
+    $: fraisReels = parseFloat($fraisDeMission) - parseFloat($nuiteesAF || $nuiteesInput || nightsCostEstimate) - parseFloat(totalFrais);
 
 
 </script>
@@ -74,7 +75,7 @@
     <tr>
         <td>
             <input name="nuitees" type="number" disabled={!!$nuiteesAF} bind:value="{$nuiteesInput}" min="0" step="100" placeholder="{($nuiteesAF) ? $nuiteesAF : nightsCostEstimate}"/>
-            {#if ($nuiteesInput == nightsCostEstimate)}
+            {#if (!$nuiteesInput || $nuiteesInput == nightsCostEstimate)}
             <div class="estimate" transition:fade|local><small>estimation à ±10%</small></div>
             {/if}
         </td>
@@ -161,6 +162,9 @@
     td input {
         margin-bottom: 0;
         width: 120px;
+    }
+    td input:disabled {
+        color: #999;
     }
     tbody th { /* Total bottom line */
         font-family: monospace;
