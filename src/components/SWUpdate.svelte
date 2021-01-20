@@ -1,7 +1,11 @@
+<script context="module">
+    import {writable} from 'svelte/store';
+    export const swDismiss = writable(false);
+</script>
 <script>
     import { fade } from 'svelte/transition';
     let installLabel = 'Installer';
-    let dismiss = false;
+    $swDismiss = false;
     const install = (reg) => {
         let refreshing;
         navigator.serviceWorker.addEventListener('controllerchange', () => {
@@ -15,11 +19,11 @@
 </script>
 
 {#await window.isSWUpdateAvailable.promise then registration}
-{#if registration && !dismiss}
+{#if registration && !$swDismiss}
 <div class="toast" transition:fade style="position: fixed; top: 0; right: 0;">   
     <div class="toast-header">
         <strong><span>👨🏻‍✈️</span>Mise à jour disponible</strong>
-        <button type="button" class="close" aria-label="Close" on:click={() => dismiss=true}>
+        <button type="button" class="close" aria-label="Close" on:click={() => $swDismiss=true}>
             <span aria-hidden="true">&times;</span>
         </button>
     </div>
