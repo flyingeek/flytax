@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset='utf-8'>
+    <meta name='viewport' content='width=device-width,initial-scale=1'>
+
+    <title>FLYTAX RESET</title>
+</head>
+<body>
+
+<script>
+if (navigator && 'serviceWorker' in navigator) {
+  navigator.serviceWorker.getRegistrations().then(function (registrations) {
+    //returns installed service workers
+    if (registrations.length) {
+      document.write('Service workers:<br/>');
+      for(let registration of registrations) {
+          if (registration)
+          console.log(registration);
+          document.write(JSON.stringify({
+            scope: registration.scope,
+            active: (registration.active) ? registration.active.scriptURL : '',
+            active_state: (registration.active) ? registration.active.state : '',
+            waiting: (registration.waiting) ? registration.waiting.scriptURL : '',
+            waiting_state: (registration.waiting) ? registration.waiting.state : ''
+
+          }));
+      }
+    }
+  });
+}else{
+    console.log('service worker non supporté');
+}
+</script>
+<noscript>Javascript est requis pour lancer FLYTAX</noscript>
+</html>
+.then(function(clients) { clients.forEach(client => ); } }); 
