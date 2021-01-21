@@ -3,7 +3,10 @@ import {registerRoute} from 'workbox-routing';
 import {StaleWhileRevalidate, CacheFirst} from 'workbox-strategies';
 import {ExpirationPlugin} from 'workbox-expiration';
 
-const deprecatedCaches = ['flytax-data'];
+const deprecatedCaches = ['flytax-data', 'flytax-data2'];
+const warmupCacheName = 'flytax-warmup';
+const dataCacheName = 'flytax-data3';
+const iconsCacheName = 'flytax-icons';
 
 precacheAndRoute(
     self.__WB_MANIFEST, {
@@ -27,13 +30,13 @@ const allUrls = thirdPartyUrls.concat(flytaxUrls);
 registerRoute(
     /.+\/(pdf\.min\.js|pdf\.worker\.min\.js|jspdf\..+min\.js|HelveticaUTF8\.ttf|abril-fatface-v12-latin-ext_latin-regular\.woff2?)$/,
     new CacheFirst({
-      cacheName: 'flytax-warmup',
+      cacheName: warmupCacheName,
     })
 );
 registerRoute(
   ({url}) => url.pathname.match(/\/data\/data[0-9]{4}\.json/),
   new CacheFirst({
-    cacheName: 'flytax-data2',
+    cacheName: dataCacheName,
     plugins: [
       new ExpirationPlugin({
         maxEntries: 6
@@ -44,7 +47,7 @@ registerRoute(
 registerRoute(
   ({url}) => url.pathname.match(/\/flytax-icons\/.+\.png/),
   new StaleWhileRevalidate({
-    cacheName: 'flytax-icons',
+    cacheName: iconsCacheName,
     plugins: [
       new ExpirationPlugin({
         maxEntries: 20
@@ -119,7 +122,7 @@ self.addEventListener('activate', function(event) {
     caches.keys().then(function(cacheNames) {
       return cacheNames.filter(isOldCache).map((cacheName) => caches.delete(cacheName));
     }).then(() => {
-      return caches.open('flytax-warmup')
+      return caches.open(warmupCacheName)
     }).then(function(cache) {
         return cache.keys().then(function(keys) {
           return Promise.all(keys.filter(isOldRequest).map(request => cache.delete(request)));
