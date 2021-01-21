@@ -77,15 +77,15 @@
                     console.error('[SW ERROR]', err);
                 });
             // reload once when the new Service Worker starts activating
-            // unless the page is already loaded.
-            // When the page is loaded, no need to do it there, we will show a prompt and perform a manual reload
             //
-            let refreshing;
-            navigator.serviceWorker.addEventListener('controllerchange', () => {
-                if (refreshing || (document.querySelector && document.querySelector('nav'))) return;
-                refreshing = true;
-                window.location.reload();
-            });
+            // No need to do it there, we will show a prompt and perform a manual reload
+            //
+            // let refreshing;
+            // navigator.serviceWorker.addEventListener('controllerchange', () => {
+            //     if (refreshing) return;
+            //     refreshing = true;
+            //     window.location.reload();
+            // });
         });
     }
 </script>
