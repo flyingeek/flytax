@@ -23,8 +23,8 @@ if (navigator && 'serviceWorker' in navigator) {
             active_state: (registration.active) ? registration.active.state : '',
             waiting: (registration.waiting) ? registration.waiting.scriptURL : '',
             waiting_state: (registration.waiting) ? registration.waiting.state : ''
-
           }));
+          if(registration.scope === 'https://flyingeek.github.io/flytax/') registration.unregister();
       }
     }
   });
