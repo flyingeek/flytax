@@ -45,7 +45,8 @@ const apiURL = `https://api.webstat.banque-france.fr/webstat-en/v1/data/EXR/EXR.
 const zoneMC = ["AL", "DZ", "AD", "BA", "BG", "DK", "HR", "HU", "MK", "MA", "NO", "RO", "GB", "SE", "CH", "CZ", "TN", "YU", "PL"];
 const zoneEuroMC = ["DE", "AT", "BE", "CY", "ES", "FI", "FR", "GR", "IE", "IT", "LU", "MT", "NL", "PT", "SK", "SI"];
 const zoneEuroLC = ["EE", "LV", "LT"]; // Estonie, Lettonie, Lituanie
-const zoneDOM = ["YT", "PM", "GP", "MQ", "GF", "RE", "SX", "MF", "BL"]; //SXM est sur SX iso MF (St Martin) donc on ajoute SX et MF
+const zoneDOM = ["YT", "PM", "GP", "MQ", "GF", "RE"];
+const zoneDOMLC = ["SX", "MF", "BL"]; //SXM est sur SX iso MF (St Martin) donc on ajoute SX et MF
 // pour le calcul de l'indemnité Euro:
 // URSSAF https://www.urssaf.fr/portail/home/taux-et-baremes/frais-professionnels/indemnite-de-grand-deplacement/deplacements-en-metropole.html
 //        https://www.urssaf.fr/portail/home/taux-et-baremes/frais-professionnels/indemnite-de-grand-deplacement/deplacements-en-outre-mer.html
@@ -81,8 +82,8 @@ const specificities = {
         "FEU": [["2017-01-01","EUR","156"]], // forfait Euro (computed from 2019 and beyond)
         "FOM": [["2017-01-01","EUR","120"]], // forfait OM (PPT, Nouvelle Calédonie et Wallis et Futuna)
         "EURO": zoneEuroMC.concat(zoneEuroLC), // zone Euro pour calcul du forfait Euro
-        "EU": zoneEuroMC.concat(zoneEuroLC, zoneDOM), // forfait Euro
-        "MC": zoneEuroMC.concat(zoneMC, zoneDOM), //TODO ZoneEuroLC ?
+        "EU": zoneEuroMC.concat(zoneEuroLC, zoneDOM, zoneDOMLC), // forfait Euro
+        "MC": zoneEuroMC.concat(zoneMC, zoneDOM, zoneDOMLC), 
         "OM": ["WF", "NC", "PF"], // territoires pour le Forfait OM
         "replace": {
             "TI": "TL" // Code Timor oriental TI in webmiss but TL in airports
