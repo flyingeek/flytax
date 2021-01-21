@@ -162,7 +162,8 @@ export default [{
   },
   plugins: [
     replace({...U, ...{
-      'process.env.NODE_ENV': JSON.stringify('production')
+        'APP_VERSION': version,
+        'process.env.NODE_ENV': (production) ? JSON.stringify('production') : JSON.stringify('development')
     }}),
     commonjs(),
     resolve({

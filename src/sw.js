@@ -7,13 +7,14 @@ const deprecatedCaches = ['flytax-data', 'flytax-data2'];
 const warmupCacheName = 'flytax-warmup';
 const dataCacheName = 'flytax-data3';
 const iconsCacheName = 'flytax-icons';
+const SW_VERSION = 'APP_VERSION';
 
 precacheAndRoute(
     self.__WB_MANIFEST, {
 //    "directoryIndex": null,
 //    "ignoreURLParametersMatching": []
 });
-
+self.__WB_DISABLE_DEV_LOGS = false;
 const thirdPartyUrls = [
     'CONF_PDFJS_JS',
     'CONF_PDFJS_WORKER_JS',
@@ -127,12 +128,15 @@ self.addEventListener('activate', function(event) {
         return cache.keys().then(function(keys) {
           return Promise.all(keys.filter(isOldRequest).map(request => cache.delete(request)));
         });
-    }).then(() => self.clients.claim())
+    })//.then(() => self.clients.claim())
   );
 });
 
 self.addEventListener('message', (event) => {
-  if (event.data === 'SKIP_WAITING') {
+  if (event.data === 'SKIP_WAITING' || event.data.type === 'SKIP_WAITING') {
     self.skipWaiting();
+    event.ports[0].postMessage(SW_VERSION);
+  }else if (event.data.type === 'GET_VERSION') {
+    event.ports[0].postMessage(SW_VERSION);
   }
 });

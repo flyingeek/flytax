@@ -1,25 +1,27 @@
 <script context="module">
     import {writable} from 'svelte/store';
     export const swDismiss = writable(false);
+    export const swUpdated = writable(false);
+    export const wb = writable();
 </script>
 <script>
     import { fade } from 'svelte/transition';
     let installLabel = 'Installer';
     $swDismiss = false;
-    const install = (reg) => {
+    
+    const install = () => {
         let refreshing;
-        navigator.serviceWorker.addEventListener('controllerchange', () => {
+        $wb.addEventListener('controlling', () => {
             if (refreshing) return;
             refreshing = true;
             window.location.reload();
         });
-        installLabel = "En cours..."
-        reg.waiting.postMessage('SKIP_WAITING');
+        installLabel = "En cours...";
+        $wb.messageSW({type: 'SKIP_WAITING'});
     }
 </script>
 
-{#await window.isSWUpdateAvailable.promise then registration}
-{#if registration && !$swDismiss}
+{#if $swUpdated && !$swDismiss}
 <div class="toast" transition:fade style="position: fixed; top: 0; right: 0;">   
     <div class="toast-header">
         <strong><span>👨🏻‍✈️</span>Mise à jour disponible</strong>
@@ -28,11 +30,11 @@
         </button>
     </div>
     <div class="toast-body">
-        <button on:click|once={() => install(registration)}>{installLabel}</button>
+        <button on:click|once={() => install()}>{installLabel}</button>
     </div>
 </div>
 {/if}
-{/await}
+
 <style>
     .toast {
         opacity: 1;

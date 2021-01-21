@@ -7,10 +7,9 @@
     import {route} from './stores';
     import NavBar from './components/Navbar.svelte';
     import SWUpdate from './components/SWUpdate.svelte';
-
 </script>
 
-<SWUpdate/>
+<SWUpdate />
 <NavBar/>
 <LogWindow />
 
