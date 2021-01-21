@@ -14,6 +14,7 @@ precacheAndRoute(
 //    "directoryIndex": null,
 //    "ignoreURLParametersMatching": []
 });
+
 self.__WB_DISABLE_DEV_LOGS = false;
 const thirdPartyUrls = [
     'CONF_PDFJS_JS',
@@ -135,7 +136,6 @@ self.addEventListener('activate', function(event) {
 self.addEventListener('message', (event) => {
   if (event.data === 'SKIP_WAITING' || event.data.type === 'SKIP_WAITING') {
     self.skipWaiting();
-    event.ports[0].postMessage(SW_VERSION);
   }else if (event.data.type === 'GET_VERSION') {
     event.ports[0].postMessage(SW_VERSION);
   }
