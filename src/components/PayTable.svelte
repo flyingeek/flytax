@@ -76,7 +76,7 @@
         <td>
             <input name="nuitees" type="number" disabled={!!$nuiteesAF} bind:value="{$nuiteesInput}" min="0" step="100" placeholder="{($nuiteesAF) ? $nuiteesAF : nightsCostEstimate}"/>
             {#if (!$nuiteesInput || $nuiteesInput == nightsCostEstimate)}
-            <div class="estimate" transition:fade|local><small>estimation à ±10%</small></div>
+            <div class="estimate" transition:fade|local><small>estimation des nuitées à ±10%</small></div>
             {/if}
         </td>
         <td>{$fraisDeMission} - {parseFloat($nuiteesAF || $nuiteesInput || nightsCostEstimate).toFixed(0)} - {parseFloat(totalFrais).toFixed(0)} = {fraisReels.toFixed(0)} €</td>
@@ -146,7 +146,7 @@
     }
     .estimate{
         position: absolute;
-        top: 10px;
+        top: 0px;
         left: 0px;
     }
     .estimate small {
@@ -156,7 +156,7 @@
         color: var(--background-color);
         background-color: var(--green);
         font-size: small;
-        min-width: 126px;
+        width: 126px;
         text-align: center;
     }
     td input {
