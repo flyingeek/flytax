@@ -121,7 +121,7 @@
     </tbody>
     <tfoot>
         <tr>
-            <td colspan="5">1. Les Frais d'emploi commprennent les lignes IND.REPAS, INDEMNITE REPAS, IND. TRANSPORT, FRAIS REELS TRANSP du bulletin de paye.</td>
+            <td colspan="5">1. Les Frais d'emploi commprennent les lignes IND.REPAS, INDEMNITE REPAS, IND. TRANSPORT, FRAIS REELS TRANSP, R. FRAIS DE TRANSPORT du bulletin de paye.</td>
         </tr>
         <tr>
             <td colspan="5">2. Cette colonne doit être substituée par le décompte des frais réels engagés par AF pour les nuitées.</td>
@@ -164,7 +164,9 @@
         width: 120px;
     }
     td input:disabled {
-        color: #999;
+        color: var(--green);
+        -webkit-text-fill-color: var(--green);
+        opacity: 0.85; /*ios*/
     }
     tbody th { /* Total bottom line */
         font-family: monospace;

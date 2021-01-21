@@ -112,6 +112,15 @@ export default [{
                 {
                     src: './data/*.?sv',
                     dest: './public/data'
+                },
+                {
+                    src: './reset.html',
+                    dest: './public'
+                },
+                {
+                    src: './src/index.html',
+                    dest: './public',
+                    transform: (contents) => Mustache.render(contents.toString(), U)
                 }
             ],
             copyOnce: true,
@@ -141,16 +150,18 @@ export default [{
     watch: {
         clearScreen: false
     }
-},{
-    input: 'src/index.html',
-    output: { dir: 'public'},
-    plugins: [html({
-        minify: false,
-        transform: [
-          html => Mustache.render(html.toString(), U)
-        ],
-    })],
-},{
+},
+// {
+//     input: 'src/index.html',
+//     output: { dir: 'public'},
+//     plugins: [html({
+//         minify: false,
+//         transform: [
+//           html => Mustache.render(html.toString(), U)
+//         ],
+//     })],
+// },
+{
   input: 'src/sw.js',
   output: {
     sourcemap: true,

@@ -30,7 +30,7 @@ En cas d’anomalie, un pictogramme rouge apparaîtra en haut à droite, le cliq
 
 ## Attestation des nuitées AF
 
-Air France fournit cette attestation soit dans le pdf de l’EP4 soit dans un fichier annexe. La publication de fait en général au mois de février,
+Air France fournit cette attestation soit dans le pdf de l’EP4 soit dans un fichier annexe. La publication se fait en général au mois de février,
 mais un correctif est susceptible d’être diffusé jusqu’en avril. En attendant ce document, __{@html htmlLogo}__ calcule une estimée du montant
 ce qui permet de donner un ordre de grandeur. L’estimation est modifiable. Une fois votre attestation reçue, vous pouvez soit indiquer son
 montant directement, soit glisser l’attestation dans la zone de dépôt. Merci sur vos retours concernant la fiabilité de l’estimation.
@@ -44,21 +44,20 @@ Le choix de la base se fait au-dessus de la zone de dépôt sur la page Frais de
 
 ## Mise à jour
 
-L’app détecte les mises à jour automatiquement, normalement vous n’avez rien à faire. Éventuellement, un popup peut
+__{@html htmlLogo}__ détecte les mises à jour automatiquement, normalement vous n’avez rien à faire. Éventuellement, un popup peut
 apparaître 👨🏻‍✈️ vous demandant d’autoriser cette mise à jour. Installer la mise à jour efface les résultats.
 
 ## Données fiscales
 
-Sur <Link href="https://github.com/flyingeek/flytax">GitHub</Link>&#8239;¹ vous trouverez les liens vers les barèmes au format csv et tsv (Excel/Numbers) mais aussi
+Sur <Link href="https://github.com/flyingeek/flytax">GitHub</Link> vous trouverez les liens vers les barèmes au format csv et tsv (Excel/Numbers) mais aussi
 les données json. En installant le code source sur votre ordinateur, vous pourrez en plus générer ces fichiers. Lors
 de la compilation de l’application, les API de la Banque de France et des impôts sont utilisées.
 
 ## Crédits
 
 - Le mémento fiscal du SNPL et Bernard Pédamon pour son aide sur son interprétation
-- Le site est développé en JavaScript à l’aide du framework SVELTE
-- Éric Delord, CDB 777, est l’auteur. Le code source est disponible sur <Link href="https://github.com/flyingeek/flytax">GitHub</Link>&#8239;¹
+- <Link href="https://github.com/mborsetti/airportsdata">airportsdata</Link> de Mike Borsetti
+- __{@html htmlLogo}__ est développé en JavaScript à l’aide du framework SVELTE
+- Éric Delord, CDB 777, est l’auteur. Le code source est disponible sur <Link href="https://github.com/flyingeek/flytax">GitHub</Link>
 
 Vous pouvez me contacter sur l’email AF (erdelord@…) ou sur mon compte Twitter @flyingeek.
-
-<small>1&#8239;: le code source sera disponible à la fin de la version bêta</small>
