@@ -114,27 +114,18 @@ export default [{
                     dest: './public/data'
                 },
                 {
-                    src: './reset.html',
+                    src: './src/reset.html',
                     dest: './public'
-                },
-                {
-                    src: './src/index.html',
-                    dest: './public',
-                    transform: (contents) => Mustache.render(contents.toString(), U)
-                }
+                }//,
+                // {
+                //     src: './src/index.html',
+                //     dest: './public',
+                //     transform: (contents) => Mustache.render(contents.toString(), U)
+                // }
             ],
             copyOnce: true,
             verbose: true
         }),
-        // copy({
-        //     targets: [{ 
-        //         src: 'src/index.html',
-        //         dest: 'public',
-        //         transform: (contents) => Mustache.render(contents.toString(), U)
-        //     }],
-        //     copyOnce: true,
-        //     verbose: true
-        // }),
         // In dev mode, call `npm run start` once
         // the bundle has been generated
         !production && serve(),
@@ -151,16 +142,16 @@ export default [{
         clearScreen: false
     }
 },
-// {
-//     input: 'src/index.html',
-//     output: { dir: 'public'},
-//     plugins: [html({
-//         minify: false,
-//         transform: [
-//           html => Mustache.render(html.toString(), U)
-//         ],
-//     })],
-// },
+{
+    input: 'src/index.html',
+    output: { dir: 'public'},
+    plugins: [html({
+        minify: false,
+        transform: [
+          htmlString => Mustache.render(htmlString, U)
+        ],
+    })],
+},
 {
   input: 'src/sw.js',
   output: {
