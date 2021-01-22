@@ -12,7 +12,10 @@
 
 <main>
     <section class='markdown'>
-        <h1>{@html htmlLogo} v{version} <small>/ ServiceWorker&#8239;: {swVersion}</small></h1>
+        <h1>{@html htmlLogo} v{version} 
+            <small>/ ServiceWorker&#8239;: {swVersion}</small>
+            {#if $wb}{#await $wb.active then ok}<small>/ mode déconnecté disponible</small>{/await}{/if}
+        </h1>
         <HelpMarkup/>
     </section>
     <div class="footer">
@@ -29,7 +32,6 @@
     h1 small {
         font-weight: 200;
         font-size: 0.8rem;
-        margin-left: 1em;
     }
     :global(section.markdown) {
         margin: 0 auto;

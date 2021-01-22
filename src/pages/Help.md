@@ -24,7 +24,7 @@ Calculer rapidement, facilement, et sans partage de données&#8239;:
 - Le symbole ▶ signale des informations additionnelles accessibles soit au survol de la souris, soit en cliquant sur la ligne
 - Changer d’année fiscale efface les résultats
 - L’application peut être installée sur l’écran d’accueil du PilotPad
-- __{@html htmlLogo}__ peut fonctionner en mode déconnecté après avoir effectué un premier calcul
+- __{@html htmlLogo}__ peut fonctionner en mode déconnecté
 
 En cas d’anomalie, un pictogramme rouge apparaîtra en haut à droite, le cliquer affichera les détails. Si un message d’erreur apparaissait dans la table des résultats, merci de me contacter.
 
