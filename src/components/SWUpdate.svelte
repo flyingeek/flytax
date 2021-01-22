@@ -15,8 +15,8 @@
     let installLabel = 'Installer';
     $swDismiss = false;
     const install = () => {
+        // $swRegistration.waiting check is needed to the 'reload the page' fallback
         if ($wb && $swRegistration && $swRegistration.waiting) {
-            console.log('waiting sw found');
             $wb.addEventListener('controlling', () => {
                 window.location.reload();
             });
