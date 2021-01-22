@@ -25,8 +25,8 @@ const thirdPartyUrls = [
 ];
 const flytaxUrls = [
     'CONF_JSPDF_FONT_TTF',
-    'CONF_ABRILFATFACE_WOFF2',
-    'CONF_ABRILFATFACE_WOFF'
+    'CONF_ABRILFATFACE_WOFF2'.replace('../','./'), /* was relative to bundle.css */
+    'CONF_ABRILFATFACE_WOFF'.replace('../','./')
 ];
 const dataUrls = 'CONF_DATASET_URLS'.split(';');
 const allUrls = thirdPartyUrls.concat(flytaxUrls);
