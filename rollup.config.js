@@ -12,6 +12,7 @@ const workbox = require('rollup-plugin-workbox-inject');
 import {version} from './package.json';
 import watchAssets from 'rollup-plugin-watch-assets';
 import html from '@open-wc/rollup-plugin-html';
+import {DATASET} from './src/stores';
 const Mustache = require('mustache');
 
 const production = !process.env.ROLLUP_WATCH;
@@ -29,7 +30,8 @@ const U = {
     'CONF_BUNDLE_JS': './js/bundle.js',
     'CONF_BUNDLE_CSS': './css/bundle.css',
     'CONF_ABRILFATFACE_WOFF2': '../fonts/abril-fatface-v12-latin-ext_latin-regular.woff2', /* relative to public/css/bundle.css */
-    'CONF_ABRILFATFACE_WOFF': '../fonts/abril-fatface-v12-latin-ext_latin-regular.woff'
+    'CONF_ABRILFATFACE_WOFF': '../fonts/abril-fatface-v12-latin-ext_latin-regular.woff',
+    'CONF_DATASET_URLS': Array.from(new Set(DATASET.map(o => o.url))).join(';')
 };
 function serve() {
     let server;
