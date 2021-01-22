@@ -4,8 +4,10 @@
     import { htmlLogo } from '../components/utils';
     import {wb} from '../components/SWUpdate.svelte';
     const version = "APP_VERSION";
-    let swVersion;
-    if ($wb) $wb.messageSW({type: 'GET_VERSION'}).then(v => swVersion = v);
+    let swVersion = '';
+    const updateVersion = (_wb) => (_wb) ? _wb.messageSW({type: 'GET_VERSION'}).then(v => swVersion = v) : '';
+    $: updateVersion($wb);
+    
 </script>
 
 <main>
