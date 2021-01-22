@@ -3,9 +3,9 @@ import {registerRoute} from 'workbox-routing';
 import {StaleWhileRevalidate, CacheFirst} from 'workbox-strategies';
 import {ExpirationPlugin} from 'workbox-expiration';
 
-const deprecatedCaches = ['flytax-data', 'flytax-data2', 'flytax-data3'];
-const warmupCacheName = 'flytax-warmup';
-const dataCacheName = 'flytax-data4';
+const deprecatedCaches = ['flytax-data', 'flytax-data2', 'flytax-warmup'];
+const warmupCacheName = 'flytax-warmup2';
+const dataCacheName = 'flytax-data3';
 const iconsCacheName = 'flytax-icons';
 const SW_VERSION = 'APP_VERSION';
 let immediateClaimRequired = false;
@@ -90,9 +90,7 @@ self.addEventListener('install', (event) => {
     event.waitUntil(
         caches.keys()
         .then(cacheNames => {
-          if(cacheNames.includes('flytax-data') 
-          || cacheNames.includes('flytax-data2') 
-          || cacheNames.includes('flytax-data3')) immediateClaimRequired = true;
+          if(cacheNames.includes('flytax-warmup')) immediateClaimRequired = true;
           return Promise.resolve();
         })
         .then(() => caches.open(warmupCacheName))
