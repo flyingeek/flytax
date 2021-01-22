@@ -148,7 +148,6 @@ self.addEventListener('activate', function(event) {
         .then((clients) => {
           clients.forEach(client => { 
             if (client.url && "navigate" in client){
-              console.log('navigate')
               client.navigate(client.url)
             }
           });
