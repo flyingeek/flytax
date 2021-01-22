@@ -3,12 +3,12 @@ import {registerRoute} from 'workbox-routing';
 import {StaleWhileRevalidate, CacheFirst} from 'workbox-strategies';
 import {ExpirationPlugin} from 'workbox-expiration';
 
-const deprecatedCaches = ['flytax-data', 'flytax-data2'];
-const warmupCacheName = 'flytax-warmup';
+const deprecatedCaches = ['flytax-data', 'flytax-data2', 'flytax-warmup'];
+const warmupCacheName = 'flytax-warmup2';
 const dataCacheName = 'flytax-data3';
 const iconsCacheName = 'flytax-icons';
 const SW_VERSION = 'APP_VERSION';
-let counter = 0;
+let immediateClaimRequired = false;
 
 precacheAndRoute(
     self.__WB_MANIFEST, {
@@ -87,14 +87,19 @@ const addAll = function(cache, immutableRequests = [], mutableRequests = []) {
 
 self.addEventListener('install', (event) => {
     event.waitUntil(
-        caches.open("flytax-warmup").then((cache) => {
-          return addAll(cache, allUrls)
-        }).then(() => {
-          if (counter===0) {
-            /* bug fix old version */
-            self.skipWaiting();
-          }
+        caches.keys().then(function(cacheNames) {
+          if(cacheNames.includes('flytax-warmup')) immediateClaimRequired = true;
+        }).then(function() {
+          caches.open("flytax-warmup").then((cache) => {
+            return addAll(cache, allUrls)
+          }).then(() => {
+            if (immediateClaimRequired) {
+              /* bug fix old version */
+              self.skipWaiting();
+            }
+          })
         })
+
     );
 });
 /**
@@ -136,11 +141,8 @@ self.addEventListener('activate', function(event) {
           return Promise.all(keys.filter(isOldRequest).map(request => cache.delete(request)));
         });
     }).then(() => {
-      if (counter>0) {
-        self.clients.claim();
-      }else{
-        // (bug fix for previous workers which run once)
-        counter++;
+      if (immediateClaimRequired) {
+        // (bug fix for previous workers)
         self.registration.unregister() 
         .then(() => self.clients.matchAll()) 
         .then((clients) => {
@@ -151,6 +153,8 @@ self.addEventListener('activate', function(event) {
             }
           });
         });
+      }else{
+        self.clients.claim();
       }
     })
   );
