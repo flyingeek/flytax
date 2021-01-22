@@ -28,8 +28,8 @@ const U = {
     'CONF_JSPDF_FONT_TTF': './fonts/HelveticaUTF8.ttf',
     'CONF_BUNDLE_JS': './js/bundle.js',
     'CONF_BUNDLE_CSS': './css/bundle.css',
-    'CONF_ABRILFATFACE_WOFF2': './fonts/abril-fatface-v12-latin-ext_latin-regular.woff2',
-    'CONF_ABRILFATFACE_WOFF': './fonts/abril-fatface-v12-latin-ext_latin-regular.woff'
+    'CONF_ABRILFATFACE_WOFF2': '../fonts/abril-fatface-v12-latin-ext_latin-regular.woff2', /* relative to public/css/bundle.css */
+    'CONF_ABRILFATFACE_WOFF': '../fonts/abril-fatface-v12-latin-ext_latin-regular.woff'
 };
 function serve() {
     let server;
@@ -64,7 +64,8 @@ export default [{
     plugins: [
         watchAssets({ assets: ['./src/index.html', './package.json'] }),
         replace({...U, ...{
-            'APP_VERSION': version
+            'APP_VERSION': version,
+            'process.env.NODE_ENV': (production) ? JSON.stringify('production') : JSON.stringify('development')
         }}),
         svelte({
             compilerOptions: {
