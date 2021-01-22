@@ -8,6 +8,7 @@ const warmupCacheName = 'flytax-warmup';
 const dataCacheName = 'flytax-data3';
 const iconsCacheName = 'flytax-icons';
 const SW_VERSION = 'APP_VERSION';
+let counter = 0;
 
 precacheAndRoute(
     self.__WB_MANIFEST, {
@@ -88,6 +89,11 @@ self.addEventListener('install', (event) => {
     event.waitUntil(
         caches.open("flytax-warmup").then((cache) => {
           return addAll(cache, allUrls)
+        }).then(() => {
+          if (counter===0) {
+            /* bug fix old version */
+            self.skipWaiting();
+          }
         })
     );
 });
@@ -129,7 +135,24 @@ self.addEventListener('activate', function(event) {
         return cache.keys().then(function(keys) {
           return Promise.all(keys.filter(isOldRequest).map(request => cache.delete(request)));
         });
-    })//.then(() => self.clients.claim())
+    }).then(() => {
+      if (counter>0) {
+        self.clients.claim();
+      }else{
+        // (bug fix for previous workers which run once)
+        counter++;
+        self.registration.unregister() 
+        .then(() => self.clients.matchAll()) 
+        .then((clients) => {
+          clients.forEach(client => { 
+            if (client.url && "navigate" in client){
+              console.log('navigate')
+              client.navigate(client.url)
+            }
+          });
+        });
+      }
+    })
   );
 });
 
