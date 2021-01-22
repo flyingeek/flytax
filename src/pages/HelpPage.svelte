@@ -2,15 +2,10 @@
     import Link from '../components/Link.svelte';
     import HelpMarkup from '../pages/Help.md';
     import { htmlLogo } from '../components/utils';
-    import {online} from '../stores';
-    import {swDismiss, wb} from '../components/SWUpdate.svelte';
+    import {wb} from '../components/SWUpdate.svelte';
     const version = "APP_VERSION";
     let swVersion;
     if ($wb) $wb.messageSW({type: 'GET_VERSION'}).then(v => swVersion = v);
-    if($online) {
-        $swDismiss = false;
-        if ($wb) $wb.update().then(() => {}, console.error);
-    }
 </script>
 
 <main>

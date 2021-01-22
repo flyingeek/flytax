@@ -123,10 +123,22 @@ export const online = readable({}, set => {
     };
 });
 
+let swLastUpdateDate = new Date();
+export const checkSWUpdate = () => {
+    if ('serviceWorker' in navigator) {
+        if ((new Date() - swLastUpdateDate) > 900000) { /* 15mn */
+            navigator.serviceWorker.getRegistration().then(reg => {
+                if (reg) reg.update();
+                swLastUpdateDate = new Date();
+            }, console.error);
+        }
+    }
+}
+
 export const route = readable(null, set => {
-    let myTimeOut;
     const hashchange = (e) => {
         set(window.location.hash.substr(1) || "/");
+        checkSWUpdate();
     };
     hashchange();
     window.addEventListener('hashchange', hashchange);

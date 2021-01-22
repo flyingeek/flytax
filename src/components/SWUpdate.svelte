@@ -3,21 +3,28 @@
     export const swDismiss = writable(false);
     export const swUpdated = writable(false);
     export const wb = writable();
+    export const swRegistration = writable();
+    export const showSkipWaitingPrompt = () => {
+        swUpdated.set(true);
+        swDismiss.set(false);
+    };
+
 </script>
 <script>
     import { fade } from 'svelte/transition';
     let installLabel = 'Installer';
     $swDismiss = false;
-    
     const install = () => {
-        let refreshing;
-        $wb.addEventListener('controlling', () => {
-            if (refreshing) return;
-            refreshing = true;
+        if ($wb && $swRegistration && $swRegistration.waiting) {
+            console.log('waiting sw found');
+            $wb.addEventListener('controlling', () => {
+                window.location.reload();
+            });
+            installLabel = "En cours...";
+            $swRegistration.waiting.postMessage({type: 'SKIP_WAITING'});
+        }else{ /* update probably done in another tab */
             window.location.reload();
-        });
-        installLabel = "En cours...";
-        $wb.messageSW({type: 'SKIP_WAITING'});
+        }
     }
 </script>
 
