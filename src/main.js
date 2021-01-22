@@ -5,12 +5,19 @@ import {showSkipWaitingPrompt, wb, swRegistration} from './components/SWUpdate.s
 
 let appError = false;
 try {
-    //throw new Error();
     const app = new App({
         target: document.body
     });
 }catch(err) {
     appError = true;
+    try {
+        var content = document.createElement("p");
+        content.innerHTML =('Erreur: ' + err.message + '<br/><br/>'
+            + 'FLYTAX a besoin de navigateurs récents: Safari 14 iOS/Mac, Firefox 86, Chrome 87 et Microsoft Edge 87 sont compatibles. <br /><br />'
+            + 'Contactez moi sur l\'email AF (erdelord@...) en me donnant le message d\'erreur.'
+        );
+        document.body.appendChild(content);
+    }catch(e){} /* catch all here we can not interrupt the startup sequence */ 
 }finally{
     // we always register the serviceWorker to be able to unregister it
     // or to force skipWaiting and page reload
