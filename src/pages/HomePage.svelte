@@ -90,6 +90,9 @@
                 padding: 0 40px;
         }
     }
+    main {
+        overflow-x: hidden;
+    }
     div.logo {
         font-size: 4em;
         font-weight: 800;
