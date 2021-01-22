@@ -38,10 +38,11 @@
     "rollup-plugin-workbox-inject": "^2.0.0",
     "svelte": "^3.0.0",
     "svelte-preprocess": "^4.6.1",
-    "svelte-preprocess-markdown": "^2.7.3"
+    "svelte-preprocess-markdown": "^2.7.3",
+    "workbox-build": "^6.0.0",
+    "workbox-window": "^6.0.0"
   },
   "dependencies": {
-    "sirv-cli": "^1.0.0",
-    "workbox-window": "^5.1.4"
+    "sirv-cli": "^1.0.0"
   }
 }
