@@ -14,7 +14,7 @@ try {
 }finally{
     // we always register the serviceWorker to be able to unregister it
     // or to force skipWaiting and page reload
-    // this way as soon that a new serviceWorker fix the problem the page will load
+    // this way as soon as a new serviceWorker fix the problem, the page will load
     if ('serviceWorker' in navigator) {
         const workbox = new Workbox('./sw.js');
         wb.set(workbox);

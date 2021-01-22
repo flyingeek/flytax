@@ -16,7 +16,7 @@ precacheAndRoute(
 //    "ignoreURLParametersMatching": []
 });
 
-self.__WB_DISABLE_DEV_LOGS = false;
+self.__WB_DISABLE_DEV_LOGS = true;
 const thirdPartyUrls = [
     'CONF_PDFJS_JS',
     'CONF_PDFJS_WORKER_JS',
