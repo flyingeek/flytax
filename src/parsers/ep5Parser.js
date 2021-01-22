@@ -484,7 +484,7 @@ export function* testIterator(data) {
 };
 
 export const mergeFlights = (flights1, flights2) => {
-    const f1 = [...flights1];
+    const f1 = flights1.map(f => Object.assign({...f}, {stop: 'xx,xx'})); // fix ludovic bug 30 ON Madrid
     const f2 = [...flights2];
     if (f2.length>0) {
         if (f2[0].stop==='0,00' && f1.length>0) {

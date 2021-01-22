@@ -507,3 +507,19 @@ test("single day rotation, last straddling flight of an EP5 with a base arrival 
     expect(rots[0].indemnity).toBe(156+78);
     expect(rots[0].formula).toBe("1.5 x FR");
 });
+
+// The bug is due to having a stop of '0,00' in flights1
+test('ludovic 30on madrid', ()=> {
+    const flights1 = [
+        {"stop": "0,00", "dep": "CDG", "start": "2020-02-29T11:29Z", "arr": "MAD" ,"end": "2020-02-29T13:40Z"}
+    ];
+    const flights2 = [
+        {"stop": "5,65", "dep": "MAD", "start": "2020-03-01T05:40Z", "arr": "CDG" ,"end": "2020-03-01T07:50Z"},
+        {"stop": "3,05", "dep": "CDG", "start": "2020-03-01T10:50Z", "arr": "AMS" ,"end": "2020-03-01T12:05Z"},
+        {"stop": "0,93", "dep": "AMS", "start": "2020-03-01T13:00Z", "arr": "CDG" ,"end": "2020-03-01T14:05Z"}
+    ];
+    let rots1 = buildRots(flights1, {"base": ["CDG", "ORY"], "tzConverter": iso2FR, "iataMap": iata2country});
+    let rots2 = buildRots(flights2, {"base": ["CDG", "ORY"], "tzConverter": iso2FR, "iataMap": iata2country});
+    let rots = mergeRots([rots1, rots2], "2020", taxData, iso2FR);
+    expect(rots[0].days).toBe(2); // was 30
+});
