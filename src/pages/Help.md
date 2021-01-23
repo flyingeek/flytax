@@ -5,7 +5,7 @@
 
 ## Préambule
 
-Cette application a été conçue pour le PilotPad. Elle nécessite des navigateurs récents pour fonctionner&#8239;: Safari 14 iOS/Mac, Firefox 86, Chrome 87 et Microsoft Edge 87 sont compatibles.
+Cette application a été conçue pour le PilotPad (ios14). Elle nécessite des navigateurs récents pour fonctionner&#8239;: Safari 14 iOS/Mac, Firefox 86, Chrome 87 et Microsoft Edge 87 sont compatibles.
 Les PDF utilisés ne transitent sur aucun serveur, tout est calculé localement dans votre navigateur. L’app ne collecte aucune donnée. Tout est __100 % SECURE__.
 
 ## Objectifs
@@ -49,7 +49,7 @@ apparaître 👨🏻‍✈️ vous demandant d’autoriser cette mise à jour. I
 
 ## Données fiscales
 
-Sur <Link href="https://github.com/flyingeek/flytax">GitHub</Link> vous trouverez les liens vers les barèmes au format csv et tsv (Excel/Numbers) mais aussi
+Sur <Link href="https://github.com/flyingeek/flytax#donn%C3%A9es-fiscales">GitHub</Link> vous trouverez les liens vers les barèmes au format csv et tsv (Excel/Numbers) mais aussi
 les données json. En installant le code source sur votre ordinateur, vous pourrez générer ces fichiers. Lors
 de la compilation de l’application, les API de la Banque de France et des impôts sont utilisées.
 
