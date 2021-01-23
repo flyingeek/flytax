@@ -33,24 +33,24 @@ En cas d’anomalie, un pictogramme rouge apparaîtra en haut à droite, le cliq
 Air France fournit cette attestation soit dans le pdf de l’EP4 soit dans un fichier annexe. La publication se fait en général au mois de février,
 mais un correctif est susceptible d’être diffusé jusqu’en avril. En attendant ce document, __{@html htmlLogo}__ calcule une estimée du montant
 ce qui permet de donner un ordre de grandeur. L’estimation est modifiable. Une fois votre attestation reçue, vous pouvez soit indiquer son
-montant directement, soit glisser l’attestation dans la zone de dépôt. Merci sur vos retours concernant la fiabilité de l’estimation.
+montant directement, soit glisser l’attestation dans la zone de dépôt. Merci pour vos retours concernant la fiabilité de l’estimation.
 
 ## Choix de la base
 
-La base peut être modifiée pour chaque mois&#8239;: on choisit une base, on dépose les EP5 de cette base&#8239;;
-on change de base et l’on peut déposer les EP5 pour cette nouvelle base. En cas d’erreur, il est possible de changer de base et de recharger un EP5.
+La base peut être modifiée chaque mois&#8239;: on choisit une base, on dépose les EP5 de cette base&#8239;;
+on change de base et l’on peut déposer les EP5 pour cette nouvelle base. En cas d’erreur, il est possible de changer de base et de recharger les EP5.
 
 Le choix de la base se fait au-dessus de la zone de dépôt sur la page Frais de mission.
 
 ## Mise à jour
 
-__{@html htmlLogo}__ détecte les mises à jour automatiquement, normalement vous n’avez rien à faire. Éventuellement, un popup peut
+__{@html htmlLogo}__ détecte les mises à jour automatiquement. Éventuellement, un popup peut
 apparaître 👨🏻‍✈️ vous demandant d’autoriser cette mise à jour. Installer la mise à jour efface les résultats.
 
 ## Données fiscales
 
 Sur <Link href="https://github.com/flyingeek/flytax">GitHub</Link> vous trouverez les liens vers les barèmes au format csv et tsv (Excel/Numbers) mais aussi
-les données json. En installant le code source sur votre ordinateur, vous pourrez en plus générer ces fichiers. Lors
+les données json. En installant le code source sur votre ordinateur, vous pourrez générer ces fichiers. Lors
 de la compilation de l’application, les API de la Banque de France et des impôts sont utilisées.
 
 ## Crédits

@@ -7,7 +7,7 @@ export class Deferred {
     }
 }
 export const htmlLogo = '<span class="logo">Fly<span>Tax</span></span>';
-export const navigatorLocale = (typeof navigator !== "undefined" && navigator.languages) ? Intl.DateTimeFormat.supportedLocalesOf(Intl.NumberFormat.supportedLocalesOf(navigator.languages)).shift() : undefined;
+export const navigatorLocale = (typeof navigator !== "undefined" && navigator.languages) ? Array.from(Intl.DateTimeFormat.supportedLocalesOf(Intl.NumberFormat.supportedLocalesOf(navigator.languages))).shift() : undefined;
 export const months = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'];
 export const months14 = ['00', ...months, '13'];
 export const monthsfr = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
