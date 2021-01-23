@@ -5,7 +5,7 @@
 
 ## Préambule
 
-Cette application a été conçue pour le PilotPad (ios14). Elle nécessite des navigateurs récents pour fonctionner&#8239;: Safari 14 iOS/Mac, Firefox 86, Chrome 87 et Microsoft Edge 87 sont compatibles.
+Cette application a été conçue pour le PilotPad. Elle nécessite des navigateurs récents pour fonctionner&#8239;: Safari iOS13+/ Mac(Mojave/Catalina/Big Sur), Firefox 86, Chrome 87 et Microsoft Edge 87 sont compatibles.
 Les PDF utilisés ne transitent sur aucun serveur, tout est calculé localement dans votre navigateur. L’app ne collecte aucune donnée. Tout est __100 % SECURE__.
 
 ## Objectifs
@@ -45,7 +45,7 @@ Le choix de la base se fait au-dessus de la zone de dépôt sur la page Frais de
 ## Mise à jour
 
 __{@html htmlLogo}__ détecte les mises à jour automatiquement. Éventuellement, un popup peut
-apparaître 👨🏻‍✈️ vous demandant d’autoriser cette mise à jour. Installer la mise à jour efface les résultats.
+apparaître 👨🏻‍✈️ vous demandant d’autoriser cette mise à jour. Installer la mise à jour efface les résultats. Si le popup reste à l'écran, rafraichir la page ⟳.
 
 ## Données fiscales
 

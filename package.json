@@ -1,14 +1,15 @@
 {
   "name": "flytax",
-  "version": "0.9.15",
+  "version": "0.9.16",
   "type": "module",
   "scripts": {
     "build": "rollup -c",
     "dev": "rollup -c -w",
+    "dev2": "rollup -c -w --environment SERVE:start2",
     "test": "node --experimental-vm-modules --no-warnings node_modules/.bin/jest test",
     "watchTest": "node --experimental-vm-modules --no-warnings node_modules/.bin/jest test --watchAll",
     "start": "sirv public --port 5001",
-    "start2": "sirv public --http2 --key localhost-key.pem --cert localhost-cert.pem --host 0.0.0.0",
+    "start2": "sirv public --http2 --key localhost-key.pem --cert localhost-cert.pem --host 0.0.0.0 --port 5001",
     "clean": "rimraf public/**",
     "makeAirports": "node scripts/makeAirports.js",
     "makeData": "node scripts/makeData.js"
