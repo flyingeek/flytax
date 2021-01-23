@@ -43,7 +43,8 @@ function serve() {
     return {
         writeBundle() {
             if (server) return;
-            server = require('child_process').spawn('npm', ['run', 'start', '--', '--dev'], {
+            const command = (process.env.SERVE === 'start2') ? 'start2' : 'start';
+            server = require('child_process').spawn('npm', ['run', command, '--', '--dev'], {
                 stdio: ['ignore', 'inherit', 'inherit'],
                 shell: true
             });
@@ -172,7 +173,7 @@ export default [{
     resolve({
       browser: true
     }),
-    watchAssets({ assets: ['rollup.config.js', './public/css/bundle.css', './public/js/bundle.js'] }),
+    watchAssets({ assets: ['rollup.config.js', './public/css/bundle.css', './public/js/bundle.js', './package.json'] }),
     workbox({
       "globDirectory": "public/",
       "globPatterns": [
