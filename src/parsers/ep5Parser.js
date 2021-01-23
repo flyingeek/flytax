@@ -110,12 +110,12 @@ export const buildRots = (flights, {tzConverter, base, iataMap}) => {
             rotStays = [];
             rot = {"isComplete": "<>", "nights": [], "start": flight.start};
         }
-        if (i === 0 && ((isBase(flight.dep) && flight.stop === "0,00") || !isBase(flight.dep))) {
+        if (i === 0 && ((isBase(flight.dep) && flight.stop === "0,00" && flightGMT.start.substring(8, 10) === "01") || !isBase(flight.dep))) {
             rot.isComplete = '>';
-            rot.start = `${year}-${month}-01T00:00Z`;
-            if (tzConverter) rot.start = tzConverter(rot.start);
-            const days = numberOfDays(rot.start, flight.start) + 1;
             if (!isBase(flight.dep)) { //stopovers from first day of month
+                rot.start = `${year}-${month}-01T00:00Z`;
+                if (tzConverter) rot.start = tzConverter(rot.start);
+                const days = numberOfDays(rot.start, flight.start) + 1;
                 for (let j=0; j<days-1; j++) {
                     rot.nights.push(flight.dep);
                     rotStays.push(flight.dep)
@@ -484,7 +484,7 @@ export function* testIterator(data) {
 };
 
 export const mergeFlights = (flights1, flights2) => {
-    const f1 = flights1.map(f => Object.assign({...f}, {stop: 'xx,xx'})); // fix ludovic bug 30 ON Madrid
+    const f1 = [...flights1];
     const f2 = [...flights2];
     if (f2.length>0) {
         if (f2[0].stop==='0,00' && f1.length>0) {
