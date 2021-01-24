@@ -65,7 +65,7 @@ export default [{
         entryFileNames: U.CONF_BUNDLE_JS.replace('./', '')
     },
     plugins: [
-        watchAssets({ assets: ['./src/index.html', './package.json'] }),
+        watchAssets({ assets: ['./src/index.html'] }),
         replace({...U, ...{
             'APP_VERSION': version,
             'process.env.NODE_ENV': (production) ? JSON.stringify('production') : JSON.stringify('development')
@@ -173,7 +173,7 @@ export default [{
     resolve({
       browser: true
     }),
-    watchAssets({ assets: ['rollup.config.js', './public/css/bundle.css', './public/js/bundle.js', './package.json'] }),
+    watchAssets({ assets: ['rollup.config.js', './public/css/bundle.css', './public/js/bundle.js'] }),
     workbox({
       "globDirectory": "public/",
       "globPatterns": [
