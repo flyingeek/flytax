@@ -63,7 +63,7 @@ de la compilation de l’application, les API de la Banque de France et des imp�
 - Le mémento fiscal du SNPL et Bernard Pédamon pour son aide sur son interprétation
 - <Link href="https://github.com/mborsetti/airportsdata">airportsdata</Link> de Mike Borsetti
 - __{@html htmlLogo}__ est développé en JavaScript à l’aide du framework SVELTE
-- Éric Delord, CDB 777, est l’auteur. Le code source est disponible sur <Link href="https://github.com/flyingeek/flytax">GitHub</Link> sous licence GPLv3.0
+- Éric Delord, CDB 777, est l’auteur. Le code source est disponible sur <Link href="https://github.com/flyingeek/flytax">GitHub</Link>. L'application est sous <Link href="https://raw.githubusercontent.com/flyingeek/flytax/main/LICENSE.md">licence GPLv3.0</Link>, et l’article 15 précise&#8239;: THERE IS NO WARRANTY FOR THE PROGRAM.
 
 Vous pouvez me contacter sur l’email AF (erdelord@…) ou sur mon compte Twitter @flyingeek.
 
