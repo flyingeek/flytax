@@ -31,7 +31,9 @@ const U = {
     'CONF_BUNDLE_CSS': './css/bundle.css',
     'CONF_ABRILFATFACE_WOFF2': '../fonts/abril-fatface-v12-latin-ext_latin-regular.woff2', /* relative to public/css/bundle.css */
     'CONF_ABRILFATFACE_WOFF': '../fonts/abril-fatface-v12-latin-ext_latin-regular.woff',
-    'CONF_DATASET_URLS': Array.from(new Set(DATASET.map(o => o.url))).join(';')
+    'CONF_DATASET_URLS': Array.from(new Set(DATASET.map(o => o.url))).join(';'),
+    'CONF_FM_EXAMPLE_IMG': './img/fm_exemple.jpg',
+    'CONF_S_EXAMPLE_IMG': './img/s_exemple.jpg'
 };
 function serve() {
     let server;

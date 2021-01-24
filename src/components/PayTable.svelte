@@ -128,9 +128,51 @@
         </tr>
     </tfoot>
 </table>
+{:else}
+    <div class="illustration">
+        <picture>
+            <img src="CONF_S_EXAMPLE_IMG" alt="exemple de résultat sur iPad"/>
+        </picture>
+    </div>
 {/if}
 
 <style>
+    :global(picture img) {
+        max-width: 100%;
+        width:auto;
+        height:auto;
+    }
+    :global(.illustration::after) {
+        content: 'Exemple de résultat';
+        display: block;
+        padding: 2px 5px;
+        background-color: var(--redaf);
+        color: var(--background-color);
+        opacity: 0.9;
+        font-size: 1.5em;
+        font-weight: 500;
+        border-radius: 5px;
+        top: calc(30 * calc(100% / 1032));
+        position: absolute;
+        width: 220px;
+        left: 50%;
+        margin-left: -110px;
+    }
+    @media all and (min-width: 1032px) {
+        :global(picture img){
+            max-width: 800px;
+        }
+        :global(.illustration::after) {
+            font-size: 2em;
+            width: 300px;
+            margin-left: -150px;
+        }
+    }
+    :global(.illustration) {
+        margin: 1em auto 0 auto;
+        width: 80%;
+        position: relative;
+    }
     table.data.summary {
         table-layout: fixed;
         position: relative;

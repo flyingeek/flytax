@@ -7,6 +7,7 @@ const deprecatedCaches = ['flytax-data', 'flytax-data2', 'flytax-warmup'];
 const warmupCacheName = 'flytax-warmup2';
 const dataCacheName = 'flytax-data3';
 const iconsCacheName = 'flytax-icons';
+const imageCacheName = 'flytax-img';
 const SW_VERSION = 'APP_VERSION';
 let immediateClaimRequired = false;
 
@@ -30,6 +31,7 @@ const flytaxUrls = [
 ];
 const warmupUrls = thirdPartyUrls.concat(flytaxUrls);
 const dataUrls = 'CONF_DATASET_URLS'.split(';');
+const imageUrls = ['CONF_FM_EXAMPLE_IMG', 'CONF_S_EXAMPLE_IMG'];
 
 registerRoute(
     /.+\/(pdf\.min\.js|pdf\.worker\.min\.js|jspdf\..+min\.js|HelveticaUTF8\.ttf|abril-fatface-v12-latin-ext_latin-regular\.woff2?)$/,
@@ -41,6 +43,17 @@ registerRoute(
   ({url}) => url.pathname.match(/\/data\/data[0-9]{4}\.json/),
   new CacheFirst({
     cacheName: dataCacheName,
+    plugins: [
+      new ExpirationPlugin({
+        maxEntries: 6
+      })
+    ]
+  })
+);
+registerRoute(
+  ({url}) => url.pathname.match(/\/img\//),
+  new CacheFirst({
+    cacheName: imageCacheName,
     plugins: [
       new ExpirationPlugin({
         maxEntries: 6
@@ -97,6 +110,8 @@ self.addEventListener('install', (event) => {
         .then((cache) => addAll(cache, warmupUrls))
         .then(() => caches.open(dataCacheName))
         .then((cache) => addAll(cache, dataUrls))
+        .then(() => caches.open(imageCacheName))
+        .then((cache) => addAll(cache, imageUrls))
         .then(() => {
             if (immediateClaimRequired) {
               /* take control */

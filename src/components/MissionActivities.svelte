@@ -37,10 +37,17 @@
         </tfoot>
     </table>
     <MissionCountries tableId={tableIndemnitiesId}/>
+{:else}
+<div class="illustration">
+    <picture>
+        <img src="CONF_FM_EXAMPLE_IMG" alt="exemple de résultat sur iPad"/>
+    </picture>
+</div>
 {/if}
 
 
 <style>
+
 td:nth-child(5), th:nth-child(5){
     text-align: right;
     white-space: nowrap;
