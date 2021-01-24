@@ -25,6 +25,7 @@ Calculer rapidement, facilement, et sans partage de données&#8239;:
 - Changer d’année fiscale efface les résultats
 - L’application peut être installée sur l’écran d’accueil du PilotPad
 - __{@html htmlLogo}__ peut fonctionner en mode déconnecté
+- __flytax.fr__ (plus simple à mémoriser et à partager) redirige vers FLYTAX
 
 En cas d’anomalie, un pictogramme rouge apparaîtra en haut à droite, le cliquer affichera les détails. Si un message d’erreur apparaissait dans la table des résultats, merci de me contacter.
 
@@ -53,11 +54,26 @@ Sur <Link href="https://github.com/flyingeek/flytax#donn%C3%A9es-fiscales">GitHu
 les données json. En installant le code source sur votre ordinateur, vous pourrez générer ces fichiers. Lors
 de la compilation de l’application, les API de la Banque de France et des impôts sont utilisées.
 
+- <Link href="https://www.legifrance.gouv.fr/loda/id/LEGIARTI000042212803">Arrêté de 2006 fixant les taux des indemnités de mission</Link>
+- <Link href="http://www.fraispn.com/dlf.html" rel="noopener">La lettre de la DLF sur FraisPN</Link>
+- <Link href="http://www.fraispn.com/dlfannexe.html" rel="noopener">L’annexe à lettre de la DLF sur FraisPN</Link>
+
 ## Crédits
 
 - Le mémento fiscal du SNPL et Bernard Pédamon pour son aide sur son interprétation
 - <Link href="https://github.com/mborsetti/airportsdata">airportsdata</Link> de Mike Borsetti
 - __{@html htmlLogo}__ est développé en JavaScript à l’aide du framework SVELTE
-- Éric Delord, CDB 777, est l’auteur. Le code source est disponible sur <Link href="https://github.com/flyingeek/flytax">GitHub</Link>
+- Éric Delord, CDB 777, est l’auteur. Le code source est disponible sur <Link href="https://github.com/flyingeek/flytax">GitHub</Link> sous licence GPLv3.0
 
 Vous pouvez me contacter sur l’email AF (erdelord@…) ou sur mon compte Twitter @flyingeek.
+
+## Liens
+
+- <Link href="https://flyingeek.github.io/lido-online/index.html" rel="noopener">OFP2MAP</Link> affiche l'OFP sur une carte Lambert (même auteur)
+
+Les autres sites traitant des frais réels des PN (par ordre alphabétique):
+
+- <Link href="http://www.cafepn.com" rel="noopener">CaféPN</Link> (payant) (non sécurisé)
+- <Link href="http://www.fraispn.com/index.html" rel="noopener">FraisPN</Link> (non sécurisé)
+- <Link href="https://myconcorde.fr/" rel="noopener">MyConcorde</Link>
+- <Link href="https://nightstop.top/" rel="noopener">NightStop</Link>
