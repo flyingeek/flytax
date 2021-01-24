@@ -5,7 +5,7 @@
     import TaxYearSelect from '../components/TaxYearSelect.svelte';
 </script>
 <nav>
-    <a href="#/" class:active={$route=='/'}>{@html htmlLogo}<sup>beta</sup></a>
+    <a href="#/" class:active={$route=='/'}>{@html htmlLogo}<sup>.fr</sup></a>
     <a href="#/mission" class:active={$route=='/mission'}>Frais De Mission</a>
     <a href="#/pay" class:active={$route=='/pay'}>Salaire</a>
     <a href="#/help" class:active={$route=='/help'}>Aide</a>
@@ -27,6 +27,12 @@
         font-weight: normal;
         margin-left: 4px;
         font-size: xx-small;
+    }
+    a[href="#/"] sup{
+        background-color: var(--blueaf);
+        font-size: x-small;
+        font-weight: bold;
+        margin-left: 2px;
     }
     nav {
         display: flex;
