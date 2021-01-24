@@ -28,8 +28,8 @@ const flytaxUrls = [
     'CONF_ABRILFATFACE_WOFF2'.replace('../','./'), /* was relative to bundle.css */
     'CONF_ABRILFATFACE_WOFF'.replace('../','./')
 ];
+const warmupUrls = thirdPartyUrls.concat(flytaxUrls);
 const dataUrls = 'CONF_DATASET_URLS'.split(';');
-const allUrls = thirdPartyUrls.concat(flytaxUrls);
 
 registerRoute(
     /.+\/(pdf\.min\.js|pdf\.worker\.min\.js|jspdf\..+min\.js|HelveticaUTF8\.ttf|abril-fatface-v12-latin-ext_latin-regular\.woff2?)$/,
@@ -90,16 +90,16 @@ self.addEventListener('install', (event) => {
     event.waitUntil(
         caches.keys()
         .then(cacheNames => {
-          if(cacheNames.includes('flytax-warmup')) immediateClaimRequired = true;
+          // if(cacheNames.includes('flytax-warmup')) immediateClaimRequired = true; /* removed: bug did not exist */
           return Promise.resolve();
         })
         .then(() => caches.open(warmupCacheName))
-        .then((cache) => addAll(cache, allUrls))
+        .then((cache) => addAll(cache, warmupUrls))
         .then(() => caches.open(dataCacheName))
         .then((cache) => addAll(cache, dataUrls))
         .then(() => {
             if (immediateClaimRequired) {
-              /* bug fix old version */
+              /* take control */
               self.skipWaiting();
             }
             return Promise.resolve();
@@ -146,7 +146,7 @@ self.addEventListener('activate', function(event) {
         });
     }).then(() => {
       if (immediateClaimRequired) {
-        // (bug fix for previous workers)
+        // claim and reload
         self.registration.unregister() 
         .then(() => self.clients.matchAll()) 
         .then((clients) => {
