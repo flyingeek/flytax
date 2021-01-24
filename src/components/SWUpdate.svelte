@@ -1,6 +1,6 @@
 <script context="module">
     import {writable} from 'svelte/store';
-    export const swDismiss = writable(false);
+    import {swDismiss} from '../stores';
     export const swUpdated = writable(false);
     export const wb = writable();
     export const swRegistration = writable();
@@ -15,10 +15,19 @@
     $swDismiss = false;
     const install = () => {
         // $swRegistration.waiting check is needed to the 'reload the page' fallback
+        let refreshing;
         if ($wb && $swRegistration && $swRegistration.waiting) {
-            $wb.addEventListener('controlling', () => {
+            navigator.serviceWorker.addEventListener('controllerchange', () => {
+                if (refreshing) return;
+                refreshing = true;
                 window.location.reload();
             });
+            // This does not fire sometimes...
+            // $wb.addEventListener('controlling', () => {
+            //     if (refreshing) return;
+            //     refreshing = true;
+            //     window.location.reload();
+            // });
             installLabel = "En cours...";
             $wb.messageSkipWaiting();
         }else{ /* update probably done in another tab */
