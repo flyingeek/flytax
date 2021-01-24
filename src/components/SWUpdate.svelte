@@ -8,7 +8,6 @@
         swUpdated.set(true);
         swDismiss.set(false);
     };
-
 </script>
 <script>
     import { fade } from 'svelte/transition';
@@ -21,7 +20,7 @@
                 window.location.reload();
             });
             installLabel = "En cours...";
-            $swRegistration.waiting.postMessage({type: 'SKIP_WAITING'});
+            $wb.messageSkipWaiting();
         }else{ /* update probably done in another tab */
             window.location.reload();
         }
