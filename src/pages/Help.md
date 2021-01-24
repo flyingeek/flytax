@@ -32,7 +32,7 @@ En cas d’anomalie, un pictogramme rouge apparaîtra en haut à droite, le cliq
 ## Attestation des nuitées AF
 
 Air France fournit cette attestation soit dans le pdf de l’EP4 soit dans un fichier annexe. La publication se fait en général au mois de février,
-mais un correctif est susceptible d’être diffusé jusqu’en avril. En attendant ce document, __{@html htmlLogo}__ calcule une estimée du montant
+mais un correctif est susceptible d’être diffusé jusqu’en avril. En attendant ce document, __{@html htmlLogo}__ estime le montant
 ce qui permet de donner un ordre de grandeur. L’estimation est modifiable. Une fois votre attestation reçue, vous pouvez soit indiquer son
 montant directement, soit glisser l’attestation dans la zone de dépôt. Merci pour vos retours concernant la fiabilité de l’estimation.
 
@@ -45,7 +45,7 @@ Le choix de la base se fait au-dessus de la zone de dépôt sur la page Frais de
 
 ## Mise à jour
 
-__{@html htmlLogo}__ détecte les mises à jour automatiquement. Éventuellement, un popup peut
+__{@html htmlLogo}__ se met à jour automatiquement. Éventuellement, un popup peut
 apparaître 👨🏻‍✈️ vous demandant d’autoriser cette mise à jour. Installer la mise à jour efface les résultats. Si le popup reste à l'écran, rafraichir la page ⟳.
 
 ## Données fiscales
