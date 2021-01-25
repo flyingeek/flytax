@@ -152,27 +152,28 @@
         background-color: var(--green);
         color: var(--background-color);
         opacity: 0.9;
-        font-size: 1.5em;
-        font-weight: 500;
+        font-size: 1.2em;
         border-radius: 5px;
-        top: calc(30 * calc(100% / 1032));
+        top: calc(34 * calc(100% / 1032));
         position: absolute;
         width: 220px;
         left: 50%;
         margin-left: -110px;
+        text-transform: uppercase;
+        font-weight: 200;
     }
     @media all and (min-width: 1032px) {
         :global(picture img){
             max-width: 800px;
         }
         :global(.illustration::after) {
-            font-size: 2em;
+            font-size: 1.5rem;
             width: 300px;
             margin-left: -150px;
         }
     }
     :global(.illustration) {
-        margin: 1em auto 0 auto;
+        margin: 50px auto 0 auto;
         width: 80%;
         position: relative;
     }

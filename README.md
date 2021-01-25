@@ -1,4 +1,4 @@
-# <span style="color:#002157">FLY</span><span style="color:#FA3C35">TAX</span>
+# ![FLYTAX](https://github.com/flyingeek/flytax/blob/main/assets/flytax-icons/72px.png?raw=true)
 
 Une aide au calcul des impôts pour les PNT AF qui ne transfère aucune données sur Internet. L'app calcule notamment les frais réels à partir des EP4/EP5.
 

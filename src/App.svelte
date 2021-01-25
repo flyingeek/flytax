@@ -57,12 +57,12 @@
         --blueaf: #002157; /* --royal-blue-dark */
         --blueaf_rgb: 9,34,84; /* rgba(var(--blueaf_rgb), 0.5) is valid */
         --redaf:#FA3C35; /* --tart-orange */
-        --blood-red: #6B0504;
+        --blood-red: #6B0504; /* for visited links */
         --green: #2CA58D; /* #28a745 */;
         --snow: #FFFBFF;
         --minion-yellow: #ECD444;
         --light-grey: #eee; /* used to print tables */
-        --maximum-yellow-red: #FCBF49;
+        --maximum-yellow-red: #FCBF49; /* used for warnings in LogWindow */
         /*--light-blue: rgb(213,226,242);/*#4EA5D9*/
         /* --pink: #e83e8c; */
         /*--white: #ffFBff;*/
@@ -184,7 +184,7 @@
     :global(th, td) {
         padding: 0.25rem;
         text-align: left;
-        border: 1px solid #ccc;
+        border: 1px solid var(--table-border-color);
     }
     /*******/
     /* SVG */
