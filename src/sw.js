@@ -3,11 +3,11 @@ import {registerRoute} from 'workbox-routing';
 import {StaleWhileRevalidate, CacheFirst} from 'workbox-strategies';
 import {ExpirationPlugin} from 'workbox-expiration';
 
-const deprecatedCaches = ['flytax-data', 'flytax-data2', 'flytax-warmup'];
+const deprecatedCaches = ['flytax-data', 'flytax-data2', 'flytax-warmup', 'flytax-img'];
 const warmupCacheName = 'flytax-warmup2';
 const dataCacheName = 'flytax-data3';
 const iconsCacheName = 'flytax-icons';
-const imageCacheName = 'flytax-img';
+const imageCacheName = 'flytax-img2';
 const SW_VERSION = 'APP_VERSION';
 let immediateClaimRequired = false;
 

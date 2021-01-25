@@ -4,9 +4,15 @@
     import PayPage from './pages/PayPage.svelte';
     import HelpPage from './pages/HelpPage.svelte';
     import LogWindow from './components/LogWindow.svelte';
-    import {route} from './stores';
+    import {route, handleVisibilityChange} from './stores';
     import NavBar from './components/Navbar.svelte';
     import SWUpdate from './components/SWUpdate.svelte';
+    import {onMount} from 'svelte';
+
+    onMount(() => {
+        document.addEventListener("visibilitychange", handleVisibilityChange, false);
+        return () => document.removeEventListener("visibilitychange", handleVisibilityChange);
+    });
 </script>
 
 <svg style="display: none;">
@@ -17,6 +23,11 @@
             <path id="point" d="M11 16h2v2h-2z"/>
             <path id="stroke" d="M13.516 10h-3l.484 5h2z"/>
             <path id="triangle" d="M12.017 5.974l7.519 13.026h-15.04l7.521-13.026m0-2.474c-.544 0-1.088.357-1.5 1.071l-7.985 13.831c-.825 1.429-.15 2.598 1.5 2.598h15.968c1.65 0 2.325-1.169 1.5-2.599l-7.983-13.829c-.413-.715-.956-1.072-1.5-1.072z"/>
+    </symbol>
+    <symbol id="share" viewBox="0 0 50 50">
+        <path d="M30.3 13.7L25 8.4l-5.3 5.3-1.4-1.4L25 5.6l6.7 6.7z"/>
+        <path d="M24 7h2v21h-2z"/>
+        <path d="M35 40H15c-1.7 0-3-1.3-3-3V19c0-1.7 1.3-3 3-3h7v2h-7c-.6 0-1 .4-1 1v18c0 .6.4 1 1 1h20c.6 0 1-.4 1-1V19c0-.6-.4-1-1-1h-7v-2h7c1.7 0 3 1.3 3 3v18c0 1.7-1.3 3-3 3z"/>
     </symbol>
 </svg>
 

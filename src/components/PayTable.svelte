@@ -131,6 +131,7 @@
 {:else}
     <div class="illustration">
         <picture>
+            <!-- <source srcset="CONF_S_EXAMPLE_WEBP" type="image/webp"> -->
             <img src="CONF_S_EXAMPLE_IMG" alt="exemple de résultat sur iPad"/>
         </picture>
     </div>
