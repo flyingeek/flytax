@@ -20,7 +20,7 @@
             navigator.serviceWorker.addEventListener('controllerchange', () => {
                 if (refreshing) return;
                 refreshing = true;
-                window.location.reload();
+                setTimeout(() => window.location.reload(), 600); /* attempt to remove successive prompts*/
             });
             // This does not fire sometimes...
             // $wb.addEventListener('controlling', () => {

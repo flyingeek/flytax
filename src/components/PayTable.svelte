@@ -60,11 +60,16 @@
     <col class="col3" />
 <thead>
     <tr>
-        <th colspan="3">Comparatif {$taxYear}</th>
+        <th colspan="3">
+            Comparatif {$taxYear}
+            {#if (!$nuiteesInput || $nuiteesInput == nightsCostEstimate)}
+                <div class="estimate" transition:fade|local><small>basé sur une estimation des nuitées à ±10%</small></div>
+            {/if}
+        </th>
     </tr>
     <tr>
         <th>Nuitées AF</th>
-        <th>Frais&nbsp;de&nbsp;Mission -&nbsp;Nuitées -&nbsp;Frais&nbsp;d'emploi</th>
+        <th>Frais&nbsp;de&nbsp;Mission -&nbsp;Nuitées -&nbsp;Frais&nbsp;d’emploi</th>
         <th>Abattement de 10% plafonné</th>
     </tr>
     {#if $taxYear !== $taxData.year}
@@ -75,9 +80,6 @@
     <tr>
         <td>
             <input name="nuitees" type="number" disabled={!!$nuiteesAF} bind:value="{$nuiteesInput}" min="0" step="100" placeholder="{($nuiteesAF) ? $nuiteesAF : nightsCostEstimate}"/>
-            {#if (!$nuiteesInput || $nuiteesInput == nightsCostEstimate)}
-            <div class="estimate" transition:fade|local><small>estimation des nuitées à ±10%</small></div>
-            {/if}
         </td>
         <td>{$fraisDeMission} - {parseFloat($nuiteesAF || $nuiteesInput || nightsCostEstimate).toFixed(0)} - {parseFloat(totalFrais).toFixed(0)} = {fraisReels.toFixed(0)} €</td>
         <td>{abbattement.toFixed(0)} €</td>
@@ -99,7 +101,7 @@
 <table class="data" id={tableId}>
     <thead>
         <tr><th colspan="5">Détails des salaires {$taxYear}</th></tr>
-        <tr><th>Mois</th><th>Montant imposable</th><th>Cumul imposable</th><th>Frais d'emploi ¹</th><th>Découchers F PRO ²</th></tr>
+        <tr><th>Mois</th><th>Montant imposable</th><th>Cumul imposable</th><th>Frais d’emploi ¹</th><th>Découchers F PRO ²</th></tr>
     </thead>
     <tbody>
         {#each months as month, i}
@@ -121,7 +123,7 @@
     </tbody>
     <tfoot>
         <tr>
-            <td colspan="5">1. Les Frais d'emploi commprennent les lignes IND.REPAS, INDEMNITE REPAS, IND. TRANSPORT, FRAIS REELS TRANSP, R. FRAIS DE TRANSPORT du bulletin de paye.</td>
+            <td colspan="5">1. Les Frais d’emploi commprennent les lignes IND.REPAS, INDEMNITE REPAS, IND. TRANSPORT, FRAIS REELS TRANSP, R. FRAIS DE TRANSPORT du bulletin de paye.</td>
         </tr>
         <tr>
             <td colspan="5">2. Cette colonne doit être substituée par le décompte des frais réels engagés par AF pour les nuitées.</td>
@@ -147,7 +149,7 @@
         content: 'Exemple de résultat';
         display: block;
         padding: 2px 5px;
-        background-color: var(--redaf);
+        background-color: var(--green);
         color: var(--background-color);
         opacity: 0.9;
         font-size: 1.5em;
@@ -176,7 +178,6 @@
     }
     table.data.summary {
         table-layout: fixed;
-        position: relative;
     }
     :global(table.data.summary tfoot td) {
         font-size: initial;
@@ -187,9 +188,15 @@
     .col2 {
         width: 50%;
     }
+    :global(table.data.summary thead th:first-child) {
+        position: relative;
+    }
+    @media all and (min-width: 770px) {
+        .estimate small { width: 240px !important;}
+    }
     .estimate{
         position: absolute;
-        top: 0px;
+        bottom: 0px;
         left: 0px;
     }
     .estimate small {

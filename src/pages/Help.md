@@ -12,10 +12,10 @@ Les PDF utilisés ne transitent sur aucun serveur, tout est calculé localement 
 
 Calculer rapidement, facilement, et sans partage de données&#8239;:
 
-- Le décompte des frais de mission, conformément à la méthodologie et aux conventions de calcul du SNPL
-- Les frais d’emploi des PN qui doivent s’ajouter aux revenus
-- Une estimation du montant des nuitées payées par AF
-- La différence entre (Frais de Mission - Nuitées - Frais d’emploi) et un abattement de 10 % plafonné
+- le décompte des frais de mission, conformément à la méthodologie et aux conventions de calcul du SNPL
+- les frais d’emploi des PN qui doivent s’ajouter aux revenus
+- une estimation du montant des nuitées payées par AF
+- la différence entre (Frais de Mission - Nuitées - Frais d’emploi) et un abattement de 10 % plafonné
 
 ## Utilisation/astuces
 
@@ -23,11 +23,11 @@ Calculer rapidement, facilement, et sans partage de données&#8239;:
 - Vous pouvez déposer les PDF indifféremment sur la page Salaire ou la page Frais de mission
 - Le symbole ▶ signale des informations additionnelles accessibles soit au survol de la souris, soit en cliquant sur la ligne
 - Changer d’année fiscale efface les résultats
-- L’application peut être installée sur l’écran d’accueil du PilotPad via le menu «&#8239;partage&#8239;» <svg style="width: 20px; display: inline-block; height: 20px; vertical-align: bottom;"><use xlink:href="#share"/></svg> de Safari
+- L’application peut être installée sur l’écran d’accueil du PilotPad via le menu «&#8239;partage&#8239;» <svg style="width: 1em; display: inline-block; height: 1em; vertical-align: bottom;"><use xlink:href="#share"/></svg> de Safari
 - __{@html htmlLogo}__ peut fonctionner en mode déconnecté
 - __flytax.fr__ (plus simple à mémoriser et à partager) redirige vers FLYTAX
 
-En cas d’anomalie, un pictogramme rouge apparaîtra en haut à droite, le cliquer affichera les détails. Si un message d’erreur apparaissait dans la table des résultats, merci de me contacter.
+En cas d’anomalie, le pictogramme <svg style="width: 1em; display: inline-block; height: 1em; vertical-align: text-top; fill:red"><use xlink:href="#alert"/></svg> apparaîtra en haut à droite, le cliquer affichera les détails. Si un message d’erreur apparaissait dans la table des résultats, merci de me contacter.
 
 ## Attestation des nuitées AF
 
