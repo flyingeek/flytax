@@ -1,6 +1,9 @@
 <script>
-    import {taxYear, DATASET, taxData} from "../stores";
-    const change = () => $taxData; //force preload
+    import {taxYear, DATASET, taxData, swDismiss} from "../stores";
+    const change = () => {
+        $taxData; //force preload
+        $swDismiss = false; // show popup update again
+    };
 </script>
 <label class="select">
 <!-- svelte-ignore a11y-no-onchange -->

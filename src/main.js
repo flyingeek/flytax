@@ -1,6 +1,7 @@
 import App from './App.svelte';
 import {Workbox} from 'workbox-window';
-import {showSkipWaitingPrompt, wb, swRegistration} from './components/SWUpdate.svelte';
+import {showSkipWaitingPrompt, swRegistration} from './components/SWUpdate.svelte';
+import {wb} from './stores';
 
 
 let appError = false;
@@ -31,6 +32,7 @@ try {
             }else{
                 //console.log('Updated Service worker installed');
             }
+            //console.log('Updated Service worker installed', event.isUpdate, event.isExternal)
         });
         workbox.addEventListener('activated', (event) => {
             // `event.isUpdate` will be true if another version of the service
@@ -43,6 +45,7 @@ try {
             }else{
                 //console.log('Updated Service worker activated');
             }
+            //console.log('Updated Service worker activated', event.isUpdate, event.isExternal)
         });
         workbox.addEventListener('waiting', (event) => {
             //console.log(`A new service worker has installed, but it can't activate` +
@@ -53,6 +56,7 @@ try {
                 });
                 workbox.messageSkipWaiting();
             }else{
+                //console.log('Updated Service worker waiting ', event.isUpdate, event.isExternal);
                 showSkipWaitingPrompt();
             }
         });

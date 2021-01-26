@@ -2,7 +2,7 @@
     import Link from '../components/Link.svelte';
     import HelpMarkup from '../pages/Help.md';
     import { htmlLogo } from '../components/utils';
-    import {wb} from '../components/SWUpdate.svelte';
+    import {wb} from '../stores';
     const version = "APP_VERSION";
     let swVersion = '';
     const updateVersion = (_wb) => (_wb) ? _wb.messageSW({type: 'GET_VERSION'}).then(v => swVersion = v) : '';

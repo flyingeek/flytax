@@ -124,13 +124,14 @@ export const online = readable({}, set => {
 });
 
 export const swDismiss = writable(false);
+export const wb = writable();
 let swLastUpdateDate = new Date();
 export const checkSWUpdate = () => {
     if ('serviceWorker' in navigator) {
         if ((new Date() - swLastUpdateDate) > 900000) { /* 15mn */
             navigator.serviceWorker.getRegistration().then(reg => {
                 if (reg) {
-                    reg.update();
+                    if (!reg.waiting) reg.update();
                     swDismiss.set(false);
                     swLastUpdateDate = new Date();
                 }

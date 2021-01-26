@@ -172,7 +172,7 @@ self.addEventListener('activate', function(event) {
           });
         });
       }else{
-        self.clients.claim();
+        return self.clients.claim();
       }
     })
   );

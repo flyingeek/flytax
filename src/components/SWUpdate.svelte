@@ -1,8 +1,7 @@
 <script context="module">
     import {writable} from 'svelte/store';
-    import {swDismiss} from '../stores';
+    import {swDismiss, wb} from '../stores';
     export const swUpdated = writable(false);
-    export const wb = writable();
     export const swRegistration = writable();
     export const showSkipWaitingPrompt = () => {
         swUpdated.set(true);
@@ -20,14 +19,14 @@
             navigator.serviceWorker.addEventListener('controllerchange', () => {
                 if (refreshing) return;
                 refreshing = true;
-                setTimeout(() => window.location.reload(), 600); /* attempt to remove successive prompts*/
+                window.location.reload();
             });
-            // This does not fire sometimes...
-            // $wb.addEventListener('controlling', () => {
-            //     if (refreshing) return;
-            //     refreshing = true;
-            //     window.location.reload();
-            // });
+            //This does not fire when Workbox mark event as isExternal
+            $wb.addEventListener('controlling', () => {
+                if (refreshing) return;
+                refreshing = true;
+                window.location.reload();
+            });
             installLabel = "En cours...";
             $wb.messageSkipWaiting();
         }else{ /* update probably done in another tab */
