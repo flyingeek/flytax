@@ -1,12 +1,10 @@
-[![Gitpod ready-to-code](https://img.shields.io/badge/Gitpod-ready--to--code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/flyingeek/flytax)
-
 # ![FLYTAX](https://github.com/flyingeek/flytax/blob/main/assets/flytax-icons/72px.png?raw=true)
 
 Une aide au calcul des impôts pour les PNT AF qui ne transfère aucune données sur Internet. L'app calcule notamment les frais réels à partir des EP4/EP5.
 
 Rendez-vous sur [FLYTAX](https://flyingeek.github.io/flytax/) pour utiliser l'app. Mais continuez à lire si vous êtes un développeur ou si vous souhaitez accèder aux données brutes.
 
-## Installation
+## Installation [![Gitpod ready-to-code](https://img.shields.io/badge/Gitpod-ready--to--code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/flyingeek/flytax)
 
 ```bash
 npm ci
@@ -31,6 +29,8 @@ Pour lancer les tests unitaires
 npm run test
 ```
 
+_Note: cliquer sur le badge Gitpod permet de lancer un VSCode dans le cloud, prêt-à-coder_
+
 ## Création/Mise à jour des fichiers data
 
 Pour les aéroports, (conversion IATA -> PAYS)
@@ -41,7 +41,7 @@ npm run makeAirports
 
 Pour les données fiscales, il faut obtenir un accès à l'[API de la Banque de France](http://developer.webstat.banque-france.fr)
 
-Ensuite il faut créer un fichier .env contenant en utilisant cette clé
+Ensuite il faut créer un fichier .env contenant en utilisant cette clé. Pour Gitpod.io il suffit d'ajouter une variable d'environnement nommée BNF_CLIENT_ID dans les settings de Gitpod.
 
 ```bash
 echo "BNF_CLIENT_ID=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" > .env
