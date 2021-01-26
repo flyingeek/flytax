@@ -29,6 +29,8 @@ Pour lancer les tests unitaires
 npm run test
 ```
 
+Pour les spécificités du développement avec preview sur l'iPad voir [#iPad](#ipad)
+
 _Note: cliquer sur le badge Gitpod permet de lancer un VSCode dans le cloud, prêt-à-coder_
 
 ## Création/Mise à jour des fichiers data
@@ -169,6 +171,48 @@ const findAmountEuros = (countryData, isoDate, exrData) => {
     }
 };
 ```
+
+## iPad
+
+Pour afficher le site de dev sur l'iPad, il faut ouvrir les ports de sirv sur l'extérieur. Comme de plus nous
+avons besoin du https pour que le ServiceWorker puisse fonctionner, il faut:
+
+- installer des certificats sur le Mac
+
+```sh
+# Placez vous dans le répertoire de dev
+$ pwd
+/Users/eric/Dev/flytax
+
+# génération des certificats
+$ openssl req -x509 -newkey rsa:2048 -nodes -sha256 -subj '/CN=localhost' \
+  -keyout localhost-key.pem -out localhost-cert.pem
+
+# il nous faut les utilitaires mkcert et pour Firefox nss
+$ brew install mkcert
+$ brew install nss
+
+# on installe l'autorité de certification
+$ mkcert -install
+Sudo password:
+The local CA is now installed in the system trust store! ⚡️
+The local CA is already installed in the Firefox trust store! 👍
+
+# on signe par l'autorité nos certificats
+# (remplacez 192.168.1.103 par l'ip de votre ordinateur de dev)
+$ mkcert -key-file localhost-key.pem -cert-file localhost-cert.pem \
+localhost 127.0.0.1 0.0.0.0 192.168.1.103
+
+```
+
+- installer le certificat de l'autorité sur l'iPad:
+
+Sur le Mac, ouvrez le trousseau d'accès Système et exportez via Airdrop le certificat nommé mkcert sur l'iPad
+
+Sur l'iPad, accepter le certificat puis Réglages/Général/Gestion des profils: Installer le profil mkcert,
+puis Réglages/Informations/Réglage des certificats, activer la confiance pour mkcert
+
+- ensuite il suffit d'utiliser les commandes `npm run start2` ou `npm run dev2`
 
 ## Publication du site sur GitHub Pages
 
