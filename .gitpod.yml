@@ -2,7 +2,7 @@ image: gitpod/workspace-full
 
 tasks:
   - init: npm ci && npm run build && npm run test
-    command: npm run start
+    command: npm run dev
 
 vscode:
   extensions:
