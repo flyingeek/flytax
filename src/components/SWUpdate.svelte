@@ -17,12 +17,14 @@
         let refreshing;
         if ($wb && $swRegistration && $swRegistration.waiting) {
             navigator.serviceWorker.addEventListener('controllerchange', () => {
+                console.debug('controller change')
                 if (refreshing) return;
                 refreshing = true;
                 window.location.reload();
             });
             //This does not fire when Workbox mark event as isExternal
             $wb.addEventListener('controlling', () => {
+                console.debug('controlling')
                 if (refreshing) return;
                 refreshing = true;
                 window.location.reload();
@@ -30,6 +32,7 @@
             installLabel = "En cours...";
             $wb.messageSkipWaiting();
         }else{ /* update probably done in another tab */
+            console.debug('no reg.waiting')
             window.location.reload();
         }
     }
