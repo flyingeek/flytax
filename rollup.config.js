@@ -21,7 +21,8 @@ const relPath = (url) => url.replace('./', './public/'); // public path for a lo
 //For adding/remove year, change DATASET is src/stores.js
 
 const U = {
-    //'CONF_BOOTSTRAP_CSS': 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/css/bootstrap.min.css',
+    'APP_VERSION': version,
+    'process.env.NODE_ENV': (production) ? JSON.stringify('production') : JSON.stringify('development'),
     'CONF_PDFJS_WORKER_JS': 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.4.456/pdf.worker.min.js',
     'CONF_PDFJS_JS': 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.4.456/pdf.min.js',
     'CONF_JSPDF_JS': 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.2.0/jspdf.umd.min.js',
@@ -71,10 +72,7 @@ export default [{
     },
     plugins: [
         watchAssets({ assets: ['./src/index.html'] }),
-        replace({...U, ...{
-            'APP_VERSION': version,
-            'process.env.NODE_ENV': (production) ? JSON.stringify('production') : JSON.stringify('development')
-        }}),
+        replace({...U}),
         svelte({
             compilerOptions: {
                 // enable run-time checks when not in production
@@ -107,7 +105,7 @@ export default [{
             flatten: false,
             copyOnce: true,
             verbose: true
-          }),
+        }),
         copy({
             targets: [
                 {
@@ -157,40 +155,37 @@ export default [{
     plugins: [html({
         minify: false,
         transform: [
-          htmlString => Mustache.render(htmlString, U)
+            htmlString => Mustache.render(htmlString, U)
         ],
     })],
 },
 {
-  input: 'src/sw.js',
-  output: {
-    sourcemap: true,
-    format: 'iife',
-    name: 'sw',
-    file: 'public/sw.js'
-  },
-  plugins: [
-    replace({...U, ...{
-        'APP_VERSION': version,
-        'process.env.NODE_ENV': (production) ? JSON.stringify('production') : JSON.stringify('development')
-    }}),
-    commonjs(),
-    resolve({
-      browser: true
-    }),
-    watchAssets({ assets: ['rollup.config.js', './public/css/bundle.css', './public/js/bundle.js'] }),
-    workbox({
-      "globDirectory": "public/",
-      "globPatterns": [
-        "index.html",
-        "css/bundle.css",
-        "js/bundle.js"
-      ]
-    }),
-    production && terser()
-  ],
-  watch: {
-      clearScreen: false,
-      include: []
-  }
+    input: 'src/sw.js',
+    output: {
+        sourcemap: true,
+        format: 'iife',
+        name: 'sw',
+        file: 'public/sw.js'
+    },
+    plugins: [
+        replace({...U}),
+        commonjs(),
+        resolve({
+            browser: true
+        }),
+        watchAssets({ assets: ['rollup.config.js', './public/css/bundle.css', './public/js/bundle.js'] }),
+        workbox({
+            "globDirectory": "public/",
+            "globPatterns": [
+                "index.html",
+                "css/bundle.css",
+                "js/bundle.js"
+            ]
+        }),
+        production && terser()
+    ],
+    watch: {
+        clearScreen: false,
+        include: []
+    }
 }];
