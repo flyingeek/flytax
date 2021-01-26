@@ -1,3 +1,5 @@
+[![Gitpod ready-to-code](https://img.shields.io/badge/Gitpod-ready--to--code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/flyingeek/flytax)
+
 # ![FLYTAX](https://github.com/flyingeek/flytax/blob/main/assets/flytax-icons/72px.png?raw=true)
 
 Une aide au calcul des impôts pour les PNT AF qui ne transfère aucune données sur Internet. L'app calcule notamment les frais réels à partir des EP4/EP5.
