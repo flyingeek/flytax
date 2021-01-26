@@ -23,9 +23,9 @@ Calculer rapidement, facilement, et sans partage de données&#8239;:
 - Vous pouvez déposer les PDF indifféremment sur la page Salaire ou la page Frais de mission
 - Le symbole ▶ signale des informations additionnelles accessibles soit au survol de la souris, soit en cliquant sur la ligne
 - Changer d’année fiscale efface les résultats
-- L’application peut être installée sur l’écran d’accueil du PilotPad via le menu «&#8239;partage&#8239;» <svg style="width: 1em; display: inline-block; height: 1em; vertical-align: bottom;"><use xlink:href="#share"/></svg> de Safari
+<!-- - L’application peut être installée sur l’écran d’accueil du PilotPad via le menu «&#8239;partage&#8239;» <svg style="width: 1em; display: inline-block; height: 1em; vertical-align: bottom;"><use xlink:href="#share"/></svg> de Safari -->
+- __flytax.fr__ (plus simple à mémoriser et à partager) redirige vers __{@html htmlLogo}__
 - __{@html htmlLogo}__ peut fonctionner en mode déconnecté
-- __flytax.fr__ (plus simple à mémoriser et à partager) redirige vers FLYTAX
 
 En cas d’anomalie, le pictogramme <svg style="width: 1em; display: inline-block; height: 1em; vertical-align: text-top; fill:red"><use xlink:href="#alert"/></svg> apparaîtra en haut à droite, le cliquer affichera les détails. Si un message d’erreur apparaissait dans la table des résultats, merci de me contacter.
 
