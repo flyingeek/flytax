@@ -13,7 +13,7 @@
 <main>
     <section class='markdown'>
         <h1>{@html htmlLogo} v{version} 
-            <small>/ ServiceWorker&#8239;: {swVersion}</small>
+            <small on:click|once={() => $wb.update()}>/ ServiceWorker&#8239;: {swVersion}</small>
             {#if $wb}{#await $wb.active then ok}<small>/ mode déconnecté disponible</small>{/await}{/if}
         </h1>
         <HelpMarkup/>
