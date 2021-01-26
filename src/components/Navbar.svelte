@@ -5,7 +5,7 @@
     import TaxYearSelect from '../components/TaxYearSelect.svelte';
 </script>
 <nav>
-    <a href="#/" class:active={$route=='/'}>{@html htmlLogo}<sup>.fr</sup></a>
+    <a href="#/" class:active={$route=='/'}>{@html htmlLogo}<sup>{('process.env.NODE_ENV' !== '"development"') ? '.fr' : '.dev'}</sup></a>
     <a href="#/mission" class:active={$route=='/mission'}>Frais De Mission</a>
     <a href="#/pay" class:active={$route=='/pay'}>Salaire</a>
     <a href="#/help" class:active={$route=='/help'}>Aide</a>
