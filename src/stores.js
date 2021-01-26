@@ -142,7 +142,7 @@ export const checkSWUpdate = () => {
 export const handleVisibilityChange = () =>{
     if (document && document.visibilityState && document.visibilityState === 'visible') {
         //console.debug('handleVisibilityChange: visible');
-        checkSWUpdate();
+        window.setTimeout(checkSWUpdate, 2000);
     }
 }
 
