@@ -32,7 +32,7 @@ try {
             }else{
                 //console.log('Updated Service worker installed');
             }
-            console.debug('Updated Service worker installed', event.isUpdate, event.isExternal)
+            //console.debug('Updated Service worker installed ', event.isUpdate, event.isExternal)
         });
         workbox.addEventListener('activated', (event) => {
             // `event.isUpdate` will be true if another version of the service
@@ -44,7 +44,10 @@ try {
             }else{
                 //console.log('Updated Service worker activated');
             }
-            console.debug('Updated Service worker activated ', event.isUpdate, event.isExternal)
+            if (event.isExternal) {
+                console.warn('External Service worker activated');
+                //window.location.reload();
+            }
         });
         workbox.addEventListener('waiting', (event) => {
             //console.log(`A new service worker has installed, but it can't activate` +
@@ -55,7 +58,9 @@ try {
                 });
                 workbox.messageSkipWaiting();
             }else{
-                console.debug('Updated Service worker waiting', event.isUpdate, event.isExternal, event.wasWaitingBeforeRegister);
+                if (event.isExternal) {
+                    console.warn('External Service worker waiting ');
+                }
                 showSkipWaitingPrompt(event.isExternal);
             }
         });

@@ -17,6 +17,8 @@ const Mustache = require('mustache');
 import fs from 'fs';
 
 const production = !process.env.ROLLUP_WATCH;
+const debugWorkbox = process.env.DEBUG_WORKBOX;
+
 const relPath = (url) => url.replace('./', './public/'); // public path for a local url
 
 //For adding/remove year, change DATASET is src/stores.js
@@ -140,7 +142,7 @@ export default [{
 
         // Watch the `public` directory and refresh the
         // browser on changes when not in production
-        !production && livereload({watch: 'public', port:35728, https: (process.env.SERVE === 'start2') ? {
+        !production && !debugWorkbox && livereload({watch: 'public', port:35728, https: (process.env.SERVE === 'start2') ? {
             key: fs.readFileSync('localhost-key.pem'),
             cert: fs.readFileSync('localhost-cert.pem')
         } : null}),
@@ -172,7 +174,7 @@ export default [{
         file: 'public/sw.js'
     },
     plugins: [
-        replace({...U}),
+        replace({...U, ...{'WB_DISABLE_DEV_LOGS': !debugWorkbox}}),
         commonjs(),
         resolve({
             browser: true

@@ -11,7 +11,7 @@ const imageCacheName = 'flytax-img2';
 const SW_VERSION = 'APP_VERSION';
 let immediateClaimRequired = false;
 
-self.__WB_DISABLE_DEV_LOGS = true;
+self.__WB_DISABLE_DEV_LOGS = 'WB_DISABLE_DEV_LOGS' === 'true';
 
 precacheAndRoute(
     self.__WB_MANIFEST, {
