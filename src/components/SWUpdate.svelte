@@ -1,28 +1,31 @@
 <script context="module">
-    import {writable, get} from 'svelte/store';
-    import {swDismiss, wb, paySlips, ep5} from '../stores';
+    import {writable} from 'svelte/store';
+    import {swDismiss, wb, paySlips, ep5, route} from '../stores';
     export const swUpdated = writable(false);
     export const swRegistration = writable();
     export const showSkipWaitingPrompt = (isExternal) => {
-        if (isExternal && 'serviceWorker' in navigator && Object.keys(get(ep5)).length === 1 && Object.keys(get(paySlips)).length === 1) {
-            navigator.serviceWorker.addEventListener('controllerchange', () => {
-                window.location.reload();
-            });
-            try {
-                get(swRegistration).waiting.postMessage({type: 'SKIP_WAITING'});
-                console.warn('external waiting was received and no user data found => SKIP_WAITING => reload');
-            } catch (e) {console.error(e);}
-        } else {
-            swUpdated.set(true);
-            swDismiss.set(false);
-        }
+        // if (isExternal && 'serviceWorker' in navigator && Object.keys(get(ep5)).length === 1 && Object.keys(get(paySlips)).length === 1) {
+        //     navigator.serviceWorker.addEventListener('controllerchange', () => {
+        //         window.location.reload();
+        //     });
+        //     try {
+        //         get(swRegistration).waiting.postMessage({type: 'SKIP_WAITING'});
+        //         console.warn('external waiting was received and no user data found => SKIP_WAITING => reload');
+        //     } catch (e) {console.error(e);}
+        // } else {
+        //     swUpdated.set(true);
+        //     swDismiss.set(false);
+        // }
+        swUpdated.set(true);
+        swDismiss.set(false);
     };
 </script>
 <script>
     import { fade } from 'svelte/transition';
     let installLabel = 'Installer';
     $swDismiss = false;
-    const install = () => {
+    const install = (delay=0) => {
+        if (delay) console.debug('automatic install ')
         // $swRegistration.waiting check is needed to the 'reload the page' fallback
         let refreshing;
         if ($wb && $swRegistration && $swRegistration.waiting) {
@@ -30,36 +33,47 @@
                 //console.debug('controller change')
                 if (refreshing) return;
                 refreshing = true;
-                window.location.reload();
+                console.debug('SWUpdate: controllerchange reload');
+                (delay) ? setTimeout(() => window.location.reload(), delay) : window.location.reload();
             });
             //This does not fire when Workbox mark event as isExternal
             $wb.addEventListener('controlling', () => {
                 //console.debug('controlling')
                 if (refreshing) return;
                 refreshing = true;
-                window.location.reload();
+                console.debug('SWUpdate: controlling reload');
+                (delay) ? setTimeout(() => window.location.reload(), delay) : window.location.reload();
             });
             installLabel = "En cours...";
             $swRegistration.waiting.postMessage({type: 'SKIP_WAITING'});
         }else{ /* update probably done in another tab */
-            console.debug('no reg.waiting')
+            console.debug('SWUpdate: no waiting reg reload');
             window.location.reload();
         }
     }
 </script>
-
-{#if $swUpdated && !$swDismiss}
-<div class="toast" transition:fade style="position: fixed; top: 0; right: 0;">   
-    <div class="toast-header">
-        <strong><span>👨🏻‍✈️</span>Mise à jour disponible</strong>
-        <button type="button" class="close" aria-label="Close" on:click={() => $swDismiss=true}>
-            <span aria-hidden="true">&times;</span>
-        </button>
+{#if ($swUpdated && !$swDismiss && Object.keys($ep5).length === 1 && Object.keys($paySlips).length === 1)}
+    <div class="toast" transition:fade style="position: fixed; top: 0; right: 0;">   
+        <div class="toast-header">
+            <strong><span>👨🏻‍✈️</span>Mise à jour détectée</strong>
+        </div>
+        <div class="toast-body">
+            <button on:click|preventDefault><span class="blinking">Installation...</span></button>
+        </div>
     </div>
-    <div class="toast-body">
-        <button on:click|once={() => install()}>{installLabel}</button>
+    {install(($route === '/') ? 3500 : 500) || ''}
+{:else if $swUpdated && !$swDismiss}
+    <div class="toast" transition:fade style="position: fixed; top: 0; right: 0;">   
+        <div class="toast-header">
+            <strong><span>👨🏻‍✈️</span>Mise à jour disponible</strong>
+            <button type="button" class="close" aria-label="Close" on:click={() => $swDismiss=true}>
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="toast-body">
+            <button class="manual" on:click|once={() => install()}>{installLabel}</button>
+        </div>
     </div>
-</div>
 {/if}
 
 <style>
@@ -96,9 +110,11 @@
         text-align: center;
     }
     .toast-body button{
+        border-radius: 3px;
+    }
+    button.manual{
         color: var(--background-color);
         background-color: var(--blueaf);
-        border-radius: 3px;
     }
     button.close {
         float: right;
@@ -120,5 +136,16 @@
     strong>span {
         padding-right: 1em;
     }
+
+    .blinking{
+        animation:blink 1s infinite;
+    }
+    @keyframes blink 
+    {  
+        0% { opacity: 1.0; }
+        50% { opacity: 0.0; }
+        100% { opacity: 1.0; }
+    }
+
 
 </style>

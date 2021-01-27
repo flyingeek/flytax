@@ -163,6 +163,7 @@ self.addEventListener('activate', function (event) {
         }).then(() => {
             if (immediateClaimRequired) {
                 // claim and reload
+                console.warn('sw: immediate claim required');
                 self.registration.unregister()
                     .then(() => self.clients.matchAll())
                     .then((clients) => {

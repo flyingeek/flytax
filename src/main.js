@@ -54,6 +54,7 @@ try {
             //    ` until all tabs running the current version have fully unloaded.`);
             if (appError) {
                 workbox.addEventListener('controlling ', () => {
+                    console.warn('main.js: appError reload');
                     window.location.reload();
                 });
                 workbox.messageSkipWaiting();
