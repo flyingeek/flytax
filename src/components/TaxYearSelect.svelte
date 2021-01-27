@@ -1,6 +1,7 @@
 <script>
     import {taxYear, DATASET, taxData, swDismiss} from "../stores";
     const change = () => {
+        $taxData; //force preload
         $swDismiss = false; // show popup update again
     };
 </script>
