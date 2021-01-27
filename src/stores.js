@@ -1,4 +1,4 @@
-import { writable, readable, derived} from 'svelte/store';
+import { writable, readable, derived } from 'svelte/store';
 import {iso2FR, mergeRots} from './parsers/ep5Parser';
 
 export const BASES = [
@@ -65,6 +65,7 @@ const patchLog = () => {
 }
 
 export const log = patchLog();
+
 export const ep5 = resettable({type: "ep5"});
 export const paySlips = resettable({type: "pay"});
 export const nuiteesInput = resettable();
@@ -128,7 +129,8 @@ export const wb = writable();
 let swLastUpdateDate = new Date();
 export const checkSWUpdate = () => {
     if ('serviceWorker' in navigator) {
-        if ((new Date() - swLastUpdateDate) > 900000) { /* 15mn */
+        const timeout = ('process.env.NODE_ENV' !== '"development"') ? 1800000 /* 30 mn */ : 2000;
+        if ((new Date() - swLastUpdateDate) > timeout) {
             navigator.serviceWorker.getRegistration().then(reg => {
                 if (reg) {
                     if (!reg.waiting) reg.update();
@@ -141,8 +143,7 @@ export const checkSWUpdate = () => {
 }
 export const handleVisibilityChange = () =>{
     if (document && document.visibilityState && document.visibilityState === 'visible') {
-        //console.debug('handleVisibilityChange: visible');
-        window.setTimeout(checkSWUpdate, 2000);
+        checkSWUpdate();
     }
 }
 

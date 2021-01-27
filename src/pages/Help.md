@@ -46,7 +46,8 @@ Le choix de la base se fait au-dessus de la zone de dépôt sur la page Frais de
 ## Mise à jour
 
 __{@html htmlLogo}__ se met à jour automatiquement. Éventuellement, un popup peut
-apparaître 👨🏻‍✈️ vous demandant d’autoriser cette mise à jour. Installer la mise à jour efface les résultats. Si le popup reste à l'écran, rafraichir la page ⟳.
+apparaître 👨🏻‍✈️ vous demandant d’autoriser cette mise à jour. Installer la mise à jour efface les résultats.
+Si jamais le popup restait à l'écran, il faudrait rafraichir la page ⟳.
 
 ## Données fiscales
 

@@ -1,11 +1,24 @@
 <script context="module">
-    import {writable} from 'svelte/store';
-    import {swDismiss, wb} from '../stores';
+    import {writable, get} from 'svelte/store';
+    import {swDismiss, wb, paySlips, ep5} from '../stores';
     export const swUpdated = writable(false);
     export const swRegistration = writable();
-    export const showSkipWaitingPrompt = () => {
-        swUpdated.set(true);
-        swDismiss.set(false);
+    export const showSkipWaitingPrompt = (isExternal) => {
+        if (isExternal && 'serviceWorker' in navigator && Object.keys(get(ep5)).length === 1 && Object.keys(get(paySlips)).length === 1) {
+            navigator.serviceWorker.addEventListener('controllerchange', () => {
+                window.location.reload();
+            });
+            try {
+                get(swRegistration).waiting.postMessage({type: 'SKIP_WAITING'});
+                console.debug('external waiting was received and no user data found => SKIP_WAITING => reload');
+            } catch {
+                console.debug('external waiting was received, no registration waiting => reload ');
+                window.location.reload();
+            }
+        } else {
+            swUpdated.set(true);
+            swDismiss.set(false);
+        }
     };
 </script>
 <script>
@@ -24,13 +37,13 @@
             });
             //This does not fire when Workbox mark event as isExternal
             $wb.addEventListener('controlling', () => {
-                console.debug('controlling')
+                console.debug('controlling ')
                 if (refreshing) return;
                 refreshing = true;
                 window.location.reload();
             });
             installLabel = "En cours...";
-            $wb.messageSkipWaiting();
+            $swRegistration.waiting.postMessage({type: 'SKIP_WAITING'});
         }else{ /* update probably done in another tab */
             console.debug('no reg.waiting')
             window.location.reload();

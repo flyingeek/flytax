@@ -14,6 +14,7 @@ import watchAssets from 'rollup-plugin-watch-assets';
 import html from '@open-wc/rollup-plugin-html';
 import {DATASET} from './src/stores';
 const Mustache = require('mustache');
+import fs from 'fs';
 
 const production = !process.env.ROLLUP_WATCH;
 const relPath = (url) => url.replace('./', './public/'); // public path for a local url
@@ -139,7 +140,10 @@ export default [{
 
         // Watch the `public` directory and refresh the
         // browser on changes when not in production
-        !production && livereload({watch: 'public', port:35728}),
+        !production && livereload({watch: 'public', port:35728, https: (process.env.SERVE === 'start2') ? {
+            key: fs.readFileSync('localhost-key.pem'),
+            cert: fs.readFileSync('localhost-cert.pem')
+        } : null}),
 
         // If we're building for production (npm run build
         // instead of npm run dev), minify

@@ -44,7 +44,7 @@ try {
             }else{
                 //console.log('Updated Service worker activated');
             }
-            console.debug('Updated Service worker activated', event.isUpdate, event.isExternal)
+            console.debug('Updated Service worker activated ', event.isUpdate, event.isExternal)
         });
         workbox.addEventListener('waiting', (event) => {
             //console.log(`A new service worker has installed, but it can't activate` +
@@ -55,14 +55,14 @@ try {
                 });
                 workbox.messageSkipWaiting();
             }else{
-                console.debug('Updated Service worker waiting ', event.isUpdate, event.isExternal);
-                showSkipWaitingPrompt();
+                console.debug('Updated Service worker waiting', event.isUpdate, event.isExternal, event.wasWaitingBeforeRegister);
+                showSkipWaitingPrompt(event.isExternal);
             }
         });
         workbox.register().then(reg => {
             if (appError && reg) reg.unregister();
-            if (reg) swRegistration.set(reg);
-            console.debug(reg);
+            swRegistration.set(reg);
+            //console.debug(reg);
         }, console.error);
     }
 }
