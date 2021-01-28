@@ -65,7 +65,7 @@ try {
                 if (event.isExternal) {
                     console.warn('External Service worker waiting ');
                 }
-                showSkipWaitingPrompt(event.isExternal);
+                showSkipWaitingPrompt();
             }
         });
         workbox.register().then(reg => {

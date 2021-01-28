@@ -1,26 +1,15 @@
 <script context="module">
     import {writable} from 'svelte/store';
-    import {swDismiss, wb, paySlips, ep5, route} from '../stores';
+    import {swDismiss} from '../stores';
     export const swUpdated = writable(false);
     export const swRegistration = writable();
-    export const showSkipWaitingPrompt = (isExternal) => {
-        // if (isExternal && 'serviceWorker' in navigator && Object.keys(get(ep5)).length === 1 && Object.keys(get(paySlips)).length === 1) {
-        //     navigator.serviceWorker.addEventListener('controllerchange', () => {
-        //         window.location.reload();
-        //     });
-        //     try {
-        //         get(swRegistration).waiting.postMessage({type: 'SKIP_WAITING'});
-        //         console.warn('external waiting was received and no user data found => SKIP_WAITING => reload');
-        //     } catch (e) {console.error(e);}
-        // } else {
-        //     swUpdated.set(true);
-        //     swDismiss.set(false);
-        // }
+    export const showSkipWaitingPrompt = () => {
         swUpdated.set(true);
         swDismiss.set(false);
     };
 </script>
 <script>
+    import {wb, paySlips, ep5, route} from '../stores';
     import { fade } from 'svelte/transition';
     let installLabel = 'Installer';
     $swDismiss = false;
@@ -54,17 +43,17 @@
     }
 </script>
 
-{#if ($swUpdated && !$swDismiss && Object.keys($ep5).length === 1 && Object.keys($paySlips).length === 1)}
+{#if ($route !== '/' && $swUpdated && !$swDismiss && Object.keys($ep5).length === 1 && Object.keys($paySlips).length === 1)}
 <div class="modal">
-    <div class="toast" transition:fade>   
+    <div class="toast">   
         <div class="toast-header">
             <strong><span>👨🏻‍✈️</span>Mise à jour détectée</strong>
         </div>
         <div class="toast-body">
-            <button on:click|preventDefault><span class="blinking">Installation...</span></button>
+            <button on:click|preventDefault><span>Installation...</span></button>
         </div>
     </div>
-</div>{install(($route === '/') ? 2000 : 500) || ''}
+</div>{install(($route === '/') ? 2000 : 700) || ''}
 {:else if $swUpdated && !$swDismiss}
     <div class="toast" transition:fade style="position: fixed; top: 0; right: 0;">   
         <div class="toast-header">
@@ -74,7 +63,7 @@
             </button>
         </div>
         <div class="toast-body">
-            <button class="manual" on:click|once={() => install()}>{installLabel}</button>
+            <button class="manual" on:click|once={() => install()}><span class:blinking={installLabel.endsWith('...')}>{installLabel}</span></button>
         </div>
     </div>
 {/if}

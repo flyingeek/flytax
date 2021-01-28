@@ -126,6 +126,7 @@ export const online = readable({}, set => {
 
 export const swDismiss = writable(false);
 export const wb = writable();
+
 let swLastUpdateDate = new Date();
 export const checkSWUpdate = () => {
     if ('serviceWorker' in navigator) {
@@ -141,15 +142,15 @@ export const checkSWUpdate = () => {
         }
     }
 }
+
 export const handleVisibilityChange = () =>{
     if (document && document.visibilityState && document.visibilityState === 'visible') {
         checkSWUpdate();
     }
 }
-
 export const route = readable(null, set => {
-    const hashchange = (e) => {
-        set(window.location.hash.substr(1) || "/");
+    const hashchange = () => {
+        set(window.location.hash.substr(1) || '/');
         checkSWUpdate();
     };
     hashchange();
@@ -159,4 +160,3 @@ export const route = readable(null, set => {
         window.removeEventListener('hashchange', hashchange);
     };
 });
-
