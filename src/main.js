@@ -41,6 +41,9 @@ try {
                 //console.log('Service worker activated for the first time!');
                 // If your service worker is configured to precache assets, those
                 // assets should all be available now.
+                // we should be able to remove clients.claim call in sw.js
+                // but for now we have both...
+                workbox.messageSW({ type: 'CLIENTS_CLAIM' });
             }else{
                 //console.log('Updated Service worker activated');
             }
@@ -53,7 +56,7 @@ try {
             //console.log(`A new service worker has installed, but it can't activate` +
             //    ` until all tabs running the current version have fully unloaded.`);
             if (appError) {
-                workbox.addEventListener('controlling ', () => {
+                workbox.addEventListener('controlling', () => {
                     console.warn('main.js: appError reload');
                     window.location.reload();
                 });
