@@ -17,7 +17,8 @@ const Mustache = require('mustache');
 import fs from 'fs';
 
 const production = !process.env.ROLLUP_WATCH;
-const debugWorkbox = process.env.DEBUG_WORKBOX;
+const debugWorkbox = !!process.env.DEBUG_WORKBOX;
+const disableLiveReload = !!process.env.DISABLE_LIVERELOAD || debugWorkbox;
 
 const relPath = (url) => url.replace('./', './public/'); // public path for a local url
 
@@ -142,7 +143,7 @@ export default [{
 
         // Watch the `public` directory and refresh the
         // browser on changes when not in production
-        !production && !debugWorkbox && livereload({watch: 'public', port:35728, https: (process.env.SERVE === 'start2') ? {
+        !production && !disableLiveReload && livereload({watch: 'public', port:35728, https: (process.env.SERVE === 'start2') ? {
             key: fs.readFileSync('localhost-key.pem'),
             cert: fs.readFileSync('localhost-cert.pem')
         } : null}),
