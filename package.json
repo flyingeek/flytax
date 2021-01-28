@@ -1,12 +1,13 @@
 {
   "name": "flytax",
-  "version": "0.9.28",
+  "version": "0.9.29",
   "type": "module",
   "scripts": {
     "build": "rollup -c",
     "dev": "rollup -c -w",
     "dev2": "rollup -c -w --environment SERVE:start2",
-    "dev3": "rollup -c -w --environment SERVE:start2,DEBUG_WORKBOX",
+    "dev3": "rollup -c -w --environment SERVE:start2,DISABLE_LIVERELOAD",
+    "dev4": "rollup -c -w --environment SERVE:start2,DEBUG_WORKBOX",
     "test": "node --experimental-vm-modules --no-warnings node_modules/.bin/jest test",
     "watchTest": "node --experimental-vm-modules --no-warnings node_modules/.bin/jest test --watchAll",
     "start": "sirv public --port 5001",
