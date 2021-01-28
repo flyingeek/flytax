@@ -37,7 +37,7 @@
                 requestedMonthsDefault = [...months, '13'].map(m => [m, true]);
             }
             let requested = [];
-            if (Object.keys(dat).length === 1) { //key type is always present
+            if (dat.isEmpty()) {
                 requested = [...requestedMonthsDefault];
             }else{
                 for (let i=0; i < 14; i++) {

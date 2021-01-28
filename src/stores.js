@@ -65,9 +65,11 @@ const patchLog = () => {
 }
 
 export const log = patchLog();
-
-export const ep5 = resettable({type: "ep5"});
-export const paySlips = resettable({type: "pay"});
+function isRegisterEmpty () {
+    return Object.keys(this).length === 2;
+}
+export const ep5 = resettable({type: "ep5", isEmpty: isRegisterEmpty});
+export const paySlips = resettable({type: "pay", isEmpty: isRegisterEmpty});
 export const nuiteesInput = resettable();
 export const nuiteesAF = resettable();
 

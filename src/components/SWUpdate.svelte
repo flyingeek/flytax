@@ -43,7 +43,7 @@
     }
 </script>
 
-{#if ($route !== '/' && $swUpdated && !$swDismiss && Object.keys($ep5).length === 1 && Object.keys($paySlips).length === 1)}
+{#if ($route !== '/' && $swUpdated && !$swDismiss && $ep5.isEmpty() && $paySlips.isEmpty())}
 <div class="modal">
     <div class="toast">   
         <div class="toast-header">
@@ -54,7 +54,7 @@
         </div>
     </div>
 </div>{install(($route === '/') ? 2000 : 700) || ''}
-{:else if $swUpdated && !$swDismiss}
+{:else if $swUpdated && !$swDismiss && (!$ep5.isEmpty() || !$paySlips.isEmpty())}
     <div class="toast" transition:fade style="position: fixed; top: 0; right: 0;">   
         <div class="toast-header">
             <strong><span>👨🏻‍✈️</span>Mise à jour disponible</strong>

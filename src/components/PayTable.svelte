@@ -51,7 +51,7 @@
 
 
 </script>
-{#if Object.keys(data).length > 1}
+{#if !data.isEmpty()}
 <DownloadTablePDF tableIds={[tableId]} filename={`revenus${$taxYear}.pdf`}/>
 {#if ($fraisDeMission > 0)}
 <table class="data summary" id={tableId + 'Summary'}>
