@@ -1,11 +1,18 @@
 <script context="module">
     import {writable} from 'svelte/store';
     import {swDismiss} from '../stores';
+    import {isPatchUpdate} from '../components/utils';
     export const swUpdated = writable(false);
     export const swRegistration = writable();
-    export const showSkipWaitingPrompt = () => {
+    export const majorUpdate = writable(false);
+    export const showSkipWaitingPrompt = (nextVersion) => {
         swUpdated.set(true);
         swDismiss.set(false);
+        if (nextVersion) {
+            majorUpdate.set(!isPatchUpdate('APP_VERSION', nextVersion));
+        } else {
+            majorUpdate.set(true); // we consider missing version problem as major
+        }
     };
 </script>
 <script>
@@ -43,7 +50,7 @@
     }
 </script>
 
-{#if ($route !== '/' && $swUpdated && !$swDismiss && $ep5.isEmpty() && $paySlips.isEmpty())}
+{#if (($route !== '/' || $majorUpdate) && $swUpdated && !$swDismiss && $ep5.isEmpty() && $paySlips.isEmpty())}
 <div class="modal">
     <div class="toast">   
         <div class="toast-header">

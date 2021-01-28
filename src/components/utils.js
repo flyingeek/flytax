@@ -36,3 +36,22 @@ export const localeDateFormat = (isoString, options={}) => {
         return isoString.substring(0, 10);
     }
 }
+export const promiseTimeout = function(ms, promise){
+    // Create a promise that rejects in <ms> milliseconds
+    let timeout = new Promise((resolve, reject) => {
+        let id = setTimeout(() => {
+            clearTimeout(id);
+            reject('Timed out in '+ ms + 'ms.')
+        }, ms)
+    });
+    // Returns a race between our timeout and the passed in promise
+    return Promise.race([
+        promise,
+        timeout
+    ]);
+}
+export const isPatchUpdate = (current, next) => {
+    const cParts = current.split('.');
+    const nParts = next.split('.');
+    return cParts.slice(0, -1).join('.') === nParts.slice(0, -1).join('.');
+}

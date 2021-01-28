@@ -1,6 +1,7 @@
 import App from './App.svelte';
-import {Workbox} from 'workbox-window';
+import {Workbox, messageSW} from 'workbox-window';
 import {showSkipWaitingPrompt, swRegistration} from './components/SWUpdate.svelte';
+import {promiseTimeout} from './components/utils';
 import {wb} from './stores';
 
 
@@ -63,9 +64,14 @@ try {
                 workbox.messageSkipWaiting();
             }else{
                 if (event.isExternal) {
-                    console.warn('External Service worker waiting ');
+                    console.warn('External Service worker waiting');
                 }
-                showSkipWaitingPrompt();
+                promiseTimeout(400, messageSW(event.sw,{type: 'GET_VERSION'}))
+                .then(v => showSkipWaitingPrompt(v))
+                .catch(e => {
+                    console.warn("SW GET_VERSION:", e);
+                    showSkipWaitingPrompt();
+                });
             }
         });
         workbox.register().then(reg => {
