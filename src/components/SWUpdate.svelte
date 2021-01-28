@@ -37,13 +37,14 @@
                 (delay) ? setTimeout(() => window.location.reload(), delay) : window.location.reload();
             });
             //This does not fire when Workbox mark event as isExternal
-            $wb.addEventListener('controlling', () => {
-                //console.debug('controlling')
-                if (refreshing) return;
-                refreshing = true;
-                console.debug('SWUpdate: controlling reload');
-                (delay) ? setTimeout(() => window.location.reload(), delay) : window.location.reload();
-            });
+            // $wb.addEventListener('controlling', () => {
+            //     //console.debug('controlling')
+            //     if (refreshing) return;
+            //     refreshing = true;
+            //     console.debug('SWUpdate: controlling reload');
+            //     window.location.reload();
+            //     (delay) ? setTimeout(() => window.location.reload(), delay) : window.location.reload();
+            // });
             installLabel = "En cours...";
             $swRegistration.waiting.postMessage({type: 'SKIP_WAITING'});
         }else{ /* update probably done in another tab */
@@ -52,8 +53,10 @@
         }
     }
 </script>
+
 {#if ($swUpdated && !$swDismiss && Object.keys($ep5).length === 1 && Object.keys($paySlips).length === 1)}
-    <div class="toast" transition:fade style="position: fixed; top: 0; right: 0;">   
+<div class="modal">
+    <div class="toast" transition:fade>   
         <div class="toast-header">
             <strong><span>👨🏻‍✈️</span>Mise à jour détectée</strong>
         </div>
@@ -61,7 +64,7 @@
             <button on:click|preventDefault><span class="blinking">Installation...</span></button>
         </div>
     </div>
-    {install(($route === '/') ? 3500 : 500) || ''}
+</div>{install(($route === '/') ? 2000 : 500) || ''}
 {:else if $swUpdated && !$swDismiss}
     <div class="toast" transition:fade style="position: fixed; top: 0; right: 0;">   
         <div class="toast-header">
@@ -77,6 +80,29 @@
 {/if}
 
 <style>
+    /* The Modal (background) */
+    .modal {
+        position: fixed; /* Stay in place */
+        z-index: 19; /* Sit on top below alert*/
+        left: 0;
+        top: 0;
+        width: 100%; /* Full width */
+        height: 100%; /* Full height */
+        overflow: auto; /* Enable scroll if needed */
+        background-color: rgb(0,0,0); /* Fallback color */
+        background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+    }
+
+    /* Modal Content/Box */
+    .modal .toast {
+        margin: 15% auto 0 auto; /* 15% from the top and centered */
+    }
+    .modal .toast-header {
+        justify-content: center;
+    }
+    .modal .toast-header strong {
+        margin-right: 0;
+    }
     .toast {
         opacity: 1;
         z-index: 20;
