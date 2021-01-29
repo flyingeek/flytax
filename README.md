@@ -87,6 +87,15 @@ Les fichiers .tsv peuvent être ouvert directement dans Excel ou être importé 
 | 2019| [2019.csv](https://flyingeek.github.io/flytax/data/flytax-baremes2019.csv) | [2019.tsv](https://flyingeek.github.io/flytax/data/flytax-baremes2019.tsv) | [voir](https://github.com/flyingeek/flytax/blob/gh-pages/data/flytax-baremes2019.tsv) |
 | 2018| [2018.csv](https://flyingeek.github.io/flytax/data/flytax-baremes2018.csv) | [2018.tsv](https://flyingeek.github.io/flytax/data/flytax-baremes2018.tsv) | [voir](https://github.com/flyingeek/flytax/blob/gh-pages/data/flytax-baremes2018.tsv) |
 
+Pour le calcul du forfait Euro:
+
+| Année | CSV | TSV | Aperçu | Montant | 
+| :---: | :---: | :---: | :---: | :---: |
+| 2020| [2020-euro.csv](https://flyingeek.github.io/flytax/data/flytax-baremes2020-zone_euro.csv) | [2020-euro.tsv](https://flyingeek.github.io/flytax/data/flytax-baremes2020-zone_euro.tsv) | [voir](https://github.com/flyingeek/flytax/blob/gh-pages/data/flytax-baremes2020-zone_euro.tsv) | 159 € |
+| 2019| [2019-euro.csv](https://flyingeek.github.io/flytax/data/flytax-baremes2019-zone_euro.csv) | [2019-euro.tsv](https://flyingeek.github.io/flytax/data/flytax-baremes2019-zone_euro.tsv) | [voir](https://github.com/flyingeek/flytax/blob/gh-pages/data/flytax-baremes2019-zone_euro.tsv) | 156 € |
+
+La BNF de dispose plus aujourd'hui de l'historique de taux de change du Litas (LTL) pour pouvoir publier le calcul du forfait euro de 2018. Son montant était de 156 €.
+
 #### JSON
 
 [data2020.json](https://flyingeek.github.io/flytax/data/data2020.json) est un fichier json qui contient 6 propriétés.

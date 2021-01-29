@@ -33,6 +33,7 @@ const scriptArgs = process.argv.slice(2);
 const year = (scriptArgs.length === 1) ? scriptArgs[0] : new Date().getFullYear().toString();
 const isoStart = `${year}-01-01`;
 const isoEnd = `${year}-12-31`;
+const monthsfr = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
 
 const dataPath = `./data/data${year}.json`;
 const csvPath = `./data/flytax-baremes${year}.csv`;
@@ -296,9 +297,9 @@ const findUsedCurrencies = () => {
 const save = (data) => {
     fs.writeFile(dataPath, JSON.stringify(data), (err) => {
         if (err) {
-          throw err;
+            throw err;
         } else {
-          log(`Saved ${dataPath}`, "green");
+            log(`Saved ${dataPath}`, "green");
         }
     });
 }
@@ -392,9 +393,50 @@ const makeCsv = ([countries, exr], {separator=',', decimalSeparator='.', encodin
     const outputPath = (separator === '\t') ? csvPath.replace('.csv', '.tsv') : csvPath
     fs.writeFile(outputPath, csvLines.join(newLine), (err) => {
         if (err) {
-          throw err;
+            throw err;
         } else {
-          log(`Saved ${outputPath}`, "green");
+            log(`Saved ${outputPath}`, "green");
+        }
+    });
+}
+const makeEuroCsv = (csvData, average, {separator=',', decimalSeparator='.', encoding="ascii"} = {}) => {
+    const newLine = '\n';
+    let enclose;
+    if (encoding === 'utf-8') {
+        enclose = (v) => `"${v.replace(/"/g,"'")}"`;
+    } else {
+        enclose = (v) => `"${iconv.encode(v.replace(/[éèê]/g,'e').replace(/[ÉÈÊ]/g,'E').replace(/û/g, 'u').replace('…', '...').replace(/"/g,"'"), "ascii")}"`;
+    }
+    const decimal = (v) => {
+        if (decimalSeparator === ".") return v;
+        const replaced =  v.toString().replace('.', decimalSeparator);
+        return (decimalSeparator === separator) ? enclose(replaced) : replaced; 
+    };
+
+    const csvLines = [];
+    const items = csvData.sort((a, b) => a[0].localeCompare(b[0]));
+    for (let i = 0; i < items.length; i++) {
+        //console.log(items[i]);
+        if (i===0) csvLines.push(['Code', 'Pays'].concat(monthsfr, 'Moyenne').map(v => enclose(v)).join(separator));
+        const line = [...items[i]];
+        for (let j = 0; j < line.length; j++) {
+            if (j===0 || j===1) {
+                line[j] = enclose(line[j]);
+            } else {
+                line[j] = decimal(line[j]);
+            }
+        }
+        csvLines.push(line.join(separator));
+    };
+    csvLines.push(new Array(13).fill('').concat(enclose('Moyenne'), decimal(average)).join(separator));
+
+    const euroCsvPath = csvPath.replace('.csv', '-zone_euro.csv');
+    const outputPath = (separator === '\t') ? euroCsvPath.replace('.csv', '.tsv') : euroCsvPath;
+    fs.writeFile(outputPath, csvLines.join(newLine), (err) => {
+        if (err) {
+            throw err;
+        } else {
+            log(`Saved ${outputPath}`, "green");
         }
     });
 }
@@ -446,6 +488,7 @@ const findAmount = (amounts, isoDate) => {
 const computeForfaitEU = () => {
     if (["2017", "2018"].includes(year)) return forfaitEU;
     const results = [];
+    const csv = [];
     for (const country of zoneEURO) {
         if (country === "FR") continue;
         const res = [];
@@ -454,7 +497,9 @@ const computeForfaitEU = () => {
             if (currency !== "EUR") throw new Error(`currency not in EUR`);
             res.push(parseFloat(value));
         }
-        results.push(res.reduce((a, b) => a + b) / res.length);
+        const average = res.reduce((a, b) => a + b) / res.length;
+        csv.push([country, countries[country].n].concat(...res.concat(average).map(v => v.toFixed(2))));
+        results.push(average);
     }
     const urssaf = specificity("URSSAF");
     if ("France" in urssaf) { /* arrete 2006 */
@@ -470,13 +515,17 @@ const computeForfaitEU = () => {
             results.push((paris + province) / 2);
         }
     }
+    csv.push(['FR', 'FRANCE'].concat(...new Array(13).fill(results[results.length - 1].toFixed(2), 0, 13)));
     if (Array.isArray(urssaf["DOM"])) {
         const dom = urssaf["DOM"][0] + (2 * urssaf["DOM"][1]);
         results.push(dom);
     } else {
         results.push(urssaf["DOM"]);
     }
+    csv.push(['FR', 'DOM'].concat(...new Array(13).fill(results[results.length - 1].toFixed(2), 0, 13)));
     const average = results.reduce((a, b) => a + b) / results.length;
+    makeEuroCsv(csv, average.toFixed(0));
+    makeEuroCsv(csv, average.toFixed(0), {separator: '\t', decimalSeparator: ','});
     return [[`${year}-01-01`, "EUR", average.toFixed(0)]];
 };
 
