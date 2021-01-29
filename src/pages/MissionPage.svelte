@@ -1,4 +1,5 @@
 <script>
+    import Disclaimer from '../components/Disclaimer.svelte';
     import DropZone from '../components/DropZone.svelte';
     import MonthStatus from "../components/MonthStatus.svelte";
     import MissionActivities from '../components/MissionActivities.svelte';
@@ -34,6 +35,7 @@
         </DropZone>
         <MissionActivities />
     </div>
+    {#if !$ep5.isEmpty()}<Disclaimer/>{/if}
 </main>
 <style>
     .header{min-height: 50px}

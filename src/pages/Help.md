@@ -29,6 +29,8 @@ Calculer rapidement, facilement, et sans partage de données&#8239;:
 
 En cas d’anomalie, le pictogramme <svg style="width: 1em; display: inline-block; height: 1em; vertical-align: text-top; fill:red"><use xlink:href="#alert"/></svg> apparaîtra en haut à droite, le cliquer affichera les détails. Si un message d’erreur apparaissait dans la table des résultats, merci de me contacter.
 
+__Avertissement&#8239;:__ L’application est une aide au calcul des frais professionels sous licence GPLv3.0, les PN restents seuls responsables face à l’administration pour justifier l’exactitude de leur déclaration.
+
 ## Attestation des nuitées AF
 
 Air France fournit cette attestation soit dans le pdf de l’EP4 soit dans un fichier annexe. La publication se fait en général au mois de février,
@@ -61,8 +63,7 @@ de la compilation de l’application, les API de la Banque de France et des imp�
 
 ## Crédits
 
-- Le mémento fiscal du SNPL et Bernard Pédamon pour son aide sur son interprétation
-- <Link href="https://github.com/mborsetti/airportsdata">airportsdata</Link> de Mike Borsetti
+- <Link href="https://github.com/mborsetti/airportsdata">airportsdata</Link> de Mike Borsetti (permet de lier un code IATA à un pays)
 - __{@html htmlLogo}__ est développé en JavaScript à l’aide du framework SVELTE
 - Éric Delord, CDB 777, est l’auteur. Le code source est disponible sur <Link href="https://github.com/flyingeek/flytax">GitHub</Link>. L'application est sous <Link href="https://raw.githubusercontent.com/flyingeek/flytax/main/LICENSE.md">licence GPLv3.0</Link>, et l’article 15 précise&#8239;: THERE IS NO WARRANTY FOR THE PROGRAM.
 

@@ -1,4 +1,5 @@
 <script>
+    import Disclaimer from '../components/Disclaimer.svelte';
     import DropZone from '../components/DropZone.svelte';
     import MonthStatus from "../components/MonthStatus.svelte";
     import PayTable from '../components/PayTable.svelte';
@@ -18,6 +19,7 @@
         </DropZone>
         <PayTable data={$paySlips}/>
     </div>
+    {#if !$paySlips.isEmpty()}<Disclaimer/>{/if}
 </main>
 <style>
     .header{min-height: 50px}
