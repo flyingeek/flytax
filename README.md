@@ -43,7 +43,7 @@ npm run makeAirports
 
 Pour les données fiscales, il faut obtenir un accès à l'[API de la Banque de France](http://developer.webstat.banque-france.fr)
 
-Ensuite il faut créer un fichier .env contenant en utilisant cette clé. Pour Gitpod.io il suffit d'ajouter une variable d'environnement nommée BNF_CLIENT_ID dans les settings de Gitpod.
+Ensuite il faut créer un fichier .env contenant cette clé. Pour Gitpod.io il suffit d'ajouter une variable d'environnement nommée BNF_CLIENT_ID dans les settings de Gitpod.
 
 ```bash
 echo "BNF_CLIENT_ID=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" > .env
