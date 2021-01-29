@@ -47,7 +47,7 @@ const zoneEuroMC = ["DE", "AT", "BE", "CY", "ES", "FI", "FR", "GR", "IE", "IT", 
 const zoneEuroLC = ["EE", "LV", "LT"]; // Estonie, Lettonie, Lituanie
 const zoneDOM = ["YT", "PM", "GP", "MQ", "GF", "RE"];
 const zoneDOMLC = ["SX", "MF", "BL"]; //SXM est sur SX iso MF (St Martin) donc on ajoute SX et MF
-// pour le calcul de l'indemnité Euro:
+// pour le calcul de l'indemnité Euro (FLYTAX n'utilise plus les données URSSAF mais uniquement l'arrêté de 2006):
 // URSSAF https://www.urssaf.fr/portail/home/taux-et-baremes/frais-professionnels/indemnite-de-grand-deplacement/deplacements-en-metropole.html
 //        https://www.urssaf.fr/portail/home/taux-et-baremes/frais-professionnels/indemnite-de-grand-deplacement/deplacements-en-outre-mer.html
 // Indemnités Frais de mission (arrêté de 2006) https://www.legifrance.gouv.fr/loda/id/LEGIARTI000042212803
@@ -56,20 +56,22 @@ const zoneDOMLC = ["SX", "MF", "BL"]; //SXM est sur SX iso MF (St Martin) donc o
 // data adjustment per year
 const specificities = {
     "2021": {
-        "URSSAF": {"Base": [70.00, 17.50], "Paris": [110.00, 17.50], "Province": [90.00, 17.50], "DOM": 105}, // used to compute forfaitEU
+        "URSSAF": {"Base": [70.00, 17.50], "Paris": [110.00, 17.50], "Province": [90.00, 17.50], "DOM": [70.00, 17.50]}, // used to compute forfaitEU
         //"URSSAF": {"Paris": [68.50, 19.10], "Province": [50.80, 19.10], "DOM": 105.00}, // moins interressant que l'arrêté ?
         "FOM": [["2021-01-01","EUR","132"]], // forfait OM
         "MAXFORFAIT10": 12652
     },
     "2020": {
          // arrêté 2006 utilise 3 zones en metropole 70€/90€/110€ moyennne 90€
-        "URSSAF": {"Base": [70.00, 17.50], "Paris": [110.00, 17.50], "Province": [90.00, 17.50], "DOM": 105}, // used to compute forfaitEU
+        "URSSAF": {"Base": [70.00, 17.50], "Paris": [110.00, 17.50], "Province": [90.00, 17.50], "DOM": [70.00, 17.50]}, // used to compute forfaitEU
         //"URSSAF": {"Paris": [68.50, 19.10], "Province": [50.80, 19.10], "DOM": 105.00}, // moins interressant que l'arrêté
         "FOM": [["2020-01-01","EUR","132"]], // forfait OM
         "MAXFORFAIT10": 12652
     },
     "2019": {
-        "URSSAF": {"Paris": [67.40, 18.80], "Province": [50.00, 18.80], "DOM": 90.00},// used to compute forfaitEU
+        // utilise arrêté de 2006
+        "URSSAF": {"France": [60, 15.25], "DOM": 90.00},// used to compute forfaitEU
+        //"URSSAF": {"Paris": [67.40, 18.80], "Province": [50.00, 18.80], "DOM": 90.00},// urssaf values not used anymore
         "MAXFORFAIT10": 12627
     },
     "2018": {
@@ -455,15 +457,25 @@ const computeForfaitEU = () => {
         results.push(res.reduce((a, b) => a + b) / res.length);
     }
     const urssaf = specificity("URSSAF");
-    const paris = urssaf["Paris"][0] + (2 * urssaf["Paris"][1]);
-    const province = urssaf["Province"][0] + (2 * urssaf["Province"][1]);
-    if ("Base" in urssaf) {
-        const base = urssaf["Base"][0] + (2 * urssaf["Base"][1]);
-        results.push((paris + province + base) / 3);
-    }else{
-        results.push((paris + province) / 2);
+    if ("France" in urssaf) { /* arrete 2006 */
+        const france = urssaf["France"][0] + (2 * urssaf["France"][1]);
+        results.push(france);
+    } else { /* urssaf ou arrete 2006 modifié en 2020 */
+        const paris = urssaf["Paris"][0] + (2 * urssaf["Paris"][1]);
+        const province = urssaf["Province"][0] + (2 * urssaf["Province"][1]);
+        if ("Base" in urssaf) { /* arrete 2006 modifié en 2020 */
+            const base = urssaf["Base"][0] + (2 * urssaf["Base"][1]);
+            results.push((paris + province + base) / 3);
+        }else{
+            results.push((paris + province) / 2);
+        }
     }
-    results.push(urssaf["DOM"]);
+    if (Array.isArray(urssaf["DOM"])) {
+        const dom = urssaf["DOM"][0] + (2 * urssaf["DOM"][1]);
+        results.push(dom);
+    } else {
+        results.push(urssaf["DOM"]);
+    }
     const average = results.reduce((a, b) => a + b) / results.length;
     return [[`${year}-01-01`, "EUR", average.toFixed(0)]];
 };

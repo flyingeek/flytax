@@ -57,8 +57,7 @@
             </svg>
             <div slot="content">
                 <p>Chaque année <b>{@html htmlLogo}</b> récupère les données à la source&#8239;: le montant des indemnités provient du
-                    <strong>Ministère de l’Économie</strong>, les taux de change sont ceux de la <strong>Banque de France</strong>,
-                    le forfait Euro est calculé en fonction des dernières informations de <strong>l’URSSAF</strong>.</p>
+                    <strong>Ministère de l’Économie</strong>, les taux de change sont ceux de la <strong>Banque de France</strong>.</p>
                 <p>Le programme en lui même inclus des tests permettant de fiabiliser les résultats 
                     et les erreurs détectées sont clairement affichées. Les exemples du <strong>Mémento fiscal du SNPL</strong>
                     ont été utilisés pour tester et valider les résultats de l’application.</p>
