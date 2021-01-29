@@ -510,7 +510,7 @@ const computeForfaitEU = () => {
         const province = urssaf["Province"][0] + (2 * urssaf["Province"][1]);
         if ("Base" in urssaf) { /* arrete 2006 modifié en 2020 */
             const base = urssaf["Base"][0] + (2 * urssaf["Base"][1]);
-            results.push((paris + province + base) / 3);
+            results.push(((paris / 2) + ((province + base) / 4)));
         }else{
             results.push((paris + province) / 2);
         }
