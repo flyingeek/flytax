@@ -24,7 +24,7 @@ Calculer rapidement, facilement, et sans partage de données&#8239;:
 - Le symbole ▶ signale des informations additionnelles accessibles soit au survol de la souris, soit en cliquant sur la ligne
 - Changer d’année fiscale efface les résultats
 - L’application peut être installée sur l’écran d’accueil du PilotPad via le menu «&#8239;partage&#8239;» <svg style="width: 1em; display: inline-block; height: 1em; vertical-align: bottom;"><use xlink:href="#share"/></svg> de Safari
-- __flytax.fr__ (plus simple à mémoriser et à partager) redirige vers __{@html htmlLogo}__
+- __flytax.fr__ (plus simple à mémoriser et à partager) redirige vers __{@html htmlLogo}__ mais est bloqué sur le réseau AF
 - __{@html htmlLogo}__ peut fonctionner en mode déconnecté
 
 En cas d’anomalie, le pictogramme <svg style="width: 1em; display: inline-block; height: 1em; vertical-align: text-top; fill:red"><use xlink:href="#alert"/></svg> apparaîtra en haut à droite, le cliquer affichera les détails. Si un message d’erreur apparaissait dans la table des résultats, merci de me contacter.
@@ -71,7 +71,7 @@ Vous pouvez me contacter sur l’email AF (erdelord@…) ou sur mon compte Twitt
 
 ## Liens
 
-- <Link href="https://flyingeek.github.io/lido-online/index.html" rel="noopener">OFP2MAP</Link> affiche l'OFP sur une carte Lambert (même auteur)
+- <Link href="https://flyingeek.github.io/lido-online/index.html" rel="noopener">OFP2MAP</Link> cartographie pour l'OFP (même auteur)
 
 Les autres sites traitant des frais réels des PN (par ordre alphabétique):
 
