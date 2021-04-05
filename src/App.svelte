@@ -8,9 +8,11 @@
     import NavBar from './components/Navbar.svelte';
     import SWUpdate from './components/SWUpdate.svelte';
     import {onMount} from 'svelte';
+    import {promiseTimeout} from './components/utils';
 
     onMount(() => {
         document.addEventListener("visibilitychange", handleVisibilityChange, false);
+        promiseTimeout(2000, fetch(`https://flytax.goatcounter.com/count?p=/${('process.env.NODE_ENV' !== '"development"') ? 'app' : 'test'}`)).catch(() => {});
         return () => document.removeEventListener("visibilitychange", handleVisibilityChange);
     });
 </script>
