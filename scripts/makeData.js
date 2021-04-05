@@ -174,6 +174,7 @@ const zoneForfaitEuro = specificity("EU").sort();
 const zoneForfaitOM = specificity("OM"); // Territoires où s'applique le forfait OM
 const zoneEURO = specificity("EURO"); // Pays zone Euro hors DOM (pour calcul forfait Euro)
 let forfaitEU = specificity("FEU"); // default value
+let euroData = []; // will contain data to build the euro csv/tsv
 const forfaitOM = specificity('FOM');
 const replace = specificity("replace"); // bogus country code in Webmiss
 
@@ -524,9 +525,7 @@ const computeForfaitEU = () => {
     }
     csv.push(['FR', 'DOM'].concat(...new Array(13).fill(results[results.length - 1].toFixed(2), 0, 13)));
     const average = results.reduce((a, b) => a + b) / results.length;
-    makeEuroCsv(csv, average.toFixed(0));
-    makeEuroCsv(csv, average.toFixed(0), {separator: '\t', decimalSeparator: ','});
-    return [[`${year}-01-01`, "EUR", average.toFixed(0)]];
+    return [csv, [[`${year}-01-01`, "EUR", average.toFixed(0)]]];
 };
 
 const make = async () => {
@@ -545,7 +544,7 @@ const make = async () => {
     }
 
     // forfait EU will still be the default value for years 2017/2018
-    forfaitEU = computeForfaitEU();
+    [euroData, forfaitEU] = computeForfaitEU();
     countries["EU"].a = forfaitEU; // must be set before validate() call
 
     // add MC zone
@@ -627,7 +626,8 @@ const make = async () => {
         }
 
         display([countries, exr]);
-        log(`Forfait EU: ${forfaitEU[0][2]} ${forfaitEU[0][1]}`, 'cyan');
+        const forfaitEuro = forfaitEU[0][2];
+        log(`Forfait EU: ${forfaitEuro} ${forfaitEU[0][1]}`, 'cyan');
         log(`Forfait OM: ${forfaitOM[0][2]} ${forfaitOM[0][1]}`, 'cyan');
         log(`found ${Object.keys(countries).length} countries in ${WebpaysURL.split('/').pop()}`);
 
@@ -635,6 +635,13 @@ const make = async () => {
             save({countries, exr, year, zoneForfaitEuro, 'maxForfait10': specificity('MAXFORFAIT10'), 'urssaf': specificity('URSSAF')});
             makeCsv([countries, exr]);
             makeCsv([countries, exr], {separator: '\t', decimalSeparator: ','});
+            if (euroData.length > 0) {
+                makeEuroCsv(euroData, forfaitEuro);
+                makeEuroCsv(euroData, forfaitEuro, {separator: '\t', decimalSeparator: ','});
+                const t = new Table();
+                t.addRows(euroData);
+                t.printTable();
+            }
         } else {
             errors.map(v => log(v, "red"));
         }
