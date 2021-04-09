@@ -18,7 +18,7 @@
 
     function* getData(key) {
         const value = $taxData.countries[key];
-        const amounts = (value.f === 1) ? $taxData.countries["EU"].a : value.a;
+        const amounts = (value && value.f && value.f === 1) ? $taxData.countries["EU"].a : (value && value.a) ? value.a : [];
         for (const [validity, currency, amount] of amounts) {
             const [startRate, endRate, averageRate] = $taxData.exr[currency];
             yield {

@@ -5,7 +5,7 @@ import got from 'got';
 const airportsPath = "./data/airports.json";
 const gistURL = "https://github.com/mborsetti/airportsdata/raw/main/airportsdata/airports.csv";
 
-let results = "";
+let results = "TLN:FR";
 
 const processRow = (row) => {
     const [icao, iata, name, city, subd, country, elevation, lat, lon, tz] = row.data;

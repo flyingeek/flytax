@@ -334,8 +334,8 @@ export const addIndemnities = (taxYear, rots, taxData, tzConverter) => {
     const MC_REMOVAL = 0.5;
     const nextYear = (parseInt(taxYear, 10) + 1).toString();
     const previousYear = (parseInt(taxYear, 10) - 1).toString();
-    let hasError = false;
     for (const rot of rots) {
+        let hasError = false;
         const indemnities = [];
         // check if we count all nights of if we have to substract 0.5
         let toRemove = MC_REMOVAL; // by default remove 0.5 night
