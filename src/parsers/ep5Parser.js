@@ -527,7 +527,7 @@ export const ep5Parser = (text, fileName, fileOrder, taxYear, taxData, base, tzC
     let month;
     let year;
     // search EP5 Date like JANVIER 2020
-    pattern = /\s(\S+?)\s+?(20\d{2})/;
+    pattern = /\s(JANVIER|FEVRIER|MARS|AVRIL|MAI|JUIN|JUILLET|AOUT|SEPTEMBRE|OCTOBRE|NOVEMBRE|DECEMBRE)\s+?(20\d{2})/;
     if (null !== (match = pattern.exec(text))) {
         const monthIndex = EP5MONTHS.indexOf(match[1]);
         if ( monthIndex !== -1) {
