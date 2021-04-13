@@ -527,15 +527,12 @@ export const ep5Parser = (text, fileName, fileOrder, taxYear, taxData, base, tzC
     let month;
     let year;
     // search EP5 Date like JANVIER 2020
-    pattern = /\s(JANVIER|FEVRIER|MARS|AVRIL|MAI|JUIN|JUILLET|AOUT|SEPTEMBRE|OCTOBRE|NOVEMBRE|DECEMBRE)\s+?(20\d{2})/;
-    if (null !== (match = pattern.exec(text))) {
+    pattern = String.raw`\s(${EP5MONTHS.join('|')})\s+?(20\d{2})`;
+    const regex = new RegExp(pattern);
+    if (null !== (match = regex.exec(text))) {
         const monthIndex = EP5MONTHS.indexOf(match[1]);
-        if ( monthIndex !== -1) {
-            month = (monthIndex + 1).toString(10).padStart(2, '0');
-            year = match[2];
-        } else {
-            throw new Error('EP5 parser: Invalid month ' + match[1] + `in ${fileName}`);
-        }
+        month = (monthIndex + 1).toString(10).padStart(2, '0');
+        year = match[2];
     }else{
         throw new Error(`EP5 parser:  Date not found in ${fileName}`);
     }
