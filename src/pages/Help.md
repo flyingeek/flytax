@@ -33,10 +33,7 @@ __Avertissement&#8239;:__ L’application est une aide au calcul des frais profe
 
 ## Attestation des nuitées AF
 
-Air France fournit cette attestation soit dans le pdf de l’EP4 soit dans un fichier annexe. La publication se fait en général au mois de février,
-mais un correctif est susceptible d’être diffusé jusqu’en avril. En attendant ce document, __{@html htmlLogo}__ estime le montant
-ce qui permet de donner un ordre de grandeur. L’estimation est modifiable. Une fois votre attestation reçue, vous pouvez soit indiquer son
-montant directement, soit glisser l’attestation dans la zone de dépôt. Merci pour vos retours concernant la fiabilité de l’estimation.
+Air France fournit cette attestation dans l’EP4 de février de l'année n + 1, mais un correctif est susceptible d’être diffusé jusqu’en avril dans un fichier annexe. En attendant ce document, __{@html htmlLogo}__ estime le montant ce qui permet de donner un ordre de grandeur. L’estimation est modifiable. Une fois votre attestation reçue, vous pouvez soit indiquer son montant directement, soit glisser l’attestation dans la zone de dépôt. Merci pour vos retours concernant la fiabilité de l’estimation.
 
 ## Choix de la base
 

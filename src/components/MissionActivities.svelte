@@ -53,13 +53,13 @@ td:nth-child(5), th:nth-child(5){
     text-align: right;
     white-space: nowrap;
 }
-tr.warning th{
-    color: white;
-    background-color: var(--red-af);
-    text-align: center;
-}
 details[open] summary{
     margin-bottom: 2px;
+}
+:global(tr.warning th){
+    color: white;
+    background-color: var(--redaf);
+    text-align: center;
 }
 /* Table title*/
 :global(table.data thead tr:nth-child(1) th) {

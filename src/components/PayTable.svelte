@@ -63,7 +63,7 @@
         <th colspan="3">
             Comparatif {$taxYear}
             {#if (!$nuiteesInput || $nuiteesInput == nightsCostEstimate)}
-                <div class="estimate" transition:fade|local><small>basé sur une estimation des nuitées à ±10%</small></div>
+                <div class="estimate" transition:fade|local><small>basé sur une estimation des nuitées à ±15%</small></div>
             {/if}
         </th>
     </tr>
@@ -123,7 +123,7 @@
     </tbody>
     <tfoot>
         <tr>
-            <td colspan="5">1. Les Frais d’emploi commprennent les lignes IND.REPAS, INDEMNITE REPAS, IR.FIN ANNEE DOUBL, IND. TRANSPORT, FRAIS REELS TRANSP, R. FRAIS DE TRANSPORT du bulletin de paye.</td>
+            <td colspan="5">1. Les Frais d’emploi comprennent les lignes IND.REPAS, INDEMNITE REPAS, IR.FIN ANNEE DOUBL, IND. TRANSPORT, FRAIS REELS TRANSP, R. FRAIS DE TRANSPORT du bulletin de paye.</td>
         </tr>
         <tr>
             <td colspan="5">2. Cette colonne doit être substituée par le décompte des frais réels engagés par AF pour les nuitées.</td>
