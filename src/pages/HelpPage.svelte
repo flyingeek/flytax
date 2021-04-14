@@ -1,13 +1,17 @@
 <script>
     import Link from '../components/Link.svelte';
     import HelpMarkup from '../pages/Help.md';
-    import { htmlLogo } from '../components/utils';
+    import { htmlLogo, shareAppLink } from '../components/utils';
     import {wb} from '../stores';
     const version = "APP_VERSION";
     let swVersion = '';
     const updateVersion = (_wb) => (_wb) ? _wb.messageSW({type: 'GET_VERSION'}).then(v => swVersion = v) : '';
     $: updateVersion($wb);
-    
+    const reload = () => {
+        window.location.hash = '#/';
+        console.log('reload page');
+        window.location.reload();
+    };
 </script>
 
 <main>
@@ -15,6 +19,10 @@
         <h1>{@html htmlLogo} v{version} 
             <small on:click|once={() => $wb.update()}>/ ServiceWorker&#8239;: {swVersion}</small>
             {#if $wb}{#await $wb.active then ok}<small>/ mode déconnecté disponible</small>{/await}{/if}
+            {#if navigator.standalone === true || 'process.env.NODE_ENV' === '"development"'}
+                {#if (navigator.share)}<button class="btn-sm" on:click={shareAppLink}>Partager l'App</button>{/if}
+                <button class="btn-sm" on:click={reload}>Recharger l'App</button>
+            {/if}
         </h1>
         <HelpMarkup/>
     </section>
@@ -48,4 +56,5 @@
     :global(section.markdown li){
         margin: 3px 0;
     }
+
 </style>

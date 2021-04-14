@@ -165,6 +165,14 @@
     :global(button:focus) {
         border-color: #666;
     }
+    :global(.btn-sm) {
+        text-transform: uppercase;
+        font-size: small;
+        color: var(--color);
+        border-color: var(--color);
+        background-color: var(--background-color);
+        margin-left: 1rem;
+    }
     :global(.select select){
         color: var(--color);
     }
