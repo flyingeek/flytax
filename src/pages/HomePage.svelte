@@ -126,11 +126,11 @@
     }
 /* center the blockquote in the page */
 :global(.blockquote-wrapper) {
-   display: flex;
-   flex-wrap: wrap;
-   /* column-gap: 30px; */ /* not yes supported by safari */
-   padding: 0 20px;
-   justify-content: center;
+    display: flex;
+    flex-wrap: wrap;
+    /* column-gap: 30px; */ /* not yes supported by safari */
+    padding: 0 20px;
+    justify-content: center;
 }
 
 /* Blockquote main style */
@@ -201,6 +201,6 @@
 }
 
 :global(.blockquote h4:first-letter) {
-  margin-left:-12px;
+    margin-left:-12px;
 }
 </style>
