@@ -20,6 +20,7 @@ jobs:
           npm install
           npm run build
           npm run test
+          echo "google-site-verification: googleece5115d3add3491.html" > public/googleece5115d3add3491.html
 
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@releases/v3
