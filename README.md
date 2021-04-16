@@ -64,7 +64,7 @@ Il a été porté une attention particulière au respect de la méthodologie du 
 
 ### conversion des codes IATA en code pays
 
-[airports.json](https://flyingeek.github.io/flytax/data/airports.json) est une base compacte de 5765 aéroports. C'est une chaine contenant le code IATA sur 3 lettres, le séparateur ':' et le code pays en 2 lettres. Les villes particulières comme Tokyo ou New-York ont leur propre code: NY et TY.
+[airports.json](https://flyingeek.github.io/flytax/data/airports.json) est une base compacte de 5779 aéroports. C'est une chaine contenant le code IATA sur 3 lettres, le séparateur ':' et le code pays en 2 lettres. Les villes particulières comme Tokyo ou New-York ont leur propre code: NY et TY.
 
 ```javascript
 const iata2country = (iata) => {
@@ -89,7 +89,7 @@ Les fichiers .tsv peuvent être ouvert directement dans Excel ou être importé 
 
 Pour le calcul du forfait Euro:
 
-| Année | CSV | TSV | Aperçu | Montant | 
+| Année | CSV | TSV | Aperçu | Montant |
 | :---: | :---: | :---: | :---: | :---: |
 | 2020| [2020-euro.csv](https://flyingeek.github.io/flytax/data/flytax-baremes2020-zone_euro.csv) | [2020-euro.tsv](https://flyingeek.github.io/flytax/data/flytax-baremes2020-zone_euro.tsv) | [voir](https://github.com/flyingeek/flytax/blob/gh-pages/data/flytax-baremes2020-zone_euro.tsv) | 159 € |
 | 2019| [2019-euro.csv](https://flyingeek.github.io/flytax/data/flytax-baremes2019-zone_euro.csv) | [2019-euro.tsv](https://flyingeek.github.io/flytax/data/flytax-baremes2019-zone_euro.tsv) | [voir](https://github.com/flyingeek/flytax/blob/gh-pages/data/flytax-baremes2019-zone_euro.tsv) | 156 € |
