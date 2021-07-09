@@ -41,7 +41,7 @@ Pour les aéroports, (conversion IATA -> PAYS)
 npm run makeAirports
 ```
 
-Pour les données fiscales, il faut obtenir un accès à l'[API de la Banque de France](http://developer.webstat.banque-france.fr)
+Pour les données fiscales, il faut obtenir un accès à l'[API de la Banque de France](https://developer.webstat.banque-france.fr)
 
 Ensuite il faut créer un fichier .env contenant cette clé. Pour Gitpod.io il suffit d'ajouter une variable d'environnement nommée BNF_CLIENT_ID dans les settings de Gitpod.
 
