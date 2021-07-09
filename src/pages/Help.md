@@ -1,6 +1,7 @@
 <script>
     import Link from '../components/Link.svelte';
     import { htmlLogo } from '../components/utils';
+    const ofp2map = 'https://flyingeek.github.io/lido-online/index.html' + ((navigator.standalone === true) ? '#/install': '');
 </script>
 
 ## Préambule
@@ -68,7 +69,7 @@ Vous pouvez me contacter sur l’email AF (erdelord@…) ou sur mon compte Twitt
 
 ## Liens
 
-- <Link href="https://flyingeek.github.io/lido-online/index.html" rel="noopener">OFP2MAP</Link> cartographie pour l'OFP (même auteur)
+- <Link href="{ofp2map}" rel="noopener">OFP2MAP</Link> cartographie pour l'OFP (même auteur)
 
 Les autres sites traitant des frais réels des PN (par ordre alphabétique):
 
