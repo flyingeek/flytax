@@ -14,6 +14,7 @@ import watchAssets from 'rollup-plugin-watch-assets';
 import html from '@open-wc/rollup-plugin-html';
 import {DATASET} from './src/stores';
 const Mustache = require('mustache');
+import md2json from 'md-2-json';
 import fs from 'fs';
 
 const production = !process.env.ROLLUP_WATCH;
@@ -76,7 +77,7 @@ export default [{
     },
     plugins: [
         watchAssets({ assets: ['./src/index.html'] }),
-        replace({...U}),
+        replace({'values': {...U}, 'preventAssignment': true}),
         svelte({
             compilerOptions: {
                 // enable run-time checks when not in production
@@ -137,6 +138,16 @@ export default [{
             copyOnce: true,
             verbose: true
         }),
+        {
+            name: 'generate-changelog-json',
+            writeBundle() {
+                const changelog = fs.readFileSync('./CHANGELOG.md', 'utf8');
+                fs.writeFileSync(
+                    './public/CHANGELOG.json',
+                    JSON.stringify(md2json.parse(changelog))
+                );
+            },
+        },
         // In dev mode, call `npm run start` once
         // the bundle has been generated
         !production && serve(),
@@ -175,7 +186,7 @@ export default [{
         file: 'public/sw.js'
     },
     plugins: [
-        replace({...U, ...{'WB_DISABLE_DEV_LOGS': !debugWorkbox}}),
+        replace({values: {...U, ...{'WB_DISABLE_DEV_LOGS': !debugWorkbox}}, preventAssignment: true}),
         commonjs(),
         resolve({
             browser: true
@@ -186,7 +197,8 @@ export default [{
             "globPatterns": [
                 "index.html",
                 "css/bundle.css",
-                "js/bundle.js"
+                "js/bundle.js",
+                "CHANGELOG.json"
             ]
         }),
         production && terser()

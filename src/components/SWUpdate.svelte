@@ -1,7 +1,7 @@
 <script context="module">
     import {writable} from 'svelte/store';
     import {swDismiss} from '../stores';
-    import {isPatchUpdate} from '../components/utils';
+    import {isPatchUpdate, semverCompare} from '../components/utils';
     export const swUpdated = writable(false);
     export const swRegistration = writable();
     export const majorUpdate = writable(false);
@@ -18,7 +18,17 @@
 <script>
     import {wb, paySlips, ep5, route} from '../stores';
     import { fade } from 'svelte/transition';
+    import ChangeLogModal from '../components/ChangeLogModal.svelte';
     let installLabel = 'Installer';
+    const previousAppVersionKey = 'previousAppVersion';
+    const getPreviousAppVersion = () => (sessionStorage)  ? sessionStorage.getItem(previousAppVersionKey) : undefined;
+    const setPreviousAppVersion = () => (sessionStorage) ? sessionStorage.setItem(previousAppVersionKey, 'APP_VERSION') : undefined;
+    const resetPreviousAppVersion = () => (sessionStorage) ? sessionStorage.removeItem(previousAppVersionKey) : undefined;
+    const isAppUpdated = () => {
+        const previous = getPreviousAppVersion();
+        if (!previous) return false;
+        return semverCompare('APP_VERSION', previous) > 0;
+    }
     $swDismiss = false;
     const install = (delay=0) => {
         if (delay) console.debug('automatic install ')
@@ -42,6 +52,7 @@
             //     (delay) ? setTimeout(() => window.location.reload(), delay) : window.location.reload();
             // });
             installLabel = "En cours...";
+            if (!getPreviousAppVersion()) setPreviousAppVersion(); // only set if not already set (cover multiple updates loop)
             $swRegistration.waiting.postMessage({type: 'SKIP_WAITING'});
         }else{ /* update probably done in another tab */
             console.debug('SWUpdate: no waiting reg reload');
@@ -73,6 +84,8 @@
             <button class="manual" on:click|once={() => install()}><span class:blinking={installLabel.endsWith('...')}>{installLabel}</span></button>
         </div>
     </div>
+{:else if !$swUpdated && isAppUpdated()}
+    <ChangeLogModal version={getPreviousAppVersion()} title="NOUVEAUTÉS" on:close={resetPreviousAppVersion}/>
 {/if}
 
 <style>

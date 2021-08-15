@@ -1,10 +1,12 @@
 <script>
     import Link from '../components/Link.svelte';
     import HelpMarkup from '../pages/Help.md';
+    import ChangeLogModal from '../components/ChangeLogModal.svelte';
     import { htmlLogo, shareAppLink } from '../components/utils';
     import {wb} from '../stores';
     const version = "APP_VERSION";
     let swVersion = '';
+    let modal;
     const updateVersion = (_wb) => (_wb) ? _wb.messageSW({type: 'GET_VERSION'}).then(v => swVersion = v) : '';
     $: updateVersion($wb);
     const reload = () => {
@@ -14,14 +16,16 @@
     };
 </script>
 
+<ChangeLogModal bind:this={modal} />
 <main>
     <section class='markdown'>
         <h1>{@html htmlLogo} v{version} 
             <small on:click|once={() => $wb.update()}>/ ServiceWorker&#8239;: {swVersion}</small>
             {#if $wb}{#await $wb.active then ok}<small>/ mode déconnecté disponible</small>{/await}{/if}
             {#if navigator.standalone === true || 'process.env.NODE_ENV' === '"development"'}
-                {#if (navigator.share)}<button class="btn-sm" on:click={shareAppLink}>Partager l'App</button>{/if}
-                <button class="btn-sm" on:click={reload}>Recharger l'App</button>
+                {#if (navigator.share || 'process.env.NODE_ENV' === '"development"')}<button class="btn-sm" on:click={shareAppLink}>Partager</button>{/if}
+                <button class="btn-sm" on:click={reload}>Recharger</button>
+                <button class="btn-sm" on:click={modal.show}>CHANGELOG</button>
             {/if}
         </h1>
         <HelpMarkup/>

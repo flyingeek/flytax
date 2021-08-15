@@ -99,6 +99,7 @@
         margin: 0;
         box-sizing: border-box;
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+        font-size: 1rem;
     }
     :global(main) {
         text-align: center;
@@ -219,6 +220,7 @@
     :global(.no-transition){
         animation: none !important;
     }
+    :global(h1 span.logo) {font-weight: bold;}
     /*********/
     /* FONTS */
     /*********/
@@ -232,4 +234,5 @@
         url('CONF_ABRILFATFACE_WOFF2') format('woff2'), /* Chrome 26+, Opera 23+, Firefox 39+ */
         url('CONF_ABRILFATFACE_WOFF') format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
     }
+    :global(h1,h2,h3,h4,h5,h6){margin-bottom:.5rem;font-weight:500;line-height:1.2}
 </style>
