@@ -63,7 +63,7 @@
         <th colspan="3">
             Comparatif {$taxYear}
             {#if (!$nuiteesInput || $nuiteesInput == nightsCostEstimate)}
-                <div class="estimate" transition:fade|local><small>basé sur une estimation des nuitées à ±15%</small></div>
+                <div class="estimate" transition:fade|local><small>basé sur une estimation des nuitées à ±20%</small></div>
             {/if}
         </th>
     </tr>
@@ -126,7 +126,7 @@
             <td colspan="5">1. Les Frais d’emploi comprennent les lignes IND.REPAS, INDEMNITE REPAS, IR.FIN ANNEE DOUBL, IND. TRANSPORT, FRAIS REELS TRANSP, R. FRAIS DE TRANSPORT du bulletin de paye.</td>
         </tr>
         <tr>
-            <td colspan="5">2. Cette colonne doit être substituée par le décompte des frais réels engagés par AF pour les nuitées.</td>
+            <td colspan="5">2. Cette colonne reprend la ligne I.DECOUCHERS F.PRO, elle est utilisée pour l’estimation. Pour les impôts, c’est uniquement l’attestation des nuitées AF qui doit être prise en compte.</td>
         </tr>
     </tfoot>
 </table>
