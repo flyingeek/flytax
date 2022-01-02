@@ -3,6 +3,15 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+
+## [1.1.0] - 2022-01-01
+
+### Added
+
+- Données fiscales 2021 (PLF 2022)
+- Nombreuses devises manquantes sur le site de la BNF depuis septembre 2021: ajoût manuel des cours au 31/12/2021 pour VUV, BMD, BND, CVE, DJF, DZD, FJD, GMD, JOD, LYD, MUR, TWD à partir des données de Xe.com.
+- indication dans le tableau des INDEMNITÉS PAR PAYS si un taux de change ne provient pas de la BNF
+
 ## [1.0.6] - 2021-08-15
 
 ### Added

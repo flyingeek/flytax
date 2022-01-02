@@ -49,12 +49,14 @@ Ensuite il faut créer un fichier .env contenant cette clé. Pour Gitpod.io il s
 echo "BNF_CLIENT_ID=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" > .env
 ```
 
-Vous pouvez alors créer les data pour l'année 2020 en faisant
+Vous pouvez alors créer les data pour l'année 2021 en faisant
 
 ```bash
-npm run makeData 2020
+npm run makeData 2021
 
 ```
+
+Note: La BNF a supprimé les taux de change pour VUV, BMD, BND, CVE, DJF, DZD, FJD, GMD, JOD, LYD, MUR et TWD en septembre 2021. Pour l'année fiscale 2021, les taux de change de Xe.com sont utilisés pour ces devises.
 
 ## Conformité aux conventions de calcul du SNPL
 
@@ -83,6 +85,7 @@ Les fichiers .tsv peuvent être ouvert directement dans Excel ou être importé 
 
 | Année | CSV | TSV | Aperçu |
 | :---: | :---: | :---: | :---: |
+| 2021| [2021.csv](https://flyingeek.github.io/flytax/data/flytax-baremes2021.csv) | [2021.tsv](https://flyingeek.github.io/flytax/data/flytax-baremes2021.tsv) | [voir](https://github.com/flyingeek/flytax/blob/gh-pages/data/flytax-baremes2021.tsv) |
 | 2020| [2020.csv](https://flyingeek.github.io/flytax/data/flytax-baremes2020.csv) | [2020.tsv](https://flyingeek.github.io/flytax/data/flytax-baremes2020.tsv) | [voir](https://github.com/flyingeek/flytax/blob/gh-pages/data/flytax-baremes2020.tsv) |
 | 2019| [2019.csv](https://flyingeek.github.io/flytax/data/flytax-baremes2019.csv) | [2019.tsv](https://flyingeek.github.io/flytax/data/flytax-baremes2019.tsv) | [voir](https://github.com/flyingeek/flytax/blob/gh-pages/data/flytax-baremes2019.tsv) |
 | 2018| [2018.csv](https://flyingeek.github.io/flytax/data/flytax-baremes2018.csv) | [2018.tsv](https://flyingeek.github.io/flytax/data/flytax-baremes2018.tsv) | [voir](https://github.com/flyingeek/flytax/blob/gh-pages/data/flytax-baremes2018.tsv) |
@@ -91,6 +94,7 @@ Pour le calcul du forfait Euro:
 
 | Année | CSV | TSV | Aperçu | Montant |
 | :---: | :---: | :---: | :---: | :---: |
+| 2021| [2021-euro.csv](https://flyingeek.github.io/flytax/data/flytax-baremes2021-zone_euro.csv) | [2021-euro.tsv](https://flyingeek.github.io/flytax/data/flytax-baremes2021-zone_euro.tsv) | [voir](https://github.com/flyingeek/flytax/blob/gh-pages/data/flytax-baremes2021-zone_euro.tsv) | 159 € |
 | 2020| [2020-euro.csv](https://flyingeek.github.io/flytax/data/flytax-baremes2020-zone_euro.csv) | [2020-euro.tsv](https://flyingeek.github.io/flytax/data/flytax-baremes2020-zone_euro.tsv) | [voir](https://github.com/flyingeek/flytax/blob/gh-pages/data/flytax-baremes2020-zone_euro.tsv) | 159 € |
 | 2019| [2019-euro.csv](https://flyingeek.github.io/flytax/data/flytax-baremes2019-zone_euro.csv) | [2019-euro.tsv](https://flyingeek.github.io/flytax/data/flytax-baremes2019-zone_euro.tsv) | [voir](https://github.com/flyingeek/flytax/blob/gh-pages/data/flytax-baremes2019-zone_euro.tsv) | 156 € |
 
@@ -144,24 +148,25 @@ Si par ailleurs vous considérerez qu'il faut retirer ½ indemnité à tous les 
 {
     "EUR":["1.0000","1.0000","1.0000"],
     "XAF":["655.9570","655.9570","655.9570"],
+    "BMD":["1.2215","1.13720","1.1794",false]
     /* ... */
 }
 ```
 
-contient le code monnaie, le taux au 31/12/19, le taux au 31/12/20 et le taux moyen.
+contient le code monnaie, le taux au 31/12/19, le taux au 31/12/20, le taux moyen et le dernier champ optionnel indique si le taux provient de la BNF (officiel) ou a été ajouté en manuel (false = non officiel).
 
 Pour déterminer les montants par pays vous pouvez par exemple utiliser:
 
 ```javascript
 const findAmount = (countryData, isoDate) => {
     const iso = isoDate.substring(0,10);
-    for (const [date, currency, amount] of countryData.a) {
+    for (const [date, currency, amount, official] of countryData.a) {
         if (date.localeCompare(iso) <= 0) {
-            return [amount, currency];
+            return [amount, currency, official!==false];
         }
     }
     /* error handling or just return zero */
-    return ["0", "EUR"];
+    return ["0", "EUR", false];
 }
 ```
 

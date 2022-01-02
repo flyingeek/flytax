@@ -56,11 +56,17 @@ const zoneDOMLC = ["SX", "MF", "BL"]; //SXM est sur SX iso MF (St Martin) donc o
 
 // data adjustment per year
 const specificities = {
+    "2022": {
+        "URSSAF": {"Base": [70.00, 17.50], "Paris": [110.00, 17.50], "Province": [90.00, 17.50], "DOM": [70.00, 17.50]}, // used to compute forfaitEU
+        //"URSSAF": {"Paris": [69.50, 19.40], "Province": [51.60, 19.40], "DOM": 105.00}, // moins interressant que l'arrêté ?
+        "FOM": [["2021-01-01","EUR","132"]], // forfait OM
+        "MAXFORFAIT10": 12829
+    },
     "2021": {
         "URSSAF": {"Base": [70.00, 17.50], "Paris": [110.00, 17.50], "Province": [90.00, 17.50], "DOM": [70.00, 17.50]}, // used to compute forfaitEU
-        //"URSSAF": {"Paris": [68.50, 19.10], "Province": [50.80, 19.10], "DOM": 105.00}, // moins interressant que l'arrêté ?
+        //"URSSAF": {"Paris": [69.50, 19.40], "Province": [51.60, 19.40], "DOM": 105.00}, // moins interressant que l'arrêté ?
         "FOM": [["2021-01-01","EUR","132"]], // forfait OM
-        "MAXFORFAIT10": 12652
+        "MAXFORFAIT10": 12829
     },
     "2020": {
          // arrêté 2006 utilise 3 zones en metropole 70€/90€/110€ moyennne 90€
