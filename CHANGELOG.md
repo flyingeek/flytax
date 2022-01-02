@@ -4,7 +4,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
-## [1.1.0] - 2022-01-01
+## [1.1.1] - 2022-01-02
+
+### Fixed
+
+- Le CHANGELOG n'apparaissait pas dans la page d'aide en dehors du mode standalone de l'iPad
+
+## [1.1.0] - 2022-01-02
 
 ### Added
 

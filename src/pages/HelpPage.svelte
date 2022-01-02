@@ -25,8 +25,8 @@
             {#if navigator.standalone === true || 'process.env.NODE_ENV' === '"development"'}
                 {#if (navigator.share || 'process.env.NODE_ENV' === '"development"')}<button class="btn-sm" on:click={shareAppLink}>Partager</button>{/if}
                 <button class="btn-sm" on:click={reload}>Recharger</button>
-                <button class="btn-sm" on:click={modal.show}>CHANGELOG</button>
             {/if}
+            <button class="btn-sm" on:click={modal.show}>CHANGELOG</button>
         </h1>
         <HelpMarkup/>
     </section>
