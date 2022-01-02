@@ -322,7 +322,7 @@ const display = ([countries, exr]) => {
                     "Montant": `${indemnity[2]} ${currency}`,
                     "Taux Début": exr[currency][0],
                     "Taux Fin": exr[currency][1],
-                    "Taux": exr[currency][2],
+                    "Taux": exr[currency][2] + ((exr[currency][3] === false) ? "*" : " "),
                     "Montant €": (parseFloat(indemnity[2]) / exr[currency][2]).toFixed(2),
                     "Zone": (value.z === 1) ? "Moyen": "Long"
                 }
@@ -618,6 +618,30 @@ const make = async () => {
             exr['ISK'] = ["118.8006", "124.2750" , "121.5378"];
             warnings.push(`adding manual exchange rate for LTL`);
             exr['LTL'] = ["3.4528", "3.4528", "3.4528"];
+        }
+        if (year === "2021") {
+            const data = JSON.parse(await readFile(new URL('../data/data2020.json', import.meta.url)));
+            const addRate = (currency, value) => {
+                warnings.push(`adding manual exchange rate for ${currency} 31-12-${year}: ${value}`);
+                const startRate = data['exr'][currency][1];
+                const endRate = parseFloat(value).toFixed(4);
+                const averageRate = ((parseFloat(startRate) + parseFloat(value))/2).toFixed(4);
+                exr[currency] = [startRate, endRate, averageRate, false];
+                //console.log(exr[currency]);
+            }
+            //xe.com last rate of 2021
+            addRate('VUV', "127.919"); //https://www.xe.com/fr/currencycharts/?from=EUR&to=VUV&view=1W
+            addRate('BMD', "1.13703");
+            addRate('BND', "1.53345");
+            addRate('CVE', "110.27");
+            addRate('DJF', "202.279");
+            addRate('DZD', "157.826");
+            addRate('FJD', "2.40775");
+            addRate('GMD', "60.0286");
+            addRate('JOD', "0.806156");
+            addRate('LYD', "5.2412");
+            addRate('MUR', "49.5493");
+            addRate('TWD', "31.5175");
         }
         for (const currency of currencies) {
             if (!exr[currency]) {

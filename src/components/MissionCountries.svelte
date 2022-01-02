@@ -20,7 +20,7 @@
         const value = $taxData.countries[key];
         const amounts = (value && value.f && value.f === 1) ? $taxData.countries["EU"].a : (value && value.a) ? value.a : [];
         for (const [validity, currency, amount] of amounts) {
-            const [startRate, endRate, averageRate] = $taxData.exr[currency];
+            const [startRate, endRate, averageRate, official] = $taxData.exr[currency];
             yield {
                 "name": (key === "EU") ? value.n + "¹" : value.n,
                 "code": key,
@@ -30,6 +30,7 @@
                 startRate,
                 endRate,
                 averageRate,
+                official,
                 "euros": (parseFloat(amount) / averageRate).toFixed(2),
                 "zone": (key === "EU") ? "" : (value.z === 1) ? "Moyen": "Long"
             };
@@ -50,7 +51,7 @@
         {#each countriesData as c}
             <tr>
                 <td>{c.code}</td>
-                <td>{(c.name.length <= 21) ? c.name : c.name.substring(0, 20) + '…'}</td>
+                <td>{(c.name.length <= 21) ? c.name : c.name.substring(0, 20) + '…'}{(c.official===false) ? "²" : ""}</td>
                 <td>{localeDateFormat(c.validity)}</td>
                 <td>{`${c.amount} ${c.currency}`}</td>
                 <td>{localeRate(c.startRate)}</td>
@@ -62,6 +63,9 @@
     </tbody>
     <tfoot>
         <tr><td colspan="9">1. Le forfait Euro est appliqué dans ces pays: {$taxData.zoneForfaitEuro.join(', ')}</td></tr>
+        {#if countriesData.reduce((a,c) => a | c.official===false, false)}
+        <tr><td colspan="9">2. Taux officiel non communiqué par la BNF, basé sur le taux du marché moyen de Xe.com.</td></tr>
+        {/if}
     </tfoot>
 </table>
 {/if}

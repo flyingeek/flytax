@@ -315,9 +315,9 @@ export const findAmountEuros = (countryData, isoDate, exrData) => {
 };
 
 export const findAmount = (countryData, isoDate) => {
-    for (const [date, currency, amount] of countryData.a) {
+    for (const [date, currency, amount, official] of countryData.a) {
         if (date.localeCompare(isoDate) <= 0) {
-            return [amount, currency];
+            return [amount, currency, official!==false];
         }
     }
     if (countryData) {
