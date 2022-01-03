@@ -183,6 +183,7 @@ let forfaitEU = specificity("FEU"); // default value
 let euroData = []; // will contain data to build the euro csv/tsv
 const forfaitOM = specificity('FOM');
 const replace = specificity("replace"); // bogus country code in Webmiss
+const exchangeRateSource = (currency) => (currency[3] === false) ? 'Xe.com' : 'BNF';
 
 
 const log = (v, color) => {
@@ -328,9 +329,10 @@ const display = ([countries, exr]) => {
                     "Montant": `${indemnity[2]} ${currency}`,
                     "Taux Début": exr[currency][0],
                     "Taux Fin": exr[currency][1],
-                    "Taux": exr[currency][2] + ((exr[currency][3] === false) ? "*" : " "),
+                    "Taux": exr[currency][2],
                     "Montant €": (parseFloat(indemnity[2]) / exr[currency][2]).toFixed(2),
-                    "Zone": (value.z === 1) ? "Moyen": "Long"
+                    "Zone": (value.z === 1) ? "Moyen": "Long",
+                    "Source": exchangeRateSource(exr[currency])
                 }
                 rows.push(row);
             } catch(err) {
@@ -381,7 +383,8 @@ const makeCsv = ([countries, exr], {separator=',', decimalSeparator='.', encodin
                     ["Taux 31/12/" + year]: decimal(exr[currency][1]),
                     "Taux moyen": decimal(exr[currency][2]),
                     "Zone": enclose(zone(value)),
-                    "Montant EUR": decimal((parseFloat(indemnity[2]) / exr[currency][2]).toFixed(2))
+                    "Montant EUR": decimal((parseFloat(indemnity[2]) / exr[currency][2]).toFixed(2)),
+                    "Source": enclose(exchangeRateSource(exr[currency]))
                 }
                 if (indemnity[2] !== "0") rows.push(row);
             } catch(err) {
