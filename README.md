@@ -81,7 +81,7 @@ const iata2country = (iata) => {
 
 FLYTAX propose un export des barèmes au format csv et au format tsv.
 
-Les fichiers .tsv peuvent être ouvert directement dans Excel ou être importé comme fichier CSV avec les options d'importation par défaut. L'app Numbers d'Apple lit aussi directement ces fichiers. Excel sur iPad ne sait pas importer les fichiers tsv.
+Les fichiers .tsv peuvent être ouvert directement dans Excel ou être importé comme fichier CSV avec les options d'importation par défaut. L'app Numbers d'Apple lit aussi directement ces fichiers. Excel sur iPad ne sait pas importer les fichiers tsv. Les fichiers 2021 contiennent une colonne suplémentaire indiquant la source utilisée pour les taux de change.
 
 | Année | CSV | TSV | Aperçu |
 | :---: | :---: | :---: | :---: |

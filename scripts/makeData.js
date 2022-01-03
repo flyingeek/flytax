@@ -381,7 +381,8 @@ const makeCsv = ([countries, exr], {separator=',', decimalSeparator='.', encodin
                     ["Taux 31/12/" + year]: decimal(exr[currency][1]),
                     "Taux moyen": decimal(exr[currency][2]),
                     "Zone": enclose(zone(value)),
-                    "Montant EUR": decimal((parseFloat(indemnity[2]) / exr[currency][2]).toFixed(2))
+                    "Montant EUR": decimal((parseFloat(indemnity[2]) / exr[currency][2]).toFixed(2)),
+                    "Source": (exr[currency][3] === false) ? enclose('Xe.com') : enclose('BNF')
                 }
                 if (indemnity[2] !== "0") rows.push(row);
             } catch(err) {
