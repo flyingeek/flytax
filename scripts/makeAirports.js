@@ -28,8 +28,8 @@ const save = () => {
             throw err;
         } else {
             console.log(`Saved ${results.length / 6} airports! in ${airportsPath}`);
-            // ensure manex airports are defined, this is commented out as I don't want to include Global csv file in the repo
-            // const airportsManex = './data/Global2104.csv';
+            //ensure manex airports are defined, this is commented out as I don't want to include Global csv file in the repo
+            // const airportsManex = '../lido-online/data/Global2113.csv';
             // const file = fs.createReadStream(airportsManex);
             // Papa.parse(file, {
             //     step: function(result) {
