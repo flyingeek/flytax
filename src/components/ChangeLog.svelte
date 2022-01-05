@@ -29,7 +29,7 @@
             .replace(/\[(.*?)\]\((.*?)\)/gim, "<a href='$2' rel='noreferrer' target='_blank'>$1</a>")
             .replace(/^$/g, '<br />')
 
-        return htmlText.trim()
+        return htmlText;
     }
     const translation = {
         "ADDED": "Ajouté",
@@ -72,10 +72,10 @@
             {#each Object.entries(section) as [category, content]}
                 {#if category !== "raw"}
                     {#each content.raw.replace(/^\n\n|\n\n$/, '').split('\n') as item}
-                        <div class="item">{@html parseMarkdown(item).replace('- ', `- <span class="badge badge-${badgeColor(category)}">${_(category)}</span>`)}</div>
+                        <div class="item">{@html parseMarkdown(item).replace(/^-\s/g, `- <span class="badge badge-${badgeColor(category)}">${_(category)}</span>`).replace(/^(\s+)-/g, (chn, pl) => '&nbsp;'.repeat('pl'.length) + '▫︎')}</div>
                     {/each}
                 {:else}
-                    <div class="item">{@html parseMarkdown(content)}</div>
+                    <div class="item">{@html parseMarkdown(content).trim()}</div>
                 {/if}
             {/each}
         </li>
