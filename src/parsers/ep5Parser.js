@@ -544,6 +544,7 @@ export const ep5Parser = (text, fileName, fileOrder, taxYear, taxData, base, tzC
         result.date = `${taxYear}-00`;
     } else {
         result.date = `${year}-${month}`;
+        if ((year) !== taxYear) return result;
     }
 
     //0,00 T-77W  GSQY 0 PEK  01 00,00 CDG  01 04,03
