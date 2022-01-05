@@ -327,7 +327,7 @@ export const findAmount = (countryData, isoDate) => {
     }
 };
 
-export const addIndemnities = (taxYear, rots, taxData, tzConverter) => {
+export const addIndemnities = (taxYear, rots, taxData, tzConverter, fileName) => {
     const results = [];
     const countriesData = taxData.countries;
     const exrData = taxData.exr;
@@ -347,6 +347,8 @@ export const addIndemnities = (taxYear, rots, taxData, tzConverter) => {
             rot.formula = WITHIN_BASE_TEXT;
         } else if  (rot.nights.length > rot.days || rot.countries.length > rot.days) {
             rot.formula = NIGHT_OVERFLOW_TEXT;
+            rot.currencyFormula = 'Vérifiez le choix de la base';
+            console.log(`%c${fileName}\n%ctype [ep5] %cVérifiez la base`, 'font-family: monospace;', 'color: black;', 'color: red;');
             hasError = true;
         } else {
             // if at least one of the stopover is LC, count all nights
@@ -568,7 +570,7 @@ export const ep5Parser = (text, fileName, fileOrder, taxYear, taxData, base, tzC
     // in case of multiple EP5 pages, ensure flights are sorted by start date
     const sortedFlights = flights.sort((a, b) => a.start.localeCompare(b.start))
     let rots = buildRots(sortedFlights, {base, tzConverter, "iataMap": iata2country});
-    rots = addIndemnities(taxYear, rots, taxData, tzConverter);
+    rots = addIndemnities(taxYear, rots, taxData, tzConverter, fileName);
     result.rots = rots;
     return result;
 };
