@@ -7,7 +7,7 @@ export const CONTINUATION_MARK = "...";
 export const REFNOTE1 = "\u202f¹";
 export const FORMULA_ERROR = "!ERREUR!"
 //months as written in EP5
-const EP5MONTHS = ['JANVIER', 'FEVRIER', 'MARS', 'AVRIL', 'MAI', 'JUIN', 'JUILLET', 'AOUT', 'SEPTEMBRE', 'OCTOBRE', 'NOVEMBRE', 'DECEMBRE'];
+export const EP5MONTHS = ['JANVIER', 'FEVRIER', 'MARS', 'AVRIL', 'MAI', 'JUIN', 'JUILLET', 'AOUT', 'SEPTEMBRE', 'OCTOBRE', 'NOVEMBRE', 'DECEMBRE'];
 
 //converts EP5 time hh,dd to hh:mmZ
 //returns a string
