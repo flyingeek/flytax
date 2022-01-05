@@ -3,6 +3,19 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.2] - 2022-01-05
+
+### Changed
+
+- L'aide est complétée avec:
+  - une rubrique détaillée pour l'utilisation avec un iPad
+  - une rubrique concernant les activités sol/simulateur
+  - une explications des alertes courantes
+  - le rappel pour les basés en province de lire la rubrique "Choix de la base"
+
+### Added
+
+- Décompte des trajets domicile-travail des rotations ajouté au comparatif
 
 ## [1.1.1] - 2022-01-02
 
