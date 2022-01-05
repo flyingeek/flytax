@@ -1,6 +1,7 @@
 <script>
     import {decimal2cents, cents2decimal} from '../parsers/payParser';
-    import { taxYear, taxData, fraisDeMission, nuiteesInput, nuiteesAF} from '../stores';
+    import {iso2FR} from '../parsers/ep5Parser';
+    import { taxYear, taxData, fraisDeMission, nuiteesInput, nuiteesAF, pairings} from '../stores';
     import {months, monthsfr, localeCurrency} from './utils';
     import DownloadTablePDF from './DownloadTablePDF.svelte';
     import {fade} from 'svelte/transition';
@@ -39,6 +40,26 @@
     const sumFrais = (month) => {
         return data[month].repas.concat(data[month].transport).map(decimal2cents).reduce((a, b) => a + b);
     };
+    const roadTrips = (pairings, taxYear) => {
+        if (!pairings || !taxYear) return '';
+        const results = {'count': pairings.length, 'OUT': new Map(), 'IN': new Map()};
+        for (const rot of pairings) {
+            if (iso2FR(rot.start).substring(0,4) === taxYear) {
+                results.OUT.set(rot.dep, (results.OUT.get(rot.dep)||0) + 1);
+            }
+            if (iso2FR(rot.end).substring(0,4) === taxYear) {
+                results.IN.set(rot.arr, (results.IN.get(rot.arr)||0) + 1);
+            }
+        }
+        const to = Array.from(results.OUT).map(([iata, c]) => `${c} trajet${(c>1) ? 's' : ''} vers ${iata}`);
+        const from = Array.from(results.IN).map(([iata, c]) => `${c} trajet${(c>1) ? 's' : ''} depuis ${iata}`);
+        if (results.count === 0) {
+            return '';
+        }else if (results.count === 1) {
+            return `À titre d'information, pour les frais de transport, la rotation représente ${to.join(', ')} et ${from.join(', ')}.`;
+        }
+        return `À titre d'information, pour les frais de transport, les ${results.count} rotations représentent ${to.join(', ')} et ${from.join(', ')}.`;
+    }
 
     $: totalFrais = computeTotalFrais(data);
     $: totalImposable = computeTotalImposable(data);
@@ -48,7 +69,7 @@
     $: nightsCostEstimate = (Math.ceil(parseFloat(totalDecouchersFPRO) * 3.31/100) * 100).toFixed(0);
     $: updateNuiteesInput($nuiteesAF, nightsCostEstimate);
     $: fraisReels = parseFloat($fraisDeMission) - parseFloat($nuiteesAF || $nuiteesInput || nightsCostEstimate) - parseFloat(totalFrais);
-
+    $: roadTripInformation = roadTrips($pairings, $taxYear);
 
 </script>
 {#if !data.isEmpty()}
@@ -92,6 +113,9 @@
         {:else}
         <td colspan="3">Il faudra que vos autres frais atteignent <b>{(abbattement - fraisReels).toFixed(0)} €</b> pour qu'une déclaration aux frais réels soit plus avantageuse.</td>
         {/if}
+    </tr>
+    <tr>
+        <td colspan="3">{roadTripInformation}</td>
     </tr>
 </tfoot>
 </table>
