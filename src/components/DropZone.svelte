@@ -102,10 +102,16 @@
                                 } else if (result.type === 'warning') {
                                     console.log(`%c${fileName}\n%c${result.msg}`, 'font-family: monospace;', 'color: darkorange;');
                                     return;
+                                }else if (result.type && result.warning) {
+                                    console.log(`%c${fileName}\n%ctype [${result.type}] %c${result.warning}`, 'font-family: monospace;', 'color: black;', 'color: darkorange;');
+                                    return;
+                                }else if (result.type && result.error) {
+                                    console.log(`%c${fileName}\n%ctype [${result.type}] %c${result.error}`, 'font-family: monospace;', 'color: black;', 'color: red;');
+                                    return;
                                 } else {
                                     const [year, month] = result.date.split('-');
                                     if (year !== $taxYear) {
-                                        console.log(`%c${fileName}\n%ctype [${result.type}] %cannée ${year} iso ${$taxYear}`, 'font-family: monospace;', 'color: black;', 'color: darkorange;');
+                                        console.log(`%c${fileName}\n%ctype [${result.type}] %cannée ${year} iso ${$taxYear}`, 'font-family: monospace;', 'color: black;', 'color: red;');
                                         return;
                                     }
                                     if (result.type === "pay") {
