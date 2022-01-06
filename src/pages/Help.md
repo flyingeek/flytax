@@ -62,7 +62,7 @@ Le choix de la base se fait au-dessus de la zone de dépôt sur la page Frais de
 
 Les activités sol/simulateur à la base ne peuvent pas faire l'objet de déduction forfaitaire, elles ne sont donc pas décomptées dans les frais de mission.
 
-Les activités sol/simulateur hors de base d'affectation pourraient être décomptées forfaitairement, néanmoins elles ne rentrent pas explicitement dans le cadre d'application de l'accord de la DLF, et elles ne sont donc pas décomptées par __{@html htmlLogo}__. Je vous renvoie au mémento du SNPL pour plus d'informations.
+Les activités sol/simulateur hors de la base d'affectation pourraient être décomptées forfaitairement, néanmoins elles ne rentrent pas explicitement dans le cadre d'application de l'accord de la DLF, et elles ne sont donc pas décomptées par __{@html htmlLogo}__. Je vous renvoie au mémento du SNPL pour plus d'informations.
 
 ## Mise à jour
 

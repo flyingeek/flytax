@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - L'aide est complétée avec:
   - une rubrique détaillée pour l'utilisation avec un iPad
   - une rubrique concernant les activités sol/simulateur
-  - une explications des alertes courantes
+  - une explication des alertes courantes
   - le rappel pour les basés en province de lire la rubrique "Choix de la base"
 
 ### Added
