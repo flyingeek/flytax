@@ -7,7 +7,7 @@ const gistURL = "https://github.com/mborsetti/airportsdata/raw/main/airportsdata
 
 //init with manex airports not referenced in airports.csv
 //not sure QQO is really the iata code of LGEL, could not find this information in Wikipedia
-let results = "TLN:FRAZR:DZELG:DZBYK:CIBER:DEKRN:SEMJN:MGFYT:TDMWH:USQQO:GRILS:SVRGI:PFHOI:PFOSN:KRUBN:MNBYH:US";
+let results = "TLN:FRAZR:DZELG:DZBYK:CIBER:DEKRN:SEMJN:MGFYT:TDMWH:USQQO:GRILS:SVRGI:PFHOI:PFOSN:KRUBN:MNBYH:USALY:EG";
 
 const processRow = (row) => {
     const [icao, iata, name, city, subd, country, elevation, lat, lon, tz] = row.data;
