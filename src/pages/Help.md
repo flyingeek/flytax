@@ -77,8 +77,8 @@ les données json. En installant le code source sur votre ordinateur, vous pourr
 de la compilation de l’application, les API de la Banque de France et des impôts sont utilisées.
 
 - <Link href="https://www.legifrance.gouv.fr/loda/id/LEGIARTI000042212803">Arrêté de 2006 fixant les taux des indemnités de mission</Link>
-- <Link href="http://www.fraispn.com/dlf.html" rel="noopener">La lettre de la DLF sur FraisPN</Link>
-- <Link href="http://www.fraispn.com/dlfannexe.html" rel="noopener">L’annexe à lettre de la DLF sur FraisPN</Link>
+- <Link href="https://web.archive.org/web/20190408001531/http://www.fraispn.com/dlf.html" rel="noopener">La lettre de la DLF sur FraisPN (webarchive)</Link>
+- <Link href="https://web.archive.org/web/20190407212830/http://www.fraispn.com/dlfannexe.html" rel="noopener">L’annexe à lettre de la DLF sur FraisPN (webarchive)</Link>
 
 ## Crédits
 
@@ -91,10 +91,3 @@ Vous pouvez me contacter sur l’email AF (erdelord@…), ou sur mon compte Twit
 ## Liens
 
 - <Link href="{ofp2map}" rel="noopener">OFP2MAP</Link> cartographie pour l'OFP (même auteur)
-
-Les autres sites traitant des frais réels des PN (par ordre alphabétique):
-
-- <Link href="http://www.cafepn.com" rel="noopener">CaféPN</Link> (payant) (non sécurisé)
-- <Link href="http://www.fraispn.com/index.html" rel="noopener">FraisPN</Link> (non sécurisé)
-- <Link href="https://myconcorde.fr/" rel="noopener">MyConcorde</Link>
-- <Link href="https://nightstop.top/" rel="noopener">NightStop</Link>
