@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Les autres sites traitant des frais réels PN ont disparus (FraisPN, MyConcorde). NightStop ne fournit plus le calcul et CafePN ne semble pas mis à jour. Dans l'aide, les liens vers la lettre de la DLF passent à présent par Internet Archive.
+- Les autres sites traitant des frais réels PN ont disparu (FraisPN, MyConcorde). NightStop ne fournit plus le calcul et CafePN ne semble pas mis à jour. Dans l'aide, les liens vers la lettre de la DLF passent à présent par Internet Archive.
 
 ## [1.1.2] - 2022-01-05
 
