@@ -35,7 +35,7 @@
         }else if (estimated){
             $nuiteesInput = estimated;
         }
-    } 
+    }
 
     const sumFrais = (month) => {
         return data[month].repas.concat(data[month].transport).map(decimal2cents).reduce((a, b) => a + b);
@@ -66,7 +66,8 @@
     $: cumulImposable12 = (data["12"] && data["12"].cumul !== "0") ? cents2decimal(decimal2cents(data["12"].cumul)) : undefined;
     $: abbattement = ($taxData && $taxData.maxForfait10) ? Math.min((cumulImposable12||totalImposable)*0.1, $taxData.maxForfait10) : 0;
     $: totalDecouchersFPRO = computeTotalDecouchersFPRO(data);
-    $: nightsCostEstimate = (Math.ceil(parseFloat(totalDecouchersFPRO) * 3.31/100) * 100).toFixed(0);
+    $: estimateRatio = ( parseInt($taxYear, 10)  >= 2021) ? 2.7 : 3.31;
+    $: nightsCostEstimate = (Math.ceil(parseFloat(totalDecouchersFPRO) * estimateRatio/100) * 100).toFixed(0);
     $: updateNuiteesInput($nuiteesAF, nightsCostEstimate);
     $: fraisReels = parseFloat($fraisDeMission) - parseFloat($nuiteesAF || $nuiteesInput || nightsCostEstimate) - parseFloat(totalFrais);
     $: roadTripInformation = roadTrips($pairings, $taxYear);
@@ -255,5 +256,5 @@
     }
     tbody > tr:nth-child(12) > td:nth-child(3){ /*cumul mois 12 */
         font-weight: bold;
-    } 
+    }
 </style>
