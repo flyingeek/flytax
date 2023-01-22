@@ -3,6 +3,13 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - 2023-01-22
+
+### Changed
+
+- Pour simplifier les mises à jour, à partir de 2022, récupération des taux non donnés par la BNF sur une api github (fawazahmed0) au lieu de les récupérer sur Xe.com.
+- Mise à jour des données pour les revenus 2022
+
 ## [1.1.4] - 2022-04-17
 
 ### Changed

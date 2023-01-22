@@ -46,7 +46,7 @@
                 H34.451z M18.026,10.958c0-3.023,2.452-5.481,5.47-5.481s5.47,2.458,5.47,5.481v7.893h-10.94V10.958z M21.817,41.934l-10.171-7.216
                 l3.188-5.985l7.277,6.119l10.479-10.27l2.761,4.82L21.817,41.934z"/>
             </svg>
-            <p slot="content">Inutile de partager son calendrier ou d’envoyer des données sur Internet&#8239;: <b>{@html htmlLogo}</b> 
+            <p slot="content">Inutile de partager son calendrier ou d’envoyer des données sur Internet&#8239;: <b>{@html htmlLogo}</b>
                 fonctionne directement dans votre navigateur, aucun fichier n’est transmis sur le réseau, aucune donnée n’est collectée. </p>
         </FlagSignifier>
         <FlagSignifier title="Des sources fiables">
@@ -58,7 +58,7 @@
             <div slot="content">
                 <p>Chaque année <b>{@html htmlLogo}</b> récupère les données à la source&#8239;: le montant des indemnités provient du
                     <strong>Ministère de l’Économie</strong>, les taux de change sont ceux de la <strong>Banque de France</strong>.</p>
-                <p>Le programme en lui même inclus des tests permettant de fiabiliser les résultats 
+                <p>Le programme en lui même inclus des tests permettant de fiabiliser les résultats
                     et les erreurs détectées sont clairement affichées. Les exemples du <strong>Mémento fiscal du SNPL</strong>
                     ont été utilisés pour tester et valider les résultats de l’application.</p>
             </div>
@@ -171,7 +171,7 @@
     left: 50px;
     border-bottom: none;
     border-left: none;
-    z-index: 3; 
+    z-index: 3;
 
 }
 

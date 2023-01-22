@@ -11,6 +11,8 @@ Les PDF utilisés ne transitent sur aucun serveur, tout est calculé localement 
 
 ## Objectifs
 
+__L'application ne gère pas l'article 81 A II qui se substitue pour les pilotes à cette méthode de calcul__
+
 Calculer rapidement, facilement, et sans partage de données&#8239;:
 
 - le décompte des frais de mission, conformément à la méthodologie et aux conventions de calcul du SNPL
@@ -76,7 +78,7 @@ Sur <Link href="https://github.com/flyingeek/flytax#donn%C3%A9es-fiscales">GitHu
 les données json. En installant le code source sur votre ordinateur, vous pourrez générer ces fichiers. Lors
 de la compilation de l’application, les API de la Banque de France et des impôts sont utilisées.
 
-- <Link href="https://www.legifrance.gouv.fr/loda/id/LEGIARTI000042212803">Arrêté de 2006 fixant les taux des indemnités de mission</Link>
+- <Link href="https://www.legifrance.gouv.fr/loda/id/JORFTEXT000045695811/2023-01-22/">Arrêté de 2006 fixant les taux des indemnités de mission</Link>
 - <Link href="https://web.archive.org/web/20190408001531/http://www.fraispn.com/dlf.html" rel="noopener">La lettre de la DLF sur FraisPN (webarchive)</Link>
 - <Link href="https://web.archive.org/web/20190407212830/http://www.fraispn.com/dlfannexe.html" rel="noopener">L’annexe à lettre de la DLF sur FraisPN (webarchive)</Link>
 

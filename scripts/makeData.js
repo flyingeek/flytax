@@ -2,16 +2,16 @@
  * Generates data with indemnities per country per year
  * Data also includes exchange rates from BNF Webstat EN API
  * Register an app at http://developer.webstat.banque-france.fr to get a clientId for the Webstat EN API
- * 
+ *
  * To hide clientId on GitHub, we use dotenv
  * You need to set your client id in a .env file at the root of this project using a line like:
  * BNF_CLIENT_ID=xxxxxxxxxxxx
- * 
+ *
  * To generate a new dataset:
  * node src/makeData.js [year]
  * or
  * npm makeData [year]
- * 
+ *
  * You must build airports.json first using:
  * npm makeAirports
  */
@@ -40,7 +40,7 @@ const csvPath = `./data/flytax-baremes${year}.csv`;
 const WebpaysURL = "https://www.economie.gouv.fr/dgfip/fichiers_taux_chancellerie/txt/Webpays";
 const WebmissURL = "https://www.economie.gouv.fr/dgfip/fichiers_taux_chancellerie/txt/Webmiss";
 const apiURL = `https://api.webstat.banque-france.fr/webstat-en/v1/data/EXR/EXR.M.*.EUR.SP00.E?client_id=${process.env.BNF_CLIENT_ID}&format=json&startPeriod=${parseInt(year, 10) - 1}-12-01&endPeriod=${year}-12-31`;
-//pays du memento fiscal SNPL + Estonie, Lettonie, Lituanie. 
+//pays du memento fiscal SNPL + Estonie, Lettonie, Lituanie.
 //DOM:  Martinique, Guadeloupe, Guyanne, La Réunion et aussi Mayotte et Saint-Pierre et Miquelon, St Martin, St Barth
 //      St Martin, St Barth ne sont plus des DOM depuis 2007 mais ils figurent toujours dans l'arrêté de 2006 mis à jour en 2020
 const zoneMC = ["AL", "DZ", "AD", "BA", "BG", "DK", "HR", "HU", "MK", "MA", "NO", "RO", "GB", "SE", "CH", "CZ", "TN", "YU", "PL"];
@@ -56,11 +56,17 @@ const zoneDOMLC = ["SX", "MF", "BL"]; //SXM est sur SX iso MF (St Martin) donc o
 
 // data adjustment per year
 const specificities = {
+      "2023": {
+        "URSSAF": {"Base": [70.00, 17.50], "Paris": [110.00, 17.50], "Province": [90.00, 17.50], "DOM": [70.00, 17.50]}, // used to compute forfaitEU
+        //"URSSAF": {"Paris": [69.50, 19.40], "Province": [51.60, 19.40], "DOM": 105.00}, // moins interressant que l'arrêté ?
+        "FOM": [["2021-01-01","EUR","132"]], // forfait OM
+        "MAXFORFAIT10": 13522
+    },
     "2022": {
         "URSSAF": {"Base": [70.00, 17.50], "Paris": [110.00, 17.50], "Province": [90.00, 17.50], "DOM": [70.00, 17.50]}, // used to compute forfaitEU
         //"URSSAF": {"Paris": [69.50, 19.40], "Province": [51.60, 19.40], "DOM": 105.00}, // moins interressant que l'arrêté ?
         "FOM": [["2021-01-01","EUR","132"]], // forfait OM
-        "MAXFORFAIT10": 12829
+        "MAXFORFAIT10": 13522
     },
     "2021": {
         "URSSAF": {"Base": [70.00, 17.50], "Paris": [110.00, 17.50], "Province": [90.00, 17.50], "DOM": [70.00, 17.50]}, // used to compute forfaitEU
@@ -92,12 +98,12 @@ const specificities = {
         "FOM": [["2017-01-01","EUR","120"]], // forfait OM (PPT, Nouvelle Calédonie et Wallis et Futuna)
         "EURO": zoneEuroMC.concat(zoneEuroLC), // zone Euro pour calcul du forfait Euro
         "EU": zoneEuroMC.concat(zoneEuroLC, zoneDOM, zoneDOMLC), // forfait Euro
-        "MC": zoneEuroMC.concat(zoneMC, zoneDOM, zoneDOMLC), 
+        "MC": zoneEuroMC.concat(zoneMC, zoneDOM, zoneDOMLC),
         "OM": ["WF", "NC", "PF"], // territoires pour le Forfait OM
         "replace": {
             "TI": "TL" // Code Timor oriental TI in webmiss but TL in airports
         },
-        "webmissUndefinedCountries":  [ // Those will have an amount of 0 EUR 
+        "webmissUndefinedCountries":  [ // Those will have an amount of 0 EUR
             "BT", // Bouthan
             "GL", // Groenland
             "GG", // Guernesey
@@ -133,11 +139,11 @@ const specificity = (key) => {
 // countries not defined in WebPays but used in Webmiss
 // or countries not defined in WebPays but used in airports.json
 const countries = {
-    "FR": {"n": "FRANCE"}, 
-    "GP": {"n": "GUADELOUPE"}, 
-    "MQ": {"n": "MARTINIQUE"}, 
-    "GF": {"n": "GUYANE"}, 
-    "RE": {"n": "RÉUNION"}, 
+    "FR": {"n": "FRANCE"},
+    "GP": {"n": "GUADELOUPE"},
+    "MQ": {"n": "MARTINIQUE"},
+    "GF": {"n": "GUYANE"},
+    "RE": {"n": "RÉUNION"},
     "GI": {"n": "GIBRALTAR"},
     "SX": {"n": "SAINT-MARTIN"},
     "MF": {"n": "SAINT-MARTIN"},
@@ -183,7 +189,7 @@ let forfaitEU = specificity("FEU"); // default value
 let euroData = []; // will contain data to build the euro csv/tsv
 const forfaitOM = specificity('FOM');
 const replace = specificity("replace"); // bogus country code in Webmiss
-const exchangeRateSource = (currency) => (currency[3] === false) ? 'Xe.com' : 'BNF';
+const exchangeRateSource = (currency) => (currency[3] !== false) ? 'BNF' : (year === '2021' ? 'Xe.com' : 'github');
 
 
 const log = (v, color) => {
@@ -296,7 +302,7 @@ const findUsedCurrencies = () => {
         if (country.a && country.f !== 1) {
             for (const def of country.a){
                 currencies.add(def[1]);
-            } 
+            }
         }
     }
     return [...currencies];
@@ -337,7 +343,7 @@ const display = ([countries, exr]) => {
                 rows.push(row);
             } catch(err) {
                 log(`Error processing country ${key}, currency ${currency}`, "red");
-                throw err;
+                //throw err;
             }
         }
     }
@@ -358,7 +364,7 @@ const makeCsv = ([countries, exr], {separator=',', decimalSeparator='.', encodin
     const decimal = (v) => {
         if (decimalSeparator === ".") return v;
         const replaced =  v.toString().replace('.', decimalSeparator);
-        return (decimalSeparator === separator) ? enclose(replaced) : replaced; 
+        return (decimalSeparator === separator) ? enclose(replaced) : replaced;
     };
     let i = 0;
     for (const [key, value] of Object.entries(countries)) {
@@ -420,7 +426,7 @@ const makeEuroCsv = (csvData, average, {separator=',', decimalSeparator='.', enc
     const decimal = (v) => {
         if (decimalSeparator === ".") return v;
         const replaced =  v.toString().replace('.', decimalSeparator);
-        return (decimalSeparator === separator) ? enclose(replaced) : replaced; 
+        return (decimalSeparator === separator) ? enclose(replaced) : replaced;
     };
 
     const csvLines = [];
@@ -541,7 +547,7 @@ const make = async () => {
     await parseCsvStream(WebpaysURL, {"step": processWebpays});
     await parseCsvStream(WebmissURL, {"step": processWebmiss});
 
-    // in Webmiss there is no valid value for Kosovo prior to 2018-07-20 
+    // in Webmiss there is no valid value for Kosovo prior to 2018-07-20
     const extraData = ['2017-01-01', 'EUR', '0'];
     if (countries["XK"].a) {
         countries["XK"].a.push(extraData);
@@ -654,7 +660,26 @@ const make = async () => {
         }
         for (const currency of currencies) {
             if (!exr[currency]) {
-                errors.push(`missing exchange rate for ${currency}`);
+              let date = `${year}-01-01`;
+              try {
+                // console.log(`fetch exchange rate for ${currency} from fawazahmed0/currency-api`);
+                const startData = await got(`https://raw.githubusercontent.com/fawazahmed0/currency-api/1/${date}/currencies/eur/${currency.toLowerCase()}.min.json`).json();
+                if (startData['date'] !== date) {
+                  throw new Error('exchange rate date mismatch')
+                }
+                date = `${year}-12-31`;
+                const endData = await got(`https://raw.githubusercontent.com/fawazahmed0/currency-api/1/${date}/currencies/eur/${currency.toLowerCase()}.min.json`).json();
+                if (endData['date'] !== date) {
+                  throw new Error('exchange rate date mismatch')
+                }
+                const startRate = parseFloat(startData[currency.toLowerCase()]).toFixed(4);
+                const endRate = parseFloat(endData[currency.toLowerCase()]).toFixed(4);
+                const averageRate = ((parseFloat(startRate) + parseFloat(endRate))/2).toFixed(4);
+                exr[currency] = [startRate, endRate, averageRate, false];
+                warnings.push(`adding api exchange rate for ${currency} ${year}: ${startRate} / ${endRate}`);
+              } catch (error) {
+                  errors.push(`missing exchange rate for ${currency} ${date}`);
+              }
             }
         }
 

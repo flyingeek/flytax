@@ -85,6 +85,7 @@ Les fichiers .tsv peuvent être ouvert directement dans Excel ou être importé 
 
 | Année | CSV | TSV | Aperçu |
 | :---: | :---: | :---: | :---: |
+| 2022| [2021.csv](https://flyingeek.github.io/flytax/data/flytax-baremes2022.csv) | [2021.tsv](https://flyingeek.github.io/flytax/data/flytax-baremes2022.tsv) | [voir](https://github.com/flyingeek/flytax/blob/gh-pages/data/flytax-baremes2022.tsv) |
 | 2021| [2021.csv](https://flyingeek.github.io/flytax/data/flytax-baremes2021.csv) | [2021.tsv](https://flyingeek.github.io/flytax/data/flytax-baremes2021.tsv) | [voir](https://github.com/flyingeek/flytax/blob/gh-pages/data/flytax-baremes2021.tsv) |
 | 2020| [2020.csv](https://flyingeek.github.io/flytax/data/flytax-baremes2020.csv) | [2020.tsv](https://flyingeek.github.io/flytax/data/flytax-baremes2020.tsv) | [voir](https://github.com/flyingeek/flytax/blob/gh-pages/data/flytax-baremes2020.tsv) |
 | 2019| [2019.csv](https://flyingeek.github.io/flytax/data/flytax-baremes2019.csv) | [2019.tsv](https://flyingeek.github.io/flytax/data/flytax-baremes2019.tsv) | [voir](https://github.com/flyingeek/flytax/blob/gh-pages/data/flytax-baremes2019.tsv) |
@@ -94,6 +95,7 @@ Pour le calcul du forfait Euro:
 
 | Année | CSV | TSV | Aperçu | Montant |
 | :---: | :---: | :---: | :---: | :---: |
+| 2022| [2021-euro.csv](https://flyingeek.github.io/flytax/data/flytax-baremes2022-zone_euro.csv) | [2021-euro.tsv](https://flyingeek.github.io/flytax/data/flytax-baremes2022-zone_euro.tsv) | [voir](https://github.com/flyingeek/flytax/blob/gh-pages/data/flytax-baremes2022-zone_euro.tsv) | 161 € |
 | 2021| [2021-euro.csv](https://flyingeek.github.io/flytax/data/flytax-baremes2021-zone_euro.csv) | [2021-euro.tsv](https://flyingeek.github.io/flytax/data/flytax-baremes2021-zone_euro.tsv) | [voir](https://github.com/flyingeek/flytax/blob/gh-pages/data/flytax-baremes2021-zone_euro.tsv) | 159 € |
 | 2020| [2020-euro.csv](https://flyingeek.github.io/flytax/data/flytax-baremes2020-zone_euro.csv) | [2020-euro.tsv](https://flyingeek.github.io/flytax/data/flytax-baremes2020-zone_euro.tsv) | [voir](https://github.com/flyingeek/flytax/blob/gh-pages/data/flytax-baremes2020-zone_euro.tsv) | 159 € |
 | 2019| [2019-euro.csv](https://flyingeek.github.io/flytax/data/flytax-baremes2019-zone_euro.csv) | [2019-euro.tsv](https://flyingeek.github.io/flytax/data/flytax-baremes2019-zone_euro.tsv) | [voir](https://github.com/flyingeek/flytax/blob/gh-pages/data/flytax-baremes2019-zone_euro.tsv) | 156 € |

@@ -1,6 +1,7 @@
 <script>
     import {localeRate, localeDateFormat, localeCurrency} from './utils';
     import {taxData, pairings} from '../stores';
+    import Link from './Link.svelte';
     export let tableId = "Indemnities";
 
     function* getCountriesData(dat){
@@ -34,7 +35,7 @@
                 "euros": (parseFloat(amount) / averageRate).toFixed(2),
                 "zone": (key === "EU") ? "" : (value.z === 1) ? "Moyen": "Long"
             };
-        } 
+        }
 
     };
     $: countriesData = ($taxData) ? [...getCountriesData($pairings)] : [];
@@ -64,7 +65,11 @@
     <tfoot>
         <tr><td colspan="9">1. Le forfait Euro est appliqué dans ces pays: {$taxData.zoneForfaitEuro.join(', ')}</td></tr>
         {#if countriesData.reduce((a,c) => a | c.official===false, false)}
-        <tr><td colspan="9">2. Taux officiel non communiqué par la BNF, basé sur le taux du marché moyen de Xe.com.</td></tr>
+            {#if $taxData.year === '2021'}
+                <tr><td colspan="9">2. Taux officiel non communiqué par la BNF, basé sur le taux du marché moyen de Xe.com.</td></tr>
+            {:else}
+                <tr><td colspan="9">2. Taux officiel non communiqué par la BNF, basé sur le taux de <Link href="https://github.com/fawazahmed0/currency-api">currency-api</Link>.</td></tr>
+            {/if}
         {/if}
     </tfoot>
 </table>
