@@ -7,7 +7,7 @@
 
 // convert a text number to a decimal (accepts "12345,67 or 12345.67 or 12 345.67)
 // forces 2 precision digits
-// returns a string 
+// returns a string
 export const decimal = (text) => {
     const number = text.replace(',', '.').replace(' ', '');
     const [left, right] = number.split(".");
@@ -75,9 +75,9 @@ const sum = (decimals) => cents2decimal(decimals.map(decimal2cents).reduce((a, b
 export const payParser = (text, fileName, fileOrder) => {
     //console.log(text);
     let result = {"type": "pay", fileName, fileOrder, errors: []};
-    let re = /(?:IND\.REPAS_+|INDEMNITE REPAS_+|IR\.FIN ANNEE DOUBL_+)([\-0-9, ]+)/g;
+    let re = /(?:IND\.REPAS_+|INDEMNITE REPAS_+|IR\.FIN ANNEE DOUBL_+|IR EXONEREES_+|IR NON EXONEREES_+)([\-0-9, ]+)/g;
     result.repas = matchAll(text, re, "0").map(decimal);
-    re = /(?:IND\. TRANSPORT_+|FRAIS REELS TRANSP_+|R\. FRAIS DE TRANSPORT_+)([\-0-9, ]+)/g;
+    re = /(?:IND\. TRANSPORT EXO_+|IND\. TRANSPORT_+|FRAIS REELS TRANSP_+|R\. FRAIS DE TRANSPORT_+)([\-0-9, ]+)/g;
     result.transport = matchAll(text, re, "0").map(decimal);
     re = /(?:_I.DECOUCHERS F.PRO_+)([\-0-9, ]+)/g;
     result.decouchers_fpro = matchAll(text, re, "0").map(decimal);

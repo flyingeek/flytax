@@ -97,6 +97,9 @@
     {#if $taxYear !== $taxData.year}
     <tr class="warning"><th colspan="3">Attention les montants sont basés sur les données fiscales de {$taxData.year}</th></tr>
     {/if}
+    {#if $taxYear === "2023"}
+    <tr class="warning"><th colspan="3">Le calcul des frais d'emploi est encore en test pour 2023</th></tr>
+    {/if}
 </thead>
 <tbody>
     <tr>
@@ -148,7 +151,7 @@
     </tbody>
     <tfoot>
         <tr>
-            <td colspan="5">1. Les Frais d’emploi comprennent les lignes IND.REPAS, INDEMNITE REPAS, IR.FIN ANNEE DOUBL, IND. TRANSPORT, FRAIS REELS TRANSP, R. FRAIS DE TRANSPORT du bulletin de paye.</td>
+            <td colspan="5">1. Les Frais d’emploi comprennent les lignes IND.REPAS, INDEMNITE REPAS, IR.FIN ANNEE DOUBL, IND. TRANSPORT, IND. TRANSPORT EXO, FRAIS REELS TRANSP, R. FRAIS DE TRANSPORT, IR EXONEREES, IR NON EXONEREES du bulletin de paye.</td>
         </tr>
         <tr>
             <td colspan="5">2. Cette colonne reprend la ligne I.DECOUCHERS F.PRO, elle est utilisée pour l’estimation. Pour les impôts, c’est uniquement l’attestation des nuitées AF qui doit être prise en compte.</td>

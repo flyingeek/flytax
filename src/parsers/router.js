@@ -6,7 +6,7 @@ import {nightsAFParser} from "./nightsAFParser";
 // Return array of result
 export const router = (text, fileName, fileOrder, taxYear, taxData, base, tzConverter) => {
     const results = [];
-    if (text.match(/BULLETIN DE PAIE_(AIR FRANCE|BASE)/)) {
+    if (text.match(/BULLETIN DE PAIE_(AIR FRANCE|BASE|DP GN)/)) {
         try  {
             const result = payParser(text, fileName, fileOrder);
             if (result.errors) {

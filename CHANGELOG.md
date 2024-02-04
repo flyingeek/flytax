@@ -3,11 +3,16 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.3.0] - 2024-02-04
+## [1.3.2] - 2024-02-05
 
 ### Changed
 
 - Mise à jour des données pour les revenus 2023
+
+### Fixed
+
+- accepte les bulletins de paie avec un label DP GN (erreur sur les bulletins de 06/2023)
+- En test : prise en compte pour les frais d'emploi des nouveaux libellés (IR EXONEREES, IR NON EXONEREES, IND TRANSPORT EXO)
 
 ## [1.2.0] - 2023-01-22
 
