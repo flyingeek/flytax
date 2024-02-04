@@ -45,7 +45,7 @@ const apiURL = `https://api.webstat.banque-france.fr/webstat-en/v1/data/EXR/EXR.
 //      St Martin, St Barth ne sont plus des DOM depuis 2007 mais ils figurent toujours dans l'arrêté de 2006 mis à jour en 2020
 const zoneMC = ["AL", "DZ", "AD", "BA", "BG", "DK", "HR", "HU", "MK", "MA", "NO", "RO", "GB", "SE", "CH", "CZ", "TN", "YU", "PL"];
 const zoneEuroMC = ["DE", "AT", "BE", "CY", "ES", "FI", "FR", "GR", "IE", "IT", "LU", "MT", "NL", "PT", "SK", "SI"];
-const zoneEuroLC = ["EE", "LV", "LT"]; // Estonie, Lettonie, Lituanie
+const zoneEuroLC = ["EE", "LV", "LT", "HR"]; // Estonie, Lettonie, Lituanie, Croatie (2023)
 const zoneDOM = ["YT", "PM", "GP", "MQ", "GF", "RE"];
 const zoneDOMLC = ["SX", "MF", "BL"]; //SXM est sur SX iso MF (St Martin) donc on ajoute SX et MF
 // pour le calcul de l'indemnité Euro (FLYTAX n'utilise plus les données URSSAF mais uniquement l'arrêté de 2006):
@@ -56,11 +56,17 @@ const zoneDOMLC = ["SX", "MF", "BL"]; //SXM est sur SX iso MF (St Martin) donc o
 
 // data adjustment per year
 const specificities = {
-      "2023": {
+    "2024": {
         "URSSAF": {"Base": [70.00, 17.50], "Paris": [110.00, 17.50], "Province": [90.00, 17.50], "DOM": [70.00, 17.50]}, // used to compute forfaitEU
-        //"URSSAF": {"Paris": [69.50, 19.40], "Province": [51.60, 19.40], "DOM": 105.00}, // moins interressant que l'arrêté ?
+        //"URSSAF": {"Paris": [74.30, 20.70], "Province": [55.10, 20.70], "DOM": 105.00}, // moins interressant que l'arrêté ?
         "FOM": [["2021-01-01","EUR","132"]], // forfait OM
-        "MAXFORFAIT10": 13522
+        "MAXFORFAIT10": 14171
+    },
+    "2023": {
+        "URSSAF": {"Base": [70.00, 17.50], "Paris": [110.00, 17.50], "Province": [90.00, 17.50], "DOM": [70.00, 17.50]}, // used to compute forfaitEU
+        //"URSSAF": {"Paris": [74.30, 20.70], "Province": [55.10, 20.70], "DOM": 105.00}, // moins interressant que l'arrêté ?
+        "FOM": [["2021-01-01","EUR","132"]], // forfait OM
+        "MAXFORFAIT10": 14171
     },
     "2022": {
         "URSSAF": {"Base": [70.00, 17.50], "Paris": [110.00, 17.50], "Province": [90.00, 17.50], "DOM": [70.00, 17.50]}, // used to compute forfaitEU

@@ -9,8 +9,9 @@ export const BASES = [
 ].sort((a, b) => (a.label.localeCompare(b.label)));
 
 export const DATASET = [
-    {label: "2023", selected: false, url: "./data/data2022.json"},
-    {label: "2022", selected: true, url: "./data/data2022.json"},
+    {label: "2024", selected: false, url: "./data/data2023.json"},
+    {label: "2023", selected: true, url: "./data/data2023.json"},
+    {label: "2022", selected: false, url: "./data/data2022.json"},
     {label: "2021", selected: false, url: "./data/data2021.json"},
     {label: "2020", selected: false, url: "./data/data2020.json"},
     {label: "2019", selected: false, url: "./data/data2019.json"},

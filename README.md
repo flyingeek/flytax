@@ -85,6 +85,7 @@ Les fichiers .tsv peuvent être ouvert directement dans Excel ou être importé 
 
 | Année | CSV | TSV | Aperçu |
 | :---: | :---: | :---: | :---: |
+| 2023| [2023.csv](https://flyingeek.github.io/flytax/data/flytax-baremes2023.csv) | [2023.tsv](https://flyingeek.github.io/flytax/data/flytax-baremes2023.tsv) | [voir](https://github.com/flyingeek/flytax/blob/gh-pages/data/flytax-baremes2023.tsv) |
 | 2022| [2022.csv](https://flyingeek.github.io/flytax/data/flytax-baremes2022.csv) | [2022.tsv](https://flyingeek.github.io/flytax/data/flytax-baremes2022.tsv) | [voir](https://github.com/flyingeek/flytax/blob/gh-pages/data/flytax-baremes2022.tsv) |
 | 2021| [2021.csv](https://flyingeek.github.io/flytax/data/flytax-baremes2021.csv) | [2021.tsv](https://flyingeek.github.io/flytax/data/flytax-baremes2021.tsv) | [voir](https://github.com/flyingeek/flytax/blob/gh-pages/data/flytax-baremes2021.tsv) |
 | 2020| [2020.csv](https://flyingeek.github.io/flytax/data/flytax-baremes2020.csv) | [2020.tsv](https://flyingeek.github.io/flytax/data/flytax-baremes2020.tsv) | [voir](https://github.com/flyingeek/flytax/blob/gh-pages/data/flytax-baremes2020.tsv) |
@@ -95,6 +96,7 @@ Pour le calcul du forfait Euro:
 
 | Année | CSV | TSV | Aperçu | Montant |
 | :---: | :---: | :---: | :---: | :---: |
+| 2023| [2023-euro.csv](https://flyingeek.github.io/flytax/data/flytax-baremes2023-zone_euro.csv) | [2023-euro.tsv](https://flyingeek.github.io/flytax/data/flytax-baremes2023-zone_euro.tsv) | [voir](https://github.com/flyingeek/flytax/blob/gh-pages/data/flytax-baremes2023-zone_euro.tsv) | 167 € |
 | 2022| [2022-euro.csv](https://flyingeek.github.io/flytax/data/flytax-baremes2022-zone_euro.csv) | [2022-euro.tsv](https://flyingeek.github.io/flytax/data/flytax-baremes2022-zone_euro.tsv) | [voir](https://github.com/flyingeek/flytax/blob/gh-pages/data/flytax-baremes2022-zone_euro.tsv) | 161 € |
 | 2021| [2021-euro.csv](https://flyingeek.github.io/flytax/data/flytax-baremes2021-zone_euro.csv) | [2021-euro.tsv](https://flyingeek.github.io/flytax/data/flytax-baremes2021-zone_euro.tsv) | [voir](https://github.com/flyingeek/flytax/blob/gh-pages/data/flytax-baremes2021-zone_euro.tsv) | 159 € |
 | 2020| [2020-euro.csv](https://flyingeek.github.io/flytax/data/flytax-baremes2020-zone_euro.csv) | [2020-euro.tsv](https://flyingeek.github.io/flytax/data/flytax-baremes2020-zone_euro.tsv) | [voir](https://github.com/flyingeek/flytax/blob/gh-pages/data/flytax-baremes2020-zone_euro.tsv) | 159 € |
@@ -142,7 +144,7 @@ La BNF de dispose plus aujourd'hui de l'historique de taux de change du Litas (L
 
 Pour chaque pays, "n" désigne le nom, "z":1 (optionel défini la zone M), "f":1 (optionel défini l'usage du forfait Euro), et "a" (optionel si f est présent) est une liste des indemnités pour ce pays avec la date de début de validité, la monnaie et le montant. Le code pays "EU" contient le montant du forfait euro pour l'année en cours. Pour déterminer si on doit retirer ½ indemnité, if faut vérifier `z == 1`.
 
-Si par ailleurs vous considérerez qu'il faut retirer ½ indemnité à tous les pays de la zone euro, y compris la Lituanie, la Lettonie et l'Estonie, alors il faudra vérifier `z == 1 || f == 1`.
+Si par ailleurs vous considérerez qu'il faut retirer ½ indemnité à tous les pays de la zone euro, y compris la Lituanie, la Lettonie, l'Estonie, et depuis 2023 la Croatie, alors il faudra vérifier `z == 1 || f == 1`.
 
 #### exr
 
