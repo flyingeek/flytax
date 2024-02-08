@@ -52,20 +52,21 @@ const zoneDOMLC = ["SX", "MF", "BL"]; //SXM est sur SX iso MF (St Martin) donc o
 // URSSAF https://www.urssaf.fr/portail/home/taux-et-baremes/frais-professionnels/indemnite-de-grand-deplacement/deplacements-en-metropole.html
 //        https://www.urssaf.fr/portail/home/taux-et-baremes/frais-professionnels/indemnite-de-grand-deplacement/deplacements-en-outre-mer.html
 // Indemnités Frais de mission (arrêté de 2006) https://www.legifrance.gouv.fr/loda/id/LEGIARTI000042212803
+// Pour 2023: https://www.legifrance.gouv.fr/loda/id/JORFTEXT000000242360 (et notamment l'article 1 pour FR/DOM)
 // Abattement fiscal maximum au forfait: https://www.service-public.fr/particuliers/vosdroits/F1989
 
 // data adjustment per year
 const specificities = {
     "2024": {
-        "URSSAF": {"Base": [70.00, 17.50], "Paris": [110.00, 17.50], "Province": [90.00, 17.50], "DOM": [70.00, 17.50]}, // used to compute forfaitEU
+        "URSSAF": {"Base": [90.00, 20.00], "Paris": [140.00, 20.00], "Province": [120.00, 20.00], "DOM": [120.00, 20.00]}, // used to compute forfaitEU
         //"URSSAF": {"Paris": [74.30, 20.70], "Province": [55.10, 20.70], "DOM": 105.00}, // moins interressant que l'arrêté ?
-        "FOM": [["2021-01-01","EUR","132"]], // forfait OM
+        "FOM": [["2023-01-01","EUR","168"]], // forfait OM
         "MAXFORFAIT10": 14171
     },
     "2023": {
-        "URSSAF": {"Base": [70.00, 17.50], "Paris": [110.00, 17.50], "Province": [90.00, 17.50], "DOM": [70.00, 17.50]}, // used to compute forfaitEU
+        "URSSAF": {"Base": [90.00, 20.00], "Paris": [140.00, 20.00], "Province": [120.00, 20.00], "DOM": [120.00, 20.00]}, // used to compute forfaitEU
         //"URSSAF": {"Paris": [74.30, 20.70], "Province": [55.10, 20.70], "DOM": 105.00}, // moins interressant que l'arrêté ?
-        "FOM": [["2021-01-01","EUR","132"]], // forfait OM
+        "FOM": [["2023-01-01","EUR","168"]], // forfait OM
         "MAXFORFAIT10": 14171
     },
     "2022": {
