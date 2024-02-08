@@ -9,7 +9,7 @@ import copy from 'rollup-plugin-copy';
 import replace from '@rollup/plugin-replace';
 const {markdown} = require('svelte-preprocess-markdown');
 const workbox = require('rollup-plugin-workbox-inject');
-import {version} from './package.json';
+import {version, patchVersion} from './package.json';
 import watchAssets from 'rollup-plugin-watch-assets';
 import html from '@open-wc/rollup-plugin-html';
 import {DATASET} from './src/stores';
@@ -27,6 +27,7 @@ const relPath = (url) => url.replace('./', './public/'); // public path for a lo
 
 const U = {
     'APP_VERSION': version,
+    'PATCH_VERSION': patchVersion,
     'process.env.NODE_ENV': (production) ? JSON.stringify('production') : JSON.stringify('development'),
     'CONF_PDFJS_WORKER_JS': 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.4.456/pdf.worker.min.js',
     'CONF_PDFJS_JS': 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.4.456/pdf.min.js',
@@ -84,7 +85,7 @@ export default [{
                 dev: !production
             },
             extensions: ['.svelte','.md'],
-            preprocess: [ 
+            preprocess: [
                 markdown()
             ]
         }),
