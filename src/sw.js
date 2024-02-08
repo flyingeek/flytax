@@ -3,9 +3,9 @@ import { registerRoute } from 'workbox-routing';
 import { StaleWhileRevalidate, CacheFirst } from 'workbox-strategies';
 import { ExpirationPlugin } from 'workbox-expiration';
 
-const deprecatedCaches = ['flytax-data', 'flytax-data2', 'flytax-warmup', 'flytax-img'];
+const deprecatedCaches = ['flytax-data', 'flytax-data2', 'flytax-data3', 'flytax-warmup', 'flytax-img'];
 const warmupCacheName = 'flytax-warmup2';
-const dataCacheName = 'flytax-data3';
+const dataCacheName = 'flytax-data4';
 const iconsCacheName = 'flytax-icons';
 const imageCacheName = 'flytax-img2';
 const SW_VERSION = 'APP_VERSION';
@@ -131,9 +131,9 @@ const isOldCache = (cacheName) => {
     return deprecatedCaches.includes(cacheName);
 };
 /**
- * check entries of a cache to find 
+ * check entries of a cache to find
  * old entry (not present in thirdPartyUrls or lidoUrls)
- * @param {Request} request 
+ * @param {Request} request
  * @returns {Boolean} true if should be removed from cache
  */
 const isOldRequest = (request) => {

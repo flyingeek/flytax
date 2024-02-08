@@ -58,15 +58,18 @@ const zoneDOMLC = ["SX", "MF", "BL"]; //SXM est sur SX iso MF (St Martin) donc o
 // data adjustment per year
 const specificities = {
     "2024": {
-        "URSSAF": {"Base": [90.00, 20.00], "Paris": [140.00, 20.00], "Province": [120.00, 20.00], "DOM": [120.00, 20.00]}, // used to compute forfaitEU
+        "URSSAF": [["2023-09-22", {"Base": [90.00, 20.00], "Paris": [140.00, 20.00], "Province": [120.00, 20.00], "DOM": [120.00, 20.00]}],
+            ["2023-01-01", {"Base": [70.00, 17.50], "Paris": [110.00, 17.50], "Province": [90.00, 17.50], "DOM": [70.00, 17.50]}]], // used to compute forfaitEU
+
         //"URSSAF": {"Paris": [74.30, 20.70], "Province": [55.10, 20.70], "DOM": 105.00}, // moins interressant que l'arrêté ?
-        "FOM": [["2023-01-01","EUR","168"]], // forfait OM
+        "FOM": [["2023-09-22","EUR","168"], ["2021-01-01","EUR","132"]], // forfait OM
         "MAXFORFAIT10": 14171
     },
     "2023": {
-        "URSSAF": {"Base": [90.00, 20.00], "Paris": [140.00, 20.00], "Province": [120.00, 20.00], "DOM": [120.00, 20.00]}, // used to compute forfaitEU
+        "URSSAF": [["2023-09-22", {"Base": [90.00, 20.00], "Paris": [140.00, 20.00], "Province": [120.00, 20.00], "DOM": [120.00, 20.00]}],
+            ["2023-01-01", {"Base": [70.00, 17.50], "Paris": [110.00, 17.50], "Province": [90.00, 17.50], "DOM": [70.00, 17.50]}]], // used to compute forfaitEU
         //"URSSAF": {"Paris": [74.30, 20.70], "Province": [55.10, 20.70], "DOM": 105.00}, // moins interressant que l'arrêté ?
-        "FOM": [["2023-01-01","EUR","168"]], // forfait OM
+        "FOM": [["2023-09-22","EUR","168"], ["2021-01-01","EUR","132"]], // forfait OM
         "MAXFORFAIT10": 14171
     },
     "2022": {
@@ -507,7 +510,14 @@ const findAmount = (amounts, isoDate) => {
     }
     throw new Error(`no matching amount for ${isoDate}`);
 };
-
+const findUrrsaf = (amounts, isoDate) => {
+    for (const amount of amounts) {
+        if (amount[0].localeCompare(isoDate) <= 0) {
+            return amount[1];
+        }
+    }
+    throw new Error(`no matching urssaf data for ${isoDate}`);
+};
 const computeForfaitEU = () => {
     if (["2017", "2018"].includes(year)) return forfaitEU;
     const results = [];
@@ -524,28 +534,42 @@ const computeForfaitEU = () => {
         csv.push([country, countries[country].n].concat(...res.concat(average).map(v => v.toFixed(2))));
         results.push(average);
     }
-    const urssaf = specificity("URSSAF");
-    if ("France" in urssaf) { /* arrete 2006 */
-        const france = urssaf["France"][0] + (2 * urssaf["France"][1]);
-        results.push(france);
-    } else { /* urssaf ou arrete 2006 modifié en 2020 */
-        const paris = urssaf["Paris"][0] + (2 * urssaf["Paris"][1]);
-        const province = urssaf["Province"][0] + (2 * urssaf["Province"][1]);
-        if ("Base" in urssaf) { /* arrete 2006 modifié en 2020 */
-            const base = urssaf["Base"][0] + (2 * urssaf["Base"][1]);
-            results.push((paris + province + base) / 3);
-        }else{
-            results.push((paris + province) / 2);
+    const urssafOrArray = specificity("URSSAF");
+    let urssafArray = urssafOrArray;
+    if (!Array.isArray(urssafOrArray)){
+      urssafArray = [`${year}-01-01`, urssafOrArray];
+    }
+    const resFR = [];
+    const resDOM = [];
+    for (const month of months){
+        const urssaf = findUrrsaf(urssafArray, `${year}-${month}-01`);
+        if ("France" in urssaf) { /* arrete 2006 */
+            const france = urssaf["France"][0] + (2 * urssaf["France"][1]);
+            resFR.push(france);
+        } else { /* urssaf ou arrete 2006 modifié en 2020 */
+            const paris = urssaf["Paris"][0] + (2 * urssaf["Paris"][1]);
+            const province = urssaf["Province"][0] + (2 * urssaf["Province"][1]);
+            if ("Base" in urssaf) { /* arrete 2006 modifié en 2020 */
+                const base = urssaf["Base"][0] + (2 * urssaf["Base"][1]);
+                resFR.push((paris + province + base) / 3);
+            }else{
+                resFR.push((paris + province) / 2);
+            }
+        }
+        if (Array.isArray(urssaf["DOM"])) {
+            const dom = urssaf["DOM"][0] + (2 * urssaf["DOM"][1]);
+            resDOM.push(dom);
+        } else {
+            resDOM.push(urssaf["DOM"]);
         }
     }
-    csv.push(['FR', 'FRANCE'].concat(...new Array(13).fill(results[results.length - 1].toFixed(2), 0, 13)));
-    if (Array.isArray(urssaf["DOM"])) {
-        const dom = urssaf["DOM"][0] + (2 * urssaf["DOM"][1]);
-        results.push(dom);
-    } else {
-        results.push(urssaf["DOM"]);
-    }
-    csv.push(['FR', 'DOM'].concat(...new Array(13).fill(results[results.length - 1].toFixed(2), 0, 13)));
+    const averageFR = resFR.reduce((a, b) => a + b) / resFR.length;
+    results.push(averageFR);
+    const averageDOM = resDOM.reduce((a, b) => a + b) / resDOM.length;
+    results.push(averageDOM);
+
+    csv.push(['FR', 'FRANCE'].concat(...(resFR.concat(averageFR)).map(e => e.toFixed(2))));
+    csv.push(['FR', 'DOM'].concat(...(resDOM.concat(averageDOM)).map(e => e.toFixed(2))));
     const average = results.reduce((a, b) => a + b) / results.length;
     return [csv, [[`${year}-01-01`, "EUR", average.toFixed(0)]]];
 };
@@ -693,7 +717,9 @@ const make = async () => {
         display([countries, exr]);
         const forfaitEuro = forfaitEU[0][2];
         log(`Forfait EU: ${forfaitEuro} ${forfaitEU[0][1]}`, 'cyan');
-        log(`Forfait OM: ${forfaitOM[0][2]} ${forfaitOM[0][1]}`, 'cyan');
+        for (let fom of forfaitOM) {
+          log(`Forfait OM ${fom[0]}: ${fom[2]} ${fom[1]}`, 'cyan');
+        }
         log(`found ${Object.keys(countries).length} countries in ${WebpaysURL.split('/').pop()}`);
 
         if (errors.length === 0) {
