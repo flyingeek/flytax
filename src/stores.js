@@ -7,10 +7,10 @@ export const BASES = [
     {label: "Paris", selected: true, value: ['CDG', 'ORY'], tzConverter: iso2FR},
     {label: "Toulouse", selected: false, value: ['TLS'], tzConverter: iso2FR}
 ].sort((a, b) => (a.label.localeCompare(b.label)));
-const patchVersion = "PATCH_VERSION";
+
 export const DATASET = [
-    {label: "2024", selected: false, url: `./data/data2023${patchVersion}.json`},
-    {label: "2023", selected: true, url: `./data/data2023${patchVersion}.json`},
+    {label: "2024", selected: false, url: `./data/data2023b.json`},
+    {label: "2023", selected: true, url: `./data/data2023b.json`}, // see save method in makeData
     {label: "2022", selected: false, url: "./data/data2022.json"},
     {label: "2021", selected: false, url: "./data/data2021.json"},
     {label: "2020", selected: false, url: "./data/data2020.json"},

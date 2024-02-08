@@ -29,15 +29,13 @@ import fs from 'fs';
 import got from 'got';
 import iconv from 'iconv-lite';
 
-//ugly
-const patchVersion = JSON.parse(fs.readFileSync('package.json', 'utf8')).patchVersion;
-
 const scriptArgs = process.argv.slice(2);
 const year = (scriptArgs.length === 1) ? scriptArgs[0] : new Date().getFullYear().toString();
 const isoStart = `${year}-01-01`;
 const isoEnd = `${year}-12-31`;
 const monthsfr = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
 const dataPath = `./data/data${year}.json`;
+
 const csvPath = `./data/flytax-baremes${year}.csv`;
 const WebpaysURL = "https://www.economie.gouv.fr/dgfip/fichiers_taux_chancellerie/txt/Webpays";
 const WebmissURL = "https://www.economie.gouv.fr/dgfip/fichiers_taux_chancellerie/txt/Webmiss";
@@ -328,6 +326,10 @@ const save = (data) => {
             log(`Saved ${dataPath}`, "green");
         }
     });
+    let patchVersion = '';
+    if (year === "2023") {
+      patchVersion = 'b'; //also edit stores.js
+    }
     if (patchVersion) {
           const dataPathPatched = dataPath.replace('.json', `${patchVersion}.json`);
           fs.writeFile(dataPathPatched, JSON.stringify(data), (err) => {

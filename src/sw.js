@@ -41,7 +41,7 @@ registerRoute(
     })
 );
 registerRoute(
-    ({ url }) => url.pathname.match(/\/data\/data[0-9]{4}\.json/),
+    ({ url }) => url.pathname.match(/\/data\/data[0-9]{4}.?\.json/),
     new CacheFirst({
         cacheName: dataCacheName,
         plugins: [
