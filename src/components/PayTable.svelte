@@ -96,6 +96,8 @@
     </tr>
     {#if $taxYear !== $taxData.year}
     <tr class="warning"><th colspan="3">Attention les montants sont basés sur les données fiscales de {$taxData.year}</th></tr>
+    {/if}{#if $taxYear === "2023"}
+    <tr class="warning"><th colspan="3">Attention les données fiscales de 2023 ne sont pas finalisées</th></tr>
     {/if}
 </thead>
 <tbody>
