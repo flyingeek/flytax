@@ -138,7 +138,11 @@ export const checkSWUpdate = () => {
         if ((new Date() - swLastUpdateDate) > timeout) {
             navigator.serviceWorker.getRegistration().then(reg => {
                 if (reg) {
-                    if (!reg.waiting) reg.update();
+                    if (!reg.waiting) {
+                      reg.update();
+                    } else {
+                      reg.waiting.postMessage('SKIP_WAITING');
+                    }
                     swDismiss.set(false);
                     swLastUpdateDate = new Date();
                 }
