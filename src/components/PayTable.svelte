@@ -209,7 +209,7 @@
         font-size: initial;
     }
     .col1 {
-        width: 130px;
+        width: 140px;
     }
     .col2 {
         width: 50%;
@@ -237,7 +237,7 @@
     }
     td input {
         margin-bottom: 0;
-        width: 120px;
+        width: 130px;
     }
     td input:disabled {
         color: var(--green);
