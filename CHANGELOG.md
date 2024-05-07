@@ -3,6 +3,12 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.11] - 2024-05-07
+
+### Added
+
+- Base PTP ajoutée mais pas encore testée
+
 ## [1.3.10] - 2024-05-03
 
 ### Fixed

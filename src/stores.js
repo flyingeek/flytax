@@ -1,11 +1,12 @@
 import { writable, readable, derived } from 'svelte/store';
-import {iso2FR, mergeRots} from './parsers/ep5Parser';
+import {iso2FR, iso2AST, mergeRots} from './parsers/ep5Parser';
 
 export const BASES = [
     {label: "Marseille", selected: false, value: ['MRS'], tzConverter: iso2FR},
     {label: "Nice", selected: false, value: ['NCE'], tzConverter: iso2FR},
     {label: "Paris", selected: true, value: ['CDG', 'ORY'], tzConverter: iso2FR},
-    {label: "Toulouse", selected: false, value: ['TLS'], tzConverter: iso2FR}
+    {label: "Toulouse", selected: false, value: ['TLS'], tzConverter: iso2FR},
+    {label: "Pointe-à-Pitre", selected: false, value: ['PTP'], tzConverter: iso2AST}
 ].sort((a, b) => (a.label.localeCompare(b.label)));
 
 export const DATASET = [

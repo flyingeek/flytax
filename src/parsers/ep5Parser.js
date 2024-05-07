@@ -67,6 +67,7 @@ export const iso2TZ = (timeZone, isoString, deltaDays=0) => {
     }
 }
 export const iso2FR = iso2TZ.bind(null, "Europe/Paris");
+export const iso2AST = iso2TZ.bind(null, "America/Puerto_Rico"); // Atlantic Standard Time
 
 const rotSummary = (rot) => {
     // construct a summary (nights not repeated)
@@ -84,7 +85,7 @@ const rotSummary = (rot) => {
 
 export const buildRots = (flights, {tzConverter, base, iataMap}) => {
     // Using parsed flights build up rots & places of stay
-    
+
     //verify browser compatibility
     const converterTZ = tzConverter();
     try {
@@ -97,7 +98,7 @@ export const buildRots = (flights, {tzConverter, base, iataMap}) => {
     let rot = null;
     let rotFlights;
     let rotStays;
-    
+
     for (const [i, flightGMT] of flights.entries()) {
         const year = flightGMT.start.substring(0,4);
         const month = flightGMT.start.substring(5, 7);
@@ -240,7 +241,7 @@ export const buildRots = (flights, {tzConverter, base, iataMap}) => {
             // We have to check if we can have a better night repartition
             [rot.nights,] = optimizeNightsRepartition(rot, rotStays);
         }
-        
+
         //outOfBase is > 0 if rot have at least one stopover out of base
         //If not outOfBase, indemnities are zero so we reset nights
         const outOfBase = rotFlights.reduce((a, c) => a + ((!isBase(c.dep) || !isBase(c.arr)) ? 1 : 0), 0);
@@ -281,7 +282,7 @@ export const optimizeNightsRepartition = (rot, stays) => {
         // and with a diff of two nights
         if (stayTuples.length === 2 && stayTuples[0][1] === stayTuples[1][1] && nightTuples.length === 2 && (nightTuples[1][1] - nightTuples[0][1] === 2)){
             const optimized = [].concat(nights[0], ...nights.slice(0,-1));
-            let optimizedCountries = countries; 
+            let optimizedCountries = countries;
             if (countries!== undefined) {
                 optimizedCountries = [].concat(countries[0], ...countries.slice(0,-1));
             }
@@ -289,7 +290,7 @@ export const optimizeNightsRepartition = (rot, stays) => {
             return [optimized, optimizedCountries];
         }
     }
-    return [nights, countries];   
+    return [nights, countries];
 };
 
 export const iata2country = (iata) => {
@@ -516,7 +517,7 @@ export const mergeRots = (data, taxYear, taxData, tzConverter) => {
         } else {
             mergedRots.push(rot);
         }
-    } 
+    }
     return mergedRots;
 };
 
@@ -538,7 +539,7 @@ export const ep5Parser = (text, fileName, fileOrder, taxYear, taxData, base, tzC
     }else{
         throw new Error(`EP5 parser:  Date not found in ${fileName}`);
     }
-    
+
     //search EP5 for flights
     if (month === "01" && year === nextTaxYear) {
         result.date = `${taxYear}-13`;
