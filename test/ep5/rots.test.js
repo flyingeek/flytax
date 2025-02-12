@@ -85,7 +85,7 @@ test("10 ON YVR PPT YVR", () => {
     //  4 PPT
     //  5 PPT
     //  6 ??? PPT (SNPL) YVR (SNPNC) en vol => nuit précédente => pour moi PPT
-    //  7 YVR 
+    //  7 YVR
     //  8 YVR
     //  9 YVR
     // 10 YVR par convention nuit précédente
@@ -95,7 +95,7 @@ test("10 ON YVR PPT YVR", () => {
     expect(rots[0]).toEqual({
         isComplete: '<>',
         nights: [ 'YVR', 'YVR', 'YVR', 'PPT', 'PPT', 'PPT', 'YVR', 'YVR', 'YVR', 'YVR'],
-        countries: [ 'CA', 'CA', 'CA', 'PF', 'PF', 'PF', 'CA', 'CA', 'CA', 'CA'],
+        countries: [ 'VV', 'VV', 'VV', 'PF', 'PF', 'PF', 'VV', 'VV', 'VV', 'VV'],
         start: '2019-09-01T19:05+02:00',
         end: '2019-09-10T16:35+02:00',
         days: 10,
@@ -104,7 +104,7 @@ test("10 ON YVR PPT YVR", () => {
         arr:'CDG'
     });
     rots = addIndemnities("2019", rots, taxData, iso2FR);
-    expect(rots[0].formula).toBe('3 x CA + 3 x PF + 4 x CA');
+    expect(rots[0].formula).toBe('3 x VV + 3 x PF + 4 x VV');
     expect(rots[0].indemnity).toBeCloseTo((7 * 260 / 1.5057) + (3 * 120), 1);
 });
 
@@ -193,7 +193,7 @@ test('unknown country' , () => {
         {"stop":"xx,xx", "dep": "CDG", "start": "2019-08-30T21:00Z", "arr": "SYD" ,"end": "2019-01-31T07:30Z"},
         {"stop":"xx,xx", "dep": "SYD", "start": "2019-09-02T22:01Z", "arr": "CDG" ,"end": "2019-09-03T03:30Z"}
     ];
-    
+
     let rots = buildRots(flights, {"base": ["CDG", "ORY"], "tzConverter": iso2FR, "iataMap": iata2country});
     rots = addIndemnities("2019", rots, taxData, iso2FR);
     expect(console.error.mock.calls[0][0]).toBe('Données pays manquantes pour AU');
@@ -209,7 +209,7 @@ test('no matching date indemnity amount' , () => {
         {"stop":"xx,xx", "dep": "CDG", "start": "2018-08-30T21:00Z", "arr": "JFK" ,"end": "2018-01-31T07:30Z"},
         {"stop":"xx,xx", "dep": "JFK", "start": "2018-09-02T22:01Z", "arr": "CDG" ,"end": "2018-09-03T03:30Z"}
     ];
-    
+
     let rots = buildRots(flights, {"base": ["CDG", "ORY"], "tzConverter": iso2FR, "iataMap": iata2country});
     rots = addIndemnities("2018", rots, taxData, iso2FR);
     expect(console.error.mock.calls[0][0]).toBe("Pas d'indemnité définie pour NEW-YORK CITY au 2018-09-03");
