@@ -1,11 +1,5 @@
 /*
  * Generates data with indemnities per country per year
- * Data also includes exchange rates from BNF Webstat EN API
- * Register an app at http://developer.webstat.banque-france.fr to get a clientId for the Webstat EN API
- *
- * To hide clientId on GitHub, we use dotenv
- * You need to set your client id in a .env file at the root of this project using a line like:
- * BNF_CLIENT_ID=xxxxxxxxxxxx
  *
  * To generate a new dataset:
  * node src/makeData.js [year]
@@ -18,8 +12,7 @@
 import {months} from "../src/components/utils.js";
 import { readFile } from 'fs/promises';
 const airports =JSON.parse(await readFile(new URL('../data/airports.json', import.meta.url)));
-let bnf;
-// bnf =JSON.parse(await readFile(new URL('./test/data/apibnf_2020-12-23.json', import.meta.url)));
+
 import Papa from 'papaparse';
 import { Table } from 'console-table-printer';
 import chalk from 'chalk';
@@ -39,7 +32,7 @@ const dataPath = `./data/data${year}.json`;
 const csvPath = `./data/flytax-baremes${year}.csv`;
 const WebpaysURL = "https://www.economie.gouv.fr/dgfip/fichiers_taux_chancellerie/txt/Webpays";
 const WebmissURL = "https://www.economie.gouv.fr/dgfip/fichiers_taux_chancellerie/txt/Webmiss";
-const apiURL = `https://api.webstat.banque-france.fr/webstat-en/v1/data/EXR/EXR.M.*.EUR.SP00.E?client_id=${process.env.BNF_CLIENT_ID}&format=json&startPeriod=${parseInt(year, 10) - 1}-12-01&endPeriod=${year}-12-31`;
+const WebtauxURL = "https://www.economie.gouv.fr/dgfip/fichiers_taux_chancellerie/txt/Webtaux";
 //pays du memento fiscal SNPL + Estonie, Lettonie, Lituanie.
 //DOM:  Martinique, Guadeloupe, Guyanne, La Réunion et aussi Mayotte et Saint-Pierre et Miquelon, St Martin, St Barth
 //      St Martin, St Barth ne sont plus des DOM depuis 2007 mais ils figurent toujours dans l'arrêté de 2006 mis à jour en 2020
@@ -57,13 +50,15 @@ const zoneDOMLC = ["SX", "MF", "BL"]; //SXM est sur SX iso MF (St Martin) donc o
 
 // data adjustment per year
 const specificities = {
+    "2025": {
+        "URSSAF": [["2023-09-22", {"Base": [90.00, 20.00], "Paris": [140.00, 20.00], "Province": [120.00, 20.00], "DOM": [120.00, 20.00]}]], // used to compute forfaitEU
+        "FOM": [["2023-09-22","EUR","168"]], // forfait OM
+        "MAXFORFAIT10": 14426
+    },
     "2024": {
-        "URSSAF": [["2023-09-22", {"Base": [90.00, 20.00], "Paris": [140.00, 20.00], "Province": [120.00, 20.00], "DOM": [120.00, 20.00]}],
-            ["2023-01-01", {"Base": [70.00, 17.50], "Paris": [110.00, 17.50], "Province": [90.00, 17.50], "DOM": [70.00, 17.50]}]], // used to compute forfaitEU
-
-        //"URSSAF": {"Paris": [74.30, 20.70], "Province": [55.10, 20.70], "DOM": 105.00}, // moins interressant que l'arrêté ?
-        "FOM": [["2023-09-22","EUR","168"], ["2021-01-01","EUR","132"]], // forfait OM
-        "MAXFORFAIT10": 14171
+        "URSSAF": [["2023-09-22", {"Base": [90.00, 20.00], "Paris": [140.00, 20.00], "Province": [120.00, 20.00], "DOM": [120.00, 20.00]}]], // used to compute forfaitEU
+        "FOM": [["2023-09-22","EUR","168"]], // forfait OM
+        "MAXFORFAIT10": 14426
     },
     "2023": {
         "URSSAF": [["2023-09-22", {"Base": [90.00, 20.00], "Paris": [140.00, 20.00], "Province": [120.00, 20.00], "DOM": [120.00, 20.00]}],
@@ -188,7 +183,11 @@ const countries = {
     "VG": {"n": "GB-Îles Vierges britanniques"},// defined in airports
     "CX": {"n": "AU-Christmas, île"},// defined in airports
     "NF": {"n": "AU-Île Norfolk"},// defined in airports
-    "AQ": {"n": "ANTARTIQUE"}// defined in airports
+    "AQ": {"n": "ANTARTIQUE"},// defined in airports
+    "NV": {"n": "Abuja/Lagos/Port Harcourt"},// renaming Webpays
+    "VV": {"n": "Vancouver"},// renaming Webpays
+    "VT": {"n": "Toronto"},// renaming Webpays
+    "VL": {"n": "Lomé"}// renaming Webpays
 };
 
 const codeMC = specificity("MC");
@@ -199,7 +198,7 @@ let forfaitEU = specificity("FEU"); // default value
 let euroData = []; // will contain data to build the euro csv/tsv
 const forfaitOM = specificity('FOM');
 const replace = specificity("replace"); // bogus country code in Webmiss
-const exchangeRateSource = (currency) => (currency[3] !== false) ? 'BNF' : (year === '2021' ? 'Xe.com' : 'github');
+const exchangeRateSource = (currency) => (currency[3] !== false) ? 'DGF' : (year === '2021' ? 'Xe.com' : 'github');
 
 
 const log = (v, color) => {
@@ -272,7 +271,40 @@ const processWebmiss = (row) => {
         }
     }
 };
-
+const filteredRates = {};
+const processWebtaux = (row) => {
+  let [currency, d, g1] = row.data;
+  const isoDate = d.split('/').reverse().join('-');
+  g1 = 1/parseFloat(g1.substring(0,3) + '.' + g1.substring(3));
+  if (isFinite(g1) && currency !== 'ZWR') {
+    const data = [isoDate, g1];
+    if (isoDate.localeCompare(isoEnd) <= 0) { // skip future
+      const storedRates = filteredRates[currency];
+      if (storedRates) {
+        // alreadySatisfy is > 0 when at least one date in the past is present
+        const alreadySatisfy = satisfyDateValidity(storedRates, isoStart);
+        if (isoDate.localeCompare(isoStart) >= 0 || !alreadySatisfy) {
+            storedRates.push(data);
+        }
+      } else {
+        filteredRates[currency] = [data];
+      }
+    }
+  }
+};
+const findFilteredRate = (currency, isoDate) => {
+  for (const [date, rate] of filteredRates[currency]) {
+    if (date.localeCompare(isoDate) <= 0) {
+      return rate
+    }
+  }
+  const length = filteredRates[currency].length;
+  if (length > 0){
+    console.log(`Warning currency ${currency}: using rate of ${filteredRates[currency][length - 1][0]} for requested ${isoDate}`);
+    return filteredRates[currency][length - 1][1];
+  }
+  throw new Error(`no matching rate for ${isoDate} for ${currency}`);
+};
 
 const validate = () => {
     const errors = [];
@@ -409,7 +441,7 @@ const makeCsv = ([countries, exr], {separator=',', decimalSeparator='.', encodin
                     "Date": enclose(validity),
                     "Montant": decimal(indemnity[2]),
                     "Monnaie": enclose(currency),
-                    ["Taux 31/12/" + previousYear]: decimal(exr[currency][0]),
+                    ["Taux 01/01/" + year]: decimal(exr[currency][0]),
                     ["Taux 31/12/" + year]: decimal(exr[currency][1]),
                     "Taux moyen": decimal(exr[currency][2]),
                     "Zone": enclose(zone(value)),
@@ -524,6 +556,7 @@ const findAmount = (amounts, isoDate) => {
     }
     throw new Error(`no matching amount for ${isoDate}`);
 };
+
 const findUrrsaf = (amounts, isoDate) => {
     for (const amount of amounts) {
         if (amount[0].localeCompare(isoDate) <= 0) {
@@ -589,18 +622,51 @@ const computeForfaitEU = () => {
 };
 
 const make = async () => {
+    const exr = {
+      'EUR': Array(3).fill("1.0000"),
+      'XAF': Array(3).fill("655.9570"),
+      'XOF': Array(3).fill("655.9570")
+    };
     await parseCsvStream(WebpaysURL, {"step": processWebpays});
     await parseCsvStream(WebmissURL, {"step": processWebmiss});
+    await parseCsvStream(WebtauxURL, {"step": processWebtaux});
 
+    // Adds unknown webmiss data
+    let extraData = ['2017-01-01', 'EUR', '0'];
+    for (const country of specificity("webmissUndefinedCountries")) {
+        if (typeof countries[country].a === "undefined") countries[country].a = [extraData]; // unknown webmiss data;
+    }
     // in Webmiss there is no valid value for Kosovo prior to 2018-07-20
-    const extraData = ['2017-01-01', 'EUR', '0'];
     if (countries["XK"].a) {
         countries["XK"].a.push(extraData);
     } else {
         countries["XK"].a = [extraData];
     }
-    for (const country of specificity("webmissUndefinedCountries")) {
-        if (typeof countries[country].a === "undefined") countries[country].a = [extraData]; // unknown webmiss data;
+    // in Webmiss there is no valid value for:
+    // Lome/Toronto/Vancouver prior to 2024-07-10
+    // Abuja, Lagos, Port Harcourt prior to 2023-05-16
+    const complement = (a, defaults) => {
+      if (a) {
+        const seen = new Set();
+        const results = [];
+        for (const [date, currency, value] of [...a, ...defaults]) {
+          if (!seen.has(date)) {
+            seen.add(date);
+            results.push([date, currency, value]);
+          }
+        }
+        return results;
+      } else {
+        return [...defaults];
+      }
+    };
+    if (parseInt(year, 10) <= 2024 ) {
+      countries["VL"].a = complement(countries["VL"].a, countries["TG"].a);
+      countries["VT"].a = complement(countries["VT"].a, countries["CA"].a);
+      countries["VV"].a = complement(countries["VV"].a, countries["CA"].a);
+    }
+    if (parseInt(year, 10) <= 2023 ) {
+      countries["NV"].a = complement(countries["NV"].a, countries["NG"].a);
     }
 
     // forfait EU will still be the default value for years 2017/2018
@@ -634,99 +700,59 @@ const make = async () => {
             throw err;
         }
     }
+
+    // Build exr from filteredRates for currencies found in countries
+    const usedCurrencies = findUsedCurrencies();
+    console.log(usedCurrencies);
+    for (const currency in filteredRates) {
+      if (usedCurrencies.includes(currency)) {
+        const start = findFilteredRate(currency,isoStart);
+        const end = findFilteredRate(currency,isoEnd);
+        exr[currency] = [start.toFixed(4), end.toFixed(4), ((start + end) / 2).toFixed(4)];
+      }
+    }
+
     if (validate()) {
         const errors = [];
         const warnings = [];
-        const currencies = findUsedCurrencies();
-        const exr = {
-            'EUR': Array(3).fill("1.0000"),
-            'XAF': Array(3).fill("655.9570"),
-            'XOF': Array(3).fill("655.9570")
-        };
-        // a ||= b; only is ES2021 and node 15
-        //<=> a || (a = b);
-        bnf || (bnf = await got(apiURL).json()); // We use || to be able to set a local json file at the beginning
-        // "01-05-2020 00:00:00" => "2020-05-01"
-        const date2iso = (d) => d.ObservationPeriod.periodFirstDate.substring(0, 10).split('-').reverse().join('-');
-        for (const serie of bnf.seriesObs) {
-            const key = serie.ObservationsSerie.seriesKey.split('.')[2];
-            if (currencies.includes(key)) {
-                let observations = serie.ObservationsSerie.observations;
-                if (observations === undefined || observations.length === 0){
-                    warnings.push(`missing exchange rate for ${key}`); // will be an error later if needed
-                    continue;
-                }
-                const obsLength = observations.length;
-                if (obsLength < 13) {
-                    warnings.push(`Exchange rate for ${key} is from ${observations[0].ObservationPeriod.periodName} to ${observations[obsLength - 1].ObservationPeriod.periodName}`);
-                }
-                observations = observations.sort((a, b) => date2iso(a).localeCompare(date2iso(b))); //enforce sort by date order
-                const start = observations[0].ObservationPeriod.value;
-                const end = observations[obsLength - 1].ObservationPeriod.value; //in case year is incomplete we just look for last one
-                const average = ((start + end) / 2).toFixed(4);
-                exr[key] = [start.toFixed(4), end.toFixed(4), parseFloat(average).toFixed(4)];
-            }
-        }
-        if (year === "2018"){
-            warnings.push(`adding manual exchange rate for ISK`);
-            exr['ISK'] = ["124.2750", "133.5067", "128.8909"];
-            warnings.push(`adding manual exchange rate for LTL`);
-            exr['LTL'] = ["3.4528", "3.4528", "3.4528"];
-        }
-        if (year === "2017") {
-            warnings.push(`adding manual exchange rate for ISK`);
-            exr['ISK'] = ["118.8006", "124.2750" , "121.5378"];
-            warnings.push(`adding manual exchange rate for LTL`);
-            exr['LTL'] = ["3.4528", "3.4528", "3.4528"];
-        }
-        if (year === "2021") {
-            const data = JSON.parse(await readFile(new URL('../data/data2020.json', import.meta.url)));
-            const addRate = (currency, value) => {
-                warnings.push(`adding manual exchange rate for ${currency} 31-12-${year}: ${value}`);
-                const startRate = data['exr'][currency][1];
-                const endRate = parseFloat(value).toFixed(4);
-                const averageRate = ((parseFloat(startRate) + parseFloat(value))/2).toFixed(4);
-                exr[currency] = [startRate, endRate, averageRate, false];
-                //console.log(exr[currency]);
-            }
-            //xe.com last rate of 2021
-            addRate('VUV', "127.919"); //https://www.xe.com/fr/currencycharts/?from=EUR&to=VUV&view=1W
-            addRate('BMD', "1.13703");
-            addRate('BND', "1.53345");
-            addRate('CVE', "110.27");
-            addRate('DJF', "202.279");
-            addRate('DZD', "157.826");
-            addRate('FJD', "2.40775");
-            addRate('GMD', "60.0286");
-            addRate('JOD', "0.806156");
-            addRate('LYD', "5.2412");
-            addRate('MUR', "49.5493");
-            addRate('TWD', "31.5175");
-        }
-        for (const currency of currencies) {
-            if (!exr[currency]) {
-              let date = `${year}-01-01`;
-              try {
-                // console.log(`fetch exchange rate for ${currency} from fawazahmed0/currency-api`);
-                const startData = await got(`https://raw.githubusercontent.com/fawazahmed0/currency-api/1/${date}/currencies/eur/${currency.toLowerCase()}.min.json`).json();
-                if (startData['date'] !== date) {
-                  throw new Error('exchange rate date mismatch')
-                }
-                date = `${year}-12-31`;
-                const endData = await got(`https://raw.githubusercontent.com/fawazahmed0/currency-api/1/${date}/currencies/eur/${currency.toLowerCase()}.min.json`).json();
-                if (endData['date'] !== date) {
-                  throw new Error('exchange rate date mismatch')
-                }
-                const startRate = parseFloat(startData[currency.toLowerCase()]).toFixed(4);
-                const endRate = parseFloat(endData[currency.toLowerCase()]).toFixed(4);
-                const averageRate = ((parseFloat(startRate) + parseFloat(endRate))/2).toFixed(4);
-                exr[currency] = [startRate, endRate, averageRate, false];
-                warnings.push(`adding api exchange rate for ${currency} ${year}: ${startRate} / ${endRate}`);
-              } catch (error) {
-                  errors.push(`missing exchange rate for ${currency} ${date}`);
-              }
-            }
-        }
+        // const currencies = findUsedCurrencies();
+
+        // if (year === "2018"){
+        //     warnings.push(`adding manual exchange rate for ISK`);
+        //     exr['ISK'] = ["124.2750", "133.5067", "128.8909"];
+        //     warnings.push(`adding manual exchange rate for LTL`);
+        //     exr['LTL'] = ["3.4528", "3.4528", "3.4528"];
+        // }
+        // if (year === "2017") {
+        //     warnings.push(`adding manual exchange rate for ISK`);
+        //     exr['ISK'] = ["118.8006", "124.2750" , "121.5378"];
+        //     warnings.push(`adding manual exchange rate for LTL`);
+        //     exr['LTL'] = ["3.4528", "3.4528", "3.4528"];
+        // }
+        // if (year === "2021") {
+        //     const data = JSON.parse(await readFile(new URL('../data/data2020.json', import.meta.url)));
+        //     const addRate = (currency, value) => {
+        //         warnings.push(`adding manual exchange rate for ${currency} 31-12-${year}: ${value}`);
+        //         const startRate = data['exr'][currency][1];
+        //         const endRate = parseFloat(value).toFixed(4);
+        //         const averageRate = ((parseFloat(startRate) + parseFloat(value))/2).toFixed(4);
+        //         exr[currency] = [startRate, endRate, averageRate, false];
+        //         //console.log(exr[currency]);
+        //     }
+        //     //xe.com last rate of 2021
+        //     addRate('VUV', "127.919"); //https://www.xe.com/fr/currencycharts/?from=EUR&to=VUV&view=1W
+        //     addRate('BMD', "1.13703");
+        //     addRate('BND', "1.53345");
+        //     addRate('CVE', "110.27");
+        //     addRate('DJF', "202.279");
+        //     addRate('DZD', "157.826");
+        //     addRate('FJD', "2.40775");
+        //     addRate('GMD', "60.0286");
+        //     addRate('JOD', "0.806156");
+        //     addRate('LYD', "5.2412");
+        //     addRate('MUR', "49.5493");
+        //     addRate('TWD', "31.5175");
+        // }
 
         display([countries, exr]);
         const forfaitEuro = forfaitEU[0][2];

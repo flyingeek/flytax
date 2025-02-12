@@ -41,22 +41,22 @@ Pour les aéroports, (conversion IATA -> PAYS)
 npm run makeAirports
 ```
 
-Pour les données fiscales, il faut obtenir un accès à l'[API de la Banque de France](https://developer.webstat.banque-france.fr)
+Depuis 2025, les API précédemment utilisées pour le calcul des données ne sont plus disponibles. Le Code a été mis à jour
+pour utiliser dorénavant les taux de chancellerie de la DGFP.
+Il n'est donc plus possible de recréer les données des années 2023 et précédentes à l'identique.
 
-Ensuite il faut créer un fichier .env contenant cette clé. Pour Gitpod.io il suffit d'ajouter une variable d'environnement nommée BNF_CLIENT_ID dans les settings de Gitpod.
-
-```bash
-echo "BNF_CLIENT_ID=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" > .env
-```
-
-Vous pouvez alors créer les data pour l'année 2021 en faisant
+Vous pouvez alors créer les data pour l'année 2024 en faisant
 
 ```bash
-npm run makeData 2021
+npm run makeData 2024
 
 ```
 
 Note: La BNF a supprimé les taux de change pour VUV, BMD, BND, CVE, DJF, DZD, FJD, GMD, JOD, LYD, MUR et TWD en septembre 2021. Pour l'année fiscale 2021, les taux de change de Xe.com sont utilisés pour ces devises.
+Pour les années fiscales 2022/2023 c'est l'api github de [fawazahmed0](https://github.com/fawazahmed0/currency-api) qui a été utilisée pour les données manquantes de la BNF.
+A partir de 2025 les données de la Direction Générale des Finances sont utilisées car les API utilisées précedemment ne sont plus disponibles.
+Si vous créez les fichiers pré 2024, les valeurs seront différentes des fichiers archivés dans ce repository en raison de ces changements.
+
 
 ## Conformité aux conventions de calcul du SNPL
 
@@ -83,19 +83,21 @@ FLYTAX propose un export des barèmes au format csv et au format tsv.
 
 Les fichiers .tsv peuvent être ouvert directement dans Excel ou être importé comme fichier CSV avec les options d'importation par défaut. L'app Numbers d'Apple lit aussi directement ces fichiers. Excel sur iPad ne sait pas importer les fichiers tsv. Les fichiers 2021 contiennent une colonne suplémentaire indiquant la source utilisée pour les taux de change.
 
-| Année | CSV | TSV | Aperçu |
-| :---: | :---: | :---: | :---: |
-| 2023| [2023.csv](https://flyingeek.github.io/flytax/data/flytax-baremes2023.csv) | [2023.tsv](https://flyingeek.github.io/flytax/data/flytax-baremes2023.tsv) | [voir](https://github.com/flyingeek/flytax/blob/gh-pages/data/flytax-baremes2023.tsv) |
-| 2022| [2022.csv](https://flyingeek.github.io/flytax/data/flytax-baremes2022.csv) | [2022.tsv](https://flyingeek.github.io/flytax/data/flytax-baremes2022.tsv) | [voir](https://github.com/flyingeek/flytax/blob/gh-pages/data/flytax-baremes2022.tsv) |
-| 2021| [2021.csv](https://flyingeek.github.io/flytax/data/flytax-baremes2021.csv) | [2021.tsv](https://flyingeek.github.io/flytax/data/flytax-baremes2021.tsv) | [voir](https://github.com/flyingeek/flytax/blob/gh-pages/data/flytax-baremes2021.tsv) |
-| 2020| [2020.csv](https://flyingeek.github.io/flytax/data/flytax-baremes2020.csv) | [2020.tsv](https://flyingeek.github.io/flytax/data/flytax-baremes2020.tsv) | [voir](https://github.com/flyingeek/flytax/blob/gh-pages/data/flytax-baremes2020.tsv) |
-| 2019| [2019.csv](https://flyingeek.github.io/flytax/data/flytax-baremes2019.csv) | [2019.tsv](https://flyingeek.github.io/flytax/data/flytax-baremes2019.tsv) | [voir](https://github.com/flyingeek/flytax/blob/gh-pages/data/flytax-baremes2019.tsv) |
-| 2018| [2018.csv](https://flyingeek.github.io/flytax/data/flytax-baremes2018.csv) | [2018.tsv](https://flyingeek.github.io/flytax/data/flytax-baremes2018.tsv) | [voir](https://github.com/flyingeek/flytax/blob/gh-pages/data/flytax-baremes2018.tsv) |
+| Année | CSV | TSV | JSON | Aperçu |
+| :---: | :---: | :---: | :---: | :---: |
+| 2024| [2024.csv](https://flyingeek.github.io/flytax/data/flytax-baremes2024.csv) | [2024.tsv](https://flyingeek.github.io/flytax/data/flytax-baremes2024.tsv) | [data2024.json](https://flyingeek.github.io/flytax/data/data2024.json) | [voir](https://github.com/flyingeek/flytax/blob/gh-pages/data/flytax-baremes2024.tsv) |
+| 2023| [2023.csv](https://flyingeek.github.io/flytax/data/flytax-baremes2023.csv) | [2023.tsv](https://flyingeek.github.io/flytax/data/flytax-baremes2023.tsv) | [data2023.json](https://flyingeek.github.io/flytax/data/data2023b.json) | [voir](https://github.com/flyingeek/flytax/blob/gh-pages/data/flytax-baremes2023.tsv) |
+| 2022| [2022.csv](https://flyingeek.github.io/flytax/data/flytax-baremes2022.csv) | [2022.tsv](https://flyingeek.github.io/flytax/data/flytax-baremes2022.tsv) | [data2022.json](https://flyingeek.github.io/flytax/data/data2022.json) | [voir](https://github.com/flyingeek/flytax/blob/gh-pages/data/flytax-baremes2022.tsv) |
+| 2021| [2021.csv](https://flyingeek.github.io/flytax/data/flytax-baremes2021.csv) | [2021.tsv](https://flyingeek.github.io/flytax/data/flytax-baremes2021.tsv) | [data2021.json](https://flyingeek.github.io/flytax/data/data2021.json) | [voir](https://github.com/flyingeek/flytax/blob/gh-pages/data/flytax-baremes2021.tsv) |
+| 2020| [2020.csv](https://flyingeek.github.io/flytax/data/flytax-baremes2020.csv) | [2020.tsv](https://flyingeek.github.io/flytax/data/flytax-baremes2020.tsv) | [data2020.json](https://flyingeek.github.io/flytax/data/data2020.json) | [voir](https://github.com/flyingeek/flytax/blob/gh-pages/data/flytax-baremes2020.tsv) |
+| 2019| [2019.csv](https://flyingeek.github.io/flytax/data/flytax-baremes2019.csv) | [2019.tsv](https://flyingeek.github.io/flytax/data/flytax-baremes2019.tsv) | [data2019.json](https://flyingeek.github.io/flytax/data/data2019.json) | [voir](https://github.com/flyingeek/flytax/blob/gh-pages/data/flytax-baremes2019.tsv) |
+| 2018| [2018.csv](https://flyingeek.github.io/flytax/data/flytax-baremes2018.csv) | [2018.tsv](https://flyingeek.github.io/flytax/data/flytax-baremes2018.tsv) | [data2018.json](https://flyingeek.github.io/flytax/data/data2018.json) | [voir](https://github.com/flyingeek/flytax/blob/gh-pages/data/flytax-baremes2018.tsv) |
 
 Pour le calcul du forfait Euro:
 
 | Année | CSV | TSV | Aperçu | Montant |
 | :---: | :---: | :---: | :---: | :---: |
+| 2024| [2024-euro.csv](https://flyingeek.github.io/flytax/data/flytax-baremes2024-zone_euro.csv) | [2024-euro.tsv](https://flyingeek.github.io/flytax/data/flytax-baremes2024-zone_euro.tsv) | [voir](https://github.com/flyingeek/flytax/blob/gh-pages/data/flytax-baremes2024-zone_euro.tsv) | 176 € |
 | 2023| [2023-euro.csv](https://flyingeek.github.io/flytax/data/flytax-baremes2023-zone_euro.csv) | [2023-euro.tsv](https://flyingeek.github.io/flytax/data/flytax-baremes2023-zone_euro.tsv) | [voir](https://github.com/flyingeek/flytax/blob/gh-pages/data/flytax-baremes2023-zone_euro.tsv) | 168 € |
 | 2022| [2022-euro.csv](https://flyingeek.github.io/flytax/data/flytax-baremes2022-zone_euro.csv) | [2022-euro.tsv](https://flyingeek.github.io/flytax/data/flytax-baremes2022-zone_euro.tsv) | [voir](https://github.com/flyingeek/flytax/blob/gh-pages/data/flytax-baremes2022-zone_euro.tsv) | 161 € |
 | 2021| [2021-euro.csv](https://flyingeek.github.io/flytax/data/flytax-baremes2021-zone_euro.csv) | [2021-euro.tsv](https://flyingeek.github.io/flytax/data/flytax-baremes2021-zone_euro.tsv) | [voir](https://github.com/flyingeek/flytax/blob/gh-pages/data/flytax-baremes2021-zone_euro.tsv) | 159 € |

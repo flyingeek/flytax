@@ -82,6 +82,12 @@ de la compilation de l’application, les API de la Banque de France et des imp�
 - <Link href="https://web.archive.org/web/20190408001531/http://www.fraispn.com/dlf.html" rel="noopener">La lettre de la DLF sur FraisPN (webarchive)</Link>
 - <Link href="https://web.archive.org/web/20190407212830/http://www.fraispn.com/dlfannexe.html" rel="noopener">L’annexe à lettre de la DLF sur FraisPN (webarchive)</Link>
 
+Il est plus simple d'utiliser les fichiers compilés sur <Link href="https://github.com/flyingeek/flytax#donn%C3%A9es-fiscales">GitHub</Link> mais voici les ressources utilisées par __{@html htmlLogo}__:
+
+- <Link href="https://www.economie.gouv.fr/dgfip/fichiers_taux_chancellerie/txt/Webpays" rel="noopener">Liste des pays définis par la DGIFP (format texte)</Link>
+- <Link href="https://www.economie.gouv.fr/dgfip/fichiers_taux_chancellerie/txt/Webmiss" rel="noopener">Frais de mission par pays (format texte)</Link>
+- <Link href="https://www.economie.gouv.fr/dgfip/fichiers_taux_chancellerie/txt/Webtaux" rel="noopener">Taux de chancellerie  (format texte)</Link>
+
 ## Crédits
 
 - <Link href="https://github.com/mborsetti/airportsdata">airportsdata</Link> de Mike Borsetti (permet de lier un code IATA à un pays)

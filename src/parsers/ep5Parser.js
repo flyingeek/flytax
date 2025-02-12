@@ -331,6 +331,19 @@ export const findAmount = (countryData, isoDate) => {
 export const addIndemnities = (taxYear, rots, taxData, tzConverter, fileName) => {
     const results = [];
     const countriesData = taxData.countries;
+    //adds backward compatibility for data previous to 2024
+    if (!('VL' in countriesData)) { // Lome
+      countriesData['VL'] = countriesData['TG'];
+    }
+    if (!('VT' in countriesData)) { // Toronto
+      countriesData['VT'] = countriesData['CA'];
+    }
+    if (!('VV' in countriesData)) { // Vancouver
+      countriesData['VV'] = countriesData['CA'];
+    }
+    if (!('NV' in countriesData)) { // Abuja, Lagos, Port Harcourt
+      countriesData['NV'] = countriesData['NG'];
+    }
     const exrData = taxData.exr;
     const MC_REMOVAL = 0.5;
     const nextYear = (parseInt(taxYear, 10) + 1).toString();

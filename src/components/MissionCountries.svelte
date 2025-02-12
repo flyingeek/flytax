@@ -46,7 +46,14 @@
     <thead>
         <tr><th colspan="9">Indemnités par pays {$taxData.year} </th></tr>
         <tr><th colspan="2">Pays</th><th>Validité</th><th>Montant</th><th>Taux</th><th>Taux</th><th>Taux moyen</th><th>Montant €</th><th>Zone</th></tr>
-        <tr><td colspan="2"></td><td>(à compter du)</td><td></td><td>31/12/{parseInt($taxData.year, 10) - 1}</td><td>31/12/{$taxData.year}</td><td></td><td></td><td></td></tr>
+        <tr><td colspan="2"></td><td>(à compter du)</td><td></td>
+            {#if parseInt($taxData.year, 10) < 2024}
+            <td>31/12/{parseInt($taxData.year, 10) - 1}</td>
+            {:else}
+            <td>01/01/{$taxData.year}</td>
+            {/if}
+            <td>31/12/{$taxData.year}</td>
+            <td></td><td></td><td></td></tr>
     </thead>
     <tbody>
         {#each countriesData as c}
