@@ -1,5 +1,5 @@
 import {payParser} from "./payParser";
-import {ep5Parser, EP5MONTHS} from "./ep5Parser";
+import {ep5Parser, ep5Parserf2, EP5MONTHS} from "./ep5Parser";
 import {nightsAFParser} from "./nightsAFParser";
 
 // Based on PDF text content, performs task(s)
@@ -20,11 +20,15 @@ export const router = (text, fileName, fileOrder, taxYear, taxData, base, tzConv
         }
     }else{
         const isNuiteesAF = text.indexOf(`ATTESTATION DE DECOMPTE DES NUITEES POUR L'ANNEE ${taxYear}`) !== -1;
-        if(text.indexOf('CARNET _DE _VOL _- _EP _5')!== -1) {
+        const isEP5f1 = text.indexOf('CARNET _DE _VOL _- _EP _5')!== -1;
+        const isEP5f2 = text.indexOf(`_CARNET DE VOL -  EP5_`) !== -1;
+        if(isEP5f1 || isEP5f2) {
             if(isNuiteesAF) {
                 results.push(nightsAFParser(text, fileName, fileOrder, taxYear));
-            }else{
+            }else if(isEP5f1){
                 results.push(ep5Parser(text, fileName, fileOrder, taxYear, taxData, base, tzConverter));
+            }else if(isEP5f2){
+                results.push(ep5Parserf2(text, fileName, fileOrder, taxYear, taxData, base, tzConverter));
             }
         }else if(isNuiteesAF) {
             results.push(nightsAFParser(text, fileName, fileOrder, taxYear));

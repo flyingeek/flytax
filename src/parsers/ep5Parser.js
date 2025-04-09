@@ -588,3 +588,53 @@ export const ep5Parser = (text, fileName, fileOrder, taxYear, taxData, base, tzC
     result.rots = rots;
     return result;
 };
+
+export const ep5Parserf2 = (text, fileName, fileOrder, taxYear, taxData, base, tzConverter) => {
+    const result = {"type": "ep5", fileName, fileOrder};
+    const previousTaxYear = (parseInt(taxYear, 10) - 1).toString();
+    const nextTaxYear = (parseInt(taxYear, 10) + 1).toString();
+    let match;
+    let pattern;
+    let month;
+    let year;
+
+    // search EP5 Date like JANVIER 2020
+    pattern = String.raw`_(${EP5MONTHS.join('|')})\s+?(20\d{2})_`;
+    const regex = new RegExp(pattern);
+    if (null !== (match = regex.exec(text))) {
+        const monthIndex = EP5MONTHS.indexOf(match[1]);
+        month = (monthIndex + 1).toString(10).padStart(2, '0');
+        year = match[2];
+    }else{
+        throw new Error(`EP5 parser:  Date not found in ${fileName}`);
+    }
+
+    //search EP5 for flights
+    if (month === "01" && year === nextTaxYear) {
+        result.date = `${taxYear}-13`;
+    }else if (month === "12" && year === previousTaxYear) {
+        result.date = `${taxYear}-00`;
+    } else {
+        result.date = `${year}-${month}`;
+        if ((year) !== taxYear) return result;
+    }
+    //_OTP_3.08_1.83_OOA_01 | 04.07_L-21_CDG_1.25_01 | 07.15_0_GTAY
+    pattern = /_(\S{3})_[0-9.]+(?:_[0-9.]+)?_[^_]+_(\d+)\s\|\s([0-9.]+)_[^_]+_(\S{3})(?:_[0-9.]+)?_(\d+)\s\|\s([0-9.]+)_\d_([A-Z]{4})/g;
+    //1 : escale départ
+    //2 : jour départ
+    //3 : heure decimale tu départ
+    //8 : escale arrivée
+    //9 : jour arrivée
+    //10: heure decimale tu arrivée
+    const flights = [];
+    while (null !== (match = pattern.exec(text))) {
+        const [,dep, depDay, depTime, arr, arrDay, arrTime] = match;
+        flights.push({"stop": "", dep, "start": `${year}-${month}-${depDay}T${ep5Time2iso(depTime.replace('.', ','))}`, arr, "end": `${year}-${month}-${arrDay}T${ep5Time2iso(arrTime.replace('.', ','))}`});
+    }
+    // in case of multiple EP5 pages, ensure flights are sorted by start date
+    const sortedFlights = flights.sort((a, b) => a.start.localeCompare(b.start))
+    let rots = buildRots(sortedFlights, {base, tzConverter, "iataMap": iata2country});
+    rots = addIndemnities(taxYear, rots, taxData, tzConverter, fileName);
+    result.rots = rots;
+    return result;
+};
