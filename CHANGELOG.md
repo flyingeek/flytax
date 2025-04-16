@@ -3,6 +3,12 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.3] - 2025-04-16
+
+### Fixed
+
+- Corrige le tri des rotations des EP5 en comparant la date de départ mais aussi la date d'arrivée.
+
 ## [1.4.2] - 2025-04-09
 
 ### Fixed

@@ -582,7 +582,13 @@ export const ep5Parser = (text, fileName, fileOrder, taxYear, taxData, base, tzC
         flights.push({stop, dep, "start": `${year}-${month}-${depDay}T${ep5Time2iso(depTime)}`, arr, "end": `${year}-${month}-${arrDay}T${ep5Time2iso(arrTime)}`});
     }
     // in case of multiple EP5 pages, ensure flights are sorted by start date
-    const sortedFlights = flights.sort((a, b) => a.start.localeCompare(b.start))
+    const sortedFlights = flights.sort((a, b) => {
+      const c = a.start.localeCompare(b.start);
+      if (c === 0) {
+        return a.end.localeCompare(b.end);
+      }
+      return c;
+    });
     let rots = buildRots(sortedFlights, {base, tzConverter, "iataMap": iata2country});
     rots = addIndemnities(taxYear, rots, taxData, tzConverter, fileName);
     result.rots = rots;
@@ -631,8 +637,14 @@ export const ep5Parserf2 = (text, fileName, fileOrder, taxYear, taxData, base, t
         const [,dep, depDay, depTime, arr, arrDay, arrTime] = match;
         flights.push({"stop": "", dep, "start": `${year}-${month}-${depDay}T${ep5Time2iso(depTime.replace('.', ','))}`, arr, "end": `${year}-${month}-${arrDay}T${ep5Time2iso(arrTime.replace('.', ','))}`});
     }
-    // in case of multiple EP5 pages, ensure flights are sorted by start date
-    const sortedFlights = flights.sort((a, b) => a.start.localeCompare(b.start))
+    // in case of multiple EP5 pages, ensure flights are sorted by start date and end date
+    const sortedFlights = flights.sort((a, b) => {
+      const c = a.start.localeCompare(b.start);
+      if (c === 0) {
+        return a.end.localeCompare(b.end);
+      }
+      return c;
+    });
     let rots = buildRots(sortedFlights, {base, tzConverter, "iataMap": iata2country});
     rots = addIndemnities(taxYear, rots, taxData, tzConverter, fileName);
     result.rots = rots;
