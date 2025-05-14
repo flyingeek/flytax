@@ -1,6 +1,6 @@
 {
   "name": "flytax",
-  "version": "1.4.3",
+  "version": "1.4.4",
   "type": "module",
   "scripts": {
     "build": "rollup -c",
@@ -43,8 +43,8 @@
     "svelte": "^3.0.0",
     "svelte-preprocess": "^4.6.1",
     "svelte-preprocess-markdown": "^2.7.3",
-    "workbox-build": "^6.0.0",
-    "workbox-window": "^6.0.0"
+    "workbox-build": "^6.5.4",
+    "workbox-window": "^6.5.4"
   },
   "dependencies": {
     "sirv-cli": "^1.0.0"
