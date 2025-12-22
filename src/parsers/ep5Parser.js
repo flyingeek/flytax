@@ -635,7 +635,15 @@ export const ep5Parserf2 = (text, fileName, fileOrder, taxYear, taxData, base, t
     const flights = [];
     while (null !== (match = pattern.exec(text))) {
         const [,dep, depDay, depTime, arr, arrDay, arrTime] = match;
-        flights.push({"stop": "", dep, "start": `${year}-${month}-${depDay}T${ep5Time2iso(depTime.replace('.', ','))}`, arr, "end": `${year}-${month}-${arrDay}T${ep5Time2iso(arrTime.replace('.', ','))}`});
+        let arrMonthInt = parseInt(month, 10), arrYearInt = parseInt(year, 10);
+        if (/^\d+$/.test(depDay) && /^\d+$/.test(arrDay) && parseInt(arrDay, 10) < parseInt(depDay, 10)){
+          arrMonthInt += 1;
+          if (arrMonthInt > 12) {
+            arrMonthInt = 1;
+            arrYearInt += 1;
+          }
+        }
+        flights.push({"stop": "", dep, "start": `${year}-${month}-${depDay}T${ep5Time2iso(depTime.replace('.', ','))}`, arr, "end": `${arrYearInt}-${arrMonthInt.toString(10).padStart(2, '0')}-${arrDay}T${ep5Time2iso(arrTime.replace('.', ','))}`});
     }
     // in case of multiple EP5 pages, ensure flights are sorted by start date and end date
     const sortedFlights = flights.sort((a, b) => {

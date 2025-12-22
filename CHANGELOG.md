@@ -3,6 +3,16 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.5] - 2025-12-22
+
+### Changed
+
+- Mise à jour des aéroports
+
+### Fixed
+
+- Dans le nouveau format, il peut exister des vols à cheval sur deux mois, l'analyseur le prend désormais en compte.
+
 ## [1.4.4] - 2025-05-14
 
 ### Fixed
