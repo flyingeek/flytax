@@ -50,10 +50,15 @@ const zoneDOMLC = ["SX", "MF", "BL"]; //SXM est sur SX iso MF (St Martin) donc o
 
 // data adjustment per year
 const specificities = {
+    "2026": {
+        "URSSAF": [["2023-09-22", {"Base": [90.00, 20.00], "Paris": [140.00, 20.00], "Province": [120.00, 20.00], "DOM": [120.00, 20.00]}]], // used to compute forfaitEU
+        "FOM": [["2023-09-22","EUR","168"]], // forfait OM
+        "MAXFORFAIT10": 14455
+    },
     "2025": {
         "URSSAF": [["2023-09-22", {"Base": [90.00, 20.00], "Paris": [140.00, 20.00], "Province": [120.00, 20.00], "DOM": [120.00, 20.00]}]], // used to compute forfaitEU
         "FOM": [["2023-09-22","EUR","168"]], // forfait OM
-        "MAXFORFAIT10": 14426
+        "MAXFORFAIT10": 14455
     },
     "2024": {
         "URSSAF": [["2023-09-22", {"Base": [90.00, 20.00], "Paris": [140.00, 20.00], "Province": [120.00, 20.00], "DOM": [120.00, 20.00]}]], // used to compute forfaitEU

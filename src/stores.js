@@ -10,8 +10,9 @@ export const BASES = [
 ].sort((a, b) => (a.label.localeCompare(b.label)));
 
 export const DATASET = [
-    {label: "2025", selected: false, url: `./data/data2024.json`},
-    {label: "2024", selected: true, url: `./data/data2024.json`},
+    {label: "2026", selected: false, url: `./data/data2025.json`},
+    {label: "2025", selected: true, url: `./data/data2025.json`},
+    {label: "2024", selected: false, url: `./data/data2024.json`},
     {label: "2023", selected: false, url: `./data/data2023b.json`}, // see save method in makeData
     {label: "2022", selected: false, url: "./data/data2022.json"},
     {label: "2021", selected: false, url: "./data/data2021.json"},
