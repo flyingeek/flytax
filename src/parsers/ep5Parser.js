@@ -625,7 +625,7 @@ export const ep5Parserf2 = (text, fileName, fileOrder, taxYear, taxData, base, t
         if ((year) !== taxYear) return result;
     }
     //_OTP_3.08_1.83_OOA_01 | 04.07_L-21_CDG_1.25_01 | 07.15_0_GTAY
-    pattern = /_(\S{3})_[0-9.]+(?:_[0-9.]+)?_[^_]+_(\d+)\s\|\s([0-9.]+)_[^_]+_(\S{3})(?:_[0-9.]+)?_(\d+)\s\|\s([0-9.]+)_\d_([A-Z]{4})/g;
+    pattern = /_(\S{3})_(?:[0-9.]+(?:_[0-9.]+)?_[^_]+|[^_]+_[0-9.]+)_(\d+)\s\|\s([0-9.]+)_[^_]+_(\S{3})(?:_[0-9.]+)?_(\d+)\s\|\s([0-9.]+)_\d_([A-Z]{4})/g;
     //1 : escale départ
     //2 : jour départ
     //3 : heure decimale tu départ
