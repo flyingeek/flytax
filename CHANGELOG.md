@@ -3,6 +3,12 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.7] - 2025-03-12
+
+### Fixed
+
+- Encore une MEP non reconnue dans l'EP5
+
 ## [1.4.6] - 2025-03-11
 
 ### Changed

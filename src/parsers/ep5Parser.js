@@ -625,16 +625,19 @@ export const ep5Parserf2 = (text, fileName, fileOrder, taxYear, taxData, base, t
         if ((year) !== taxYear) return result;
     }
     //_OTP_3.08_1.83_OOA_01 | 04.07_L-21_CDG_1.25_01 | 07.15_0_GTAY
-    pattern = /_(\S{3})_(?:[0-9.]+(?:_[0-9.]+)?_[^_]+|[^_]+_[0-9.]+)_(\d+)\s\|\s([0-9.]+)_[^_]+_(\S{3})(?:_[0-9.]+)?_(\d+)\s\|\s([0-9.]+)_\d_([A-Z]{4})/g;
+    pattern = /_(\S{3})_(?:[0-9.]+(?:_[0-9.]+)?_[^_]+|[^_]+_[0-9.]+)_(\d+)\s\|\s([0-9.]+)_(?:[^_]+_(\S{3})(?:_[0-9.]+)?_(\d+)\s\|\s([0-9.]+)_\d_(?:[A-Z]{4})|\sZZ_(\S{3})_(\d+)\s\|\s([0-9.]+))/g;
     //1 : escale départ
     //2 : jour départ
     //3 : heure decimale tu départ
-    //8 : escale arrivée
-    //9 : jour arrivée
-    //10: heure decimale tu arrivée
+    //4 : escale arrivée
+    //5 : jour arrivée
+    //6: heure decimale tu arrivée
     const flights = [];
     while (null !== (match = pattern.exec(text))) {
-        const [,dep, depDay, depTime, arr, arrDay, arrTime] = match;
+        let [,dep, depDay, depTime, arr, arrDay, arrTime, mepArr, mepArrDay, mepArrTime] = match;
+        arr = (typeof arr === 'undefined') ? mepArr : arr;
+        arrDay = (typeof arrDay === 'undefined') ? mepArrDay : arrDay;
+        arrTime = (typeof arrTime === 'undefined') ? mepArrTime : arrTime;
         let arrMonthInt = parseInt(month, 10), arrYearInt = parseInt(year, 10);
         if (/^\d+$/.test(depDay) && /^\d+$/.test(arrDay) && parseInt(arrDay, 10) < parseInt(depDay, 10)){
           arrMonthInt += 1;
