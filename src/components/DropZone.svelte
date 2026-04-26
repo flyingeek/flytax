@@ -1,38 +1,20 @@
 <script context="module">
+    import { onMount } from "svelte";
+    import { nuiteesAF } from '../stores';
+    import { getPDFTextFromFile, setPdfjsLib } from '../utilities/pdf';
     import loader from "./async-script-loader.js";
     import { Deferred } from "./utils.js";
-    import { onMount} from "svelte";
-    import {nuiteesAF} from '../stores';
     const pdfjsWorkerSrc = "CONF_PDFJS_WORKER_JS";
-    let pdfWorker;
     let seqOrder = 0;
     const preloadFiles = [
         { type: "script", url: "CONF_PDFJS_JS" }
     ];
-
-    const getPageText = async (pdf, pageNo, separator = "") => {
-        const page = await pdf.getPage(pageNo);
-        const tokenizedText = await page.getTextContent();
-        return tokenizedText.items.map((token) => token.str).join(separator);
-    };
-
-    const getPDFText = async (source, separator = "") => {
-        const pdfjsLib = window["pdfjs-dist/build/pdf"];
-        const pdfPages = [];
-        const pdf = await pdfjsLib.getDocument(source).promise;
-        const maxPages = pdf.numPages;
-        for (let pageNo = 1; pageNo <= maxPages; pageNo += 1) {
-            const pageText = await getPageText(pdf, pageNo, separator);
-            pdfPages.push(pageText);
-        }
-        return pdfPages.join("\n");
-    };
 </script>
 
 <script>
-    import {taxYear, taxData, base, tzConverter, ep5, paySlips} from '../stores';
-    import {router} from '../parsers/router';
-    const acceptedType = 'application/pdf'; 
+    import { router } from '../parsers/router';
+    import { base, ep5, paySlips, taxData, taxYear, tzConverter } from '../stores';
+    const acceptedType = 'application/pdf';
     let disabled = false; // locally during file processing
     let ready = new Deferred();
     let name = "file";
@@ -45,41 +27,18 @@
             () => {
                 const pdfjsLib = window["pdfjs-dist/build/pdf"];
                 pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorkerSrc;
-                if (!pdfWorker || pdfWorker.destroyed) {
-                    pdfWorker = new pdfjsLib.PDFWorker({verbosity: 0});
-                }
+                setPdfjsLib(pdfjsLib, {useWorker: true});
                 ready.resolve(true);
             }
         );
     }
     class Warning extends Error {};
 
-    const getPDF = (file, fileName) => {
-        const reader = new FileReader();
-        return new Promise((resolve, reject) => {
-            reader.onload = (ev) => {
-                if (!pdfWorker || pdfWorker.destroyed) {
-                    const pdfjsLib = window["pdfjs-dist/build/pdf"];
-                    pdfWorker = new pdfjsLib.PDFWorker({verbosity: 0});
-                }
-                getPDFText({ data: ev.target.result , verbosity: 0, worker: pdfWorker}, "_").then(
-                    (text) => {
-                        if (text) {
-                            resolve(text);
-                        } else {
-                            const err = new Warning(`%c${fileName}\n%cabsence de texte dans le PDF`);
-                            reject(err);
-                        }
-                    },
-                    (err) => reject(err)
-                );
-            };
-            reader.onerror = (err) => {
-                reject(new Warning(`%c${fileName}\n%cfichier illisible !`));
-            };
-            reader.readAsArrayBuffer(file);
-        });
-    };
+    const getPDF = (file, fileName) =>
+        getPDFTextFromFile(file).then(
+            (text) => text || Promise.reject(new Warning(`%c${fileName}\n%cabsence de texte dans le PDF`)),
+            () => Promise.reject(new Warning(`%c${fileName}\n%cfichier illisible !`)),
+        );
     async function processFiles(files, target) {
         disabled = true;
         await ready.promise.then(() => {
@@ -164,7 +123,7 @@
                 new Promise((resolve, reject) => {
                     reader.readEntries(resolve, reject);
                 });
-            let entries;  
+            let entries;
             do {
                 entries = await getNextBatch();
                 for (const entry of entries) {
