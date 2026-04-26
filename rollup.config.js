@@ -14,7 +14,7 @@ import watchAssets from 'rollup-plugin-watch-assets';
 import html from '@open-wc/rollup-plugin-html';
 import {DATASET} from './src/stores';
 const Mustache = require('mustache');
-import md2json from 'md-2-json';
+import {mdToJson} from './src/utilities/mdToJson';
 import fs from 'fs';
 
 // Minimal Rollup plugin that runs workbox-build's injectManifest after the
@@ -162,7 +162,7 @@ export default [{
                 const changelog = fs.readFileSync('./CHANGELOG.md', 'utf8');
                 fs.writeFileSync(
                     './public/CHANGELOG.json',
-                    JSON.stringify(md2json.parse(changelog))
+                    JSON.stringify(mdToJson(changelog))
                 );
             },
         },
