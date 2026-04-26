@@ -9,10 +9,10 @@
 //     (the project's own CHANGELOG.md does this for v1.0.0)
 //   - Two h2 headings back-to-back with no content between them
 import {readFileSync} from 'fs';
-import md2json from 'md-2-json';
+import {mdToJson} from '../src/utilities/mdToJson';
 
 const md = readFileSync('test/fixtures/changelog.md', 'utf8');
 
 test('parses CHANGELOG markdown into expected JSON shape', () => {
-    expect(md2json.parse(md)).toMatchSnapshot();
+    expect(mdToJson(md)).toMatchSnapshot();
 });
