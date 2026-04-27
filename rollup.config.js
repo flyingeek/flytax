@@ -8,7 +8,7 @@ import json from '@rollup/plugin-json';
 import copy from 'rollup-plugin-copy';
 import replace from '@rollup/plugin-replace';
 const {markdown} = require('svelte-preprocess-markdown');
-const workbox = require('rollup-plugin-workbox-inject');
+const {injectManifest} = require('workbox-build');
 import {version} from './package.json';
 import watchAssets from 'rollup-plugin-watch-assets';
 import html from '@open-wc/rollup-plugin-html';
@@ -16,6 +16,24 @@ import {DATASET} from './src/stores';
 const Mustache = require('mustache');
 import md2json from 'md-2-json';
 import fs from 'fs';
+
+// Minimal Rollup plugin that runs workbox-build's injectManifest after the
+// bundle is written. Replaces the abandoned rollup-plugin-workbox-inject
+// (last release 2020, locked to workbox-build@5).
+const workbox = (options) => ({
+    name: 'workbox-inject-manifest',
+    async writeBundle(outputOptions) {
+        const swDest = outputOptions.file;
+        const result = await injectManifest({
+            ...options,
+            swSrc: swDest,
+            swDest,
+        });
+        if (result.warnings.length) console.warn('Workbox warnings:', result.warnings);
+        const sizeKB = (result.size / 1024).toFixed(1);
+        console.log(`Injected ${result.count} files for precaching, ${sizeKB} kB total, into ${swDest}.`);
+    },
+});
 
 const production = !process.env.ROLLUP_WATCH;
 const debugWorkbox = !!process.env.DEBUG_WORKBOX;
