@@ -1,0 +1,5 @@
+# Source PDFs are kept private — they may contain personal data even after
+# anonymization. Their extracted text (.txt / .rows.txt) is committed and
+# serves as the public test fixture. To regenerate after dropping new PDFs:
+#   npm run extract-pdf -- --all
+*.pdf
