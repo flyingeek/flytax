@@ -238,4 +238,4 @@ puis Réglages/Informations/Réglage des certificats, activer la confiance pour 
 
 ## Publication du site sur GitHub Pages
 
-`.github/workflows/main.yml` publie automatiquement sur la branche gh-pages à chaque push sur la branche main.
+`.github/workflows/deploy.yml` publie automatiquement sur la branche gh-pages à chaque push sur la branche main.
