@@ -1,0 +1,63 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`parses CHANGELOG markdown into expected JSON shape 1`] = `
+{
+  "CHANGELOG": {
+    "[1.0.0] - 2025-01-01": {
+      "raw": "Final entry at end of file with no trailing newline.",
+    },
+    "[1.2.0] - 2025-08-15": {
+      "Fixed": {
+        "raw": "- Empty version above (no content between two h2 headings)
+
+",
+      },
+    },
+    "[1.3.0] - 2025-09-30": {},
+    "[1.5.0] - 2026-01-15": {
+      "raw": "Free-form text under a version with no subsections.
+
+",
+    },
+    "[2.0.0] - 2026-04-01": {
+      "Added": {
+        "raw": "- A new feature
+- Another new feature
+
+",
+      },
+      "Changed": {
+        "raw": "- Multiple
+- list
+- items
+
+",
+      },
+      "Deprecated": {
+        "raw": "- An old API still working but on its way out
+
+",
+      },
+      "Fixed": {
+        "raw": "- A single bug
+
+",
+      },
+      "Removed": {
+        "raw": "- An old feature
+
+",
+      },
+      "Security": {
+        "raw": "- Patched a vulnerability
+
+",
+      },
+    },
+    "raw": "Intro paragraph at the top level.
+Spans two lines.
+
+",
+  },
+}
+`;
