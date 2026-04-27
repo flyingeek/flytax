@@ -33,6 +33,36 @@ Pour les spécificités du développement avec preview sur l'iPad voir [#iPad](#
 
 _Note: cliquer sur le badge Gitpod permet de lancer un VSCode dans le cloud, prêt-à-coder_
 
+## Fixtures de test PDF
+
+Les tests dans `test/utilities/pdf.test.js` vérifient l'extraction de texte sur une série de PDFs anonymisés. Ces PDFs sont absents du repo public pour des raisons de confidentialité.
+En revanche, le texte extrait est disponible (`test/fixtures/*.txt`) et sert de fixture pour les autres tests.
+
+Sans les PDFs, les tests basés sur le texte extrait (ex. `test/parsers.test.js`) fonctionnent normalement. Les tests qui requièrent les PDFs (ex. `test/utilities/pdf.test.js`) sont automatiquement ignorés.
+
+### Génération des fixtures `.txt`
+
+Pour les collaborateurs ayant accès aux PDFs sources :
+
+1. Déposer les PDFs dans `test/fixtures/`.
+
+2. Régénérer les fixtures `.txt` :
+
+    ```bash
+    npm run extract-pdf -- --all
+    ```
+
+3. Créer un commit avec les `.txt` modifiés si nécessaire.
+
+### Inspection de l'extraction
+
+Le script `extract-pdf` extrait le texte d'un PDF en dehors du navigateur — utile pour le développement et le debugging.
+
+```bash
+npm run extract-pdf -- chemin/vers.pdf # → stdout
+npm run extract-pdf -- chemin/vers.pdf --out fichier.txt
+```
+
 ## Création/Mise à jour des fichiers data
 
 Pour les aéroports, (conversion IATA -> PAYS)
