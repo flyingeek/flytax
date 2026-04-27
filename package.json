@@ -14,7 +14,8 @@
     "start2": "sirv public --http2 --key localhost-key.pem --cert localhost-cert.pem --host 0.0.0.0 --port 5001",
     "clean": "rimraf public/**",
     "makeAirports": "node scripts/makeAirports.js",
-    "makeData": "node scripts/makeData.js"
+    "makeData": "node scripts/makeData.js",
+    "extract-pdf": "node scripts/extract-pdf.js"
   },
   "devDependencies": {
     "@open-wc/rollup-plugin-html": "^1.2.5",
