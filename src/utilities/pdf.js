@@ -50,7 +50,7 @@ export const getPDFTextFromFile = (file, separator = "_") => new Promise((resolv
 const Y_TOLERANCE = 2; // points; absorbs sub-pixel baseline drift (diacritics)
 
 export const getPDFTextByRows = (source, separator = "_") =>
-    processPages(source, (items) => itemsToRowText(items, separator));
+    processPages(source, (items, rotation) => itemsToRowText(items, separator, rotation));
 
 export const getPDFTextByRowsFromFile = (file, separator = "_") => new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -59,24 +59,38 @@ export const getPDFTextByRowsFromFile = (file, separator = "_") => new Promise((
     reader.readAsArrayBuffer(file);
 });
 
-const itemsToRowText = (items, separator) => {
+// Map an item's PDF transform to (rowKey, pos) in visual reading order:
+// rowKey ascending = visual top-to-bottom, pos ascending = visual left-to-right.
+// Negation flips the natural axis direction for a given page rotation; PDF Y
+// increases upward, so for a non-rotated page rowKey = -y.
+const visualKeysFor = (rotation) => {
+    switch (rotation) {
+        case 90:  return ([, , , , x, y]) => ({ rowKey:  x, pos:  y });
+        case 180: return ([, , , , x, y]) => ({ rowKey:  y, pos: -x });
+        case 270: return ([, , , , x, y]) => ({ rowKey: -x, pos: -y });
+        default:  return ([, , , , x, y]) => ({ rowKey: -y, pos:  x });
+    }
+};
+
+const itemsToRowText = (items, separator, rotation = 0) => {
+    const visualKeys = visualKeysFor(rotation);
     const rows = [];
-    for (const { str, transform: [, , , , x, y] } of items) {
+    for (const { str, transform } of items) {
         if (!str) continue;
 
-        let row = rows.find((r) => Math.abs(r.y - y) < Y_TOLERANCE);
+        const { rowKey, pos } = visualKeys(transform);
+        let row = rows.find((r) => Math.abs(r.rowKey - rowKey) < Y_TOLERANCE);
 
         if (!row) {
-            row = { y, items: [] };
+            row = { rowKey, items: [] };
             rows.push(row);
         }
 
-        row.items.push({ x, str });
+        row.items.push({ pos, str });
     }
 
-    // PDF y increases upward; sort descending = top-to-bottom.
-    rows.sort((a, b) => b.y - a.y);
-    for (const row of rows) row.items.sort((a, b) => a.x - b.x);
+    rows.sort((a, b) => a.rowKey - b.rowKey);
+    for (const row of rows) row.items.sort((a, b) => a.pos - b.pos);
 
     return rows.map((r) => r.items.map((i) => i.str).join(separator)).join(separator);
 };
@@ -97,7 +111,7 @@ const processPages = async (source, processor) => {
     for (let pageNumber = 1; pageNumber <= pdf.numPages; pageNumber += 1) {
         const page = await pdf.getPage(pageNumber);
         const { items } = await page.getTextContent();
-        pages.push(processor(items));
+        pages.push(processor(items, page.rotate));
     }
     return pages.join("\n");
 };
