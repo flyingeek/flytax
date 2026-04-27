@@ -36,7 +36,7 @@ _Note: cliquer sur le badge Gitpod permet de lancer un VSCode dans le cloud, pr�
 ## Fixtures de test PDF
 
 Les tests dans `test/utilities/pdf.test.js` vérifient l'extraction de texte sur une série de PDFs anonymisés. Ces PDFs sont absents du repo public pour des raisons de confidentialité.
-En revanche, le texte extrait est disponible (`test/fixtures/*.txt`) et sert de fixture pour les autres tests.
+En revanche, le texte extrait reste disponible dans `test/fixtures/` (`.txt` pour le mode flat, `.rows.txt` pour le mode row-aware) et sert de fixture pour les autres tests.
 
 Sans les PDFs, les tests basés sur le texte extrait (ex. `test/parsers.test.js`) fonctionnent normalement. Les tests qui requièrent les PDFs (ex. `test/utilities/pdf.test.js`) sont automatiquement ignorés.
 
@@ -59,7 +59,8 @@ Pour les collaborateurs ayant accès aux PDFs sources :
 Le script `extract-pdf` extrait le texte d'un PDF en dehors du navigateur — utile pour le développement et le debugging.
 
 ```bash
-npm run extract-pdf -- chemin/vers.pdf # → stdout
+npm run extract-pdf -- chemin/vers.pdf                # → stdout
+npm run extract-pdf -- chemin/vers.pdf --rows         # extraction par lignes
 npm run extract-pdf -- chemin/vers.pdf --out fichier.txt
 ```
 
