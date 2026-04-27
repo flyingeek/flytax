@@ -38,7 +38,7 @@ export const router = (text, fileName, fileOrder, taxYear, taxData, base, tzConv
         if(text.indexOf("ATTESTATION DE DECOMPTE DES NUITEES POUR L'ANNEE ") !== -1) {
             results.push({"type": "nuitées", "error":`année ≠ ${taxYear}`, fileName, fileOrder, "content": text})
         } else if(text.indexOf('CARNET _DE _VOL _- _EP _5')=== -1){
-            const pattern = String.raw`[_\s]EP\s?_?4.+?_(${EP5MONTHS.join('|')})\s+?(20\d{2})`;
+            const pattern = String.raw`[_\s]EP\s?_?4.+?_(${EP5MONTHS.join('|')})[\s_]+?(20\d{2})`;
             const regex = new RegExp(pattern);
             let match;
             if (null !== (match = regex.exec(text))) {
