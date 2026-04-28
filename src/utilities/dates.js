@@ -10,6 +10,15 @@ export const lastDayInMonthISO = (mString, yString) => {
     return `${yString}-${mString}-${day}`;
 };
 
+// Convert decimal-hour notation ("12,50" or "12.50" → 12 hours + 0.50 hour)
+// to the ISO 8601 time portion in UTC ("12:30Z").
+// The fractional part is interpreted as hundredths of an hour.
+export const decimalHours2iso = (text) => {
+    const [hours, cs] = text.replace(',', '.').split('.');
+    const minutes = (parseFloat(cs) * 0.6).toFixed(0).padStart(2, '0');
+    return `${hours}:${minutes}Z`;
+};
+
 // Intervals between two ISO dates.
 export const numberOfDays = (startISO, endISO) => {
     const diff = Date.parse(endISO.replace("24:00", "23:59")) - Date.parse(startISO.replace(/\d\d:\d\d/, "00:00"));

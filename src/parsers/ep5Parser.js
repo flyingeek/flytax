@@ -1,16 +1,9 @@
 import {iata2country} from '../utilities/iata';
+import {decimalHours2iso} from '../utilities/dates';
 import {buildRots, addIndemnities} from '../rotations';
 
 //months as written in EP5
 export const EP5MONTHS = ['JANVIER', 'FEVRIER', 'MARS', 'AVRIL', 'MAI', 'JUIN', 'JUILLET', 'AOUT', 'SEPTEMBRE', 'OCTOBRE', 'NOVEMBRE', 'DECEMBRE'];
-
-//converts EP5 time hh,dd to hh:mmZ
-//returns a string
-export const ep5Time2iso = (text) => {
-    const [hours, cs] = text.split(",");
-    const minutes = (parseFloat(cs) * 0.6).toFixed(0).padStart(2, '0');
-    return `${hours}:${minutes}Z`;
-}
 
 export const ep5Parser = (text, fileName, fileOrder, taxYear, taxData, base, tzConverter) => {
     const result = {"type": "ep5", fileName, fileOrder};
@@ -49,7 +42,7 @@ export const ep5Parser = (text, fileName, fileOrder, taxYear, taxData, base, tzC
     const flights = [];
     while (null !== (match = pattern.exec(text))) {
         const [, stop, dep, depDay, depTime, arr, arrDay, arrTime] = match;
-        flights.push({stop, dep, "start": `${year}-${month}-${depDay}T${ep5Time2iso(depTime)}`, arr, "end": `${year}-${month}-${arrDay}T${ep5Time2iso(arrTime)}`});
+        flights.push({stop, dep, "start": `${year}-${month}-${depDay}T${decimalHours2iso(depTime)}`, arr, "end": `${year}-${month}-${arrDay}T${decimalHours2iso(arrTime)}`});
     }
     // in case of multiple EP5 pages, ensure flights are sorted by start date
     const sortedFlights = flights.sort((a, b) => {
@@ -108,7 +101,7 @@ export const ep5Parserf2 = (text, fileName, fileOrder, taxYear, taxData, base, t
             arrYearInt += 1;
           }
         }
-        flights.push({"stop": "", dep, "start": `${year}-${month}-${depDay}T${ep5Time2iso(depTime.replace('.', ','))}`, arr, "end": `${arrYearInt}-${arrMonthInt.toString(10).padStart(2, '0')}-${arrDay}T${ep5Time2iso(arrTime.replace('.', ','))}`});
+        flights.push({"stop": "", dep, "start": `${year}-${month}-${depDay}T${decimalHours2iso(depTime)}`, arr, "end": `${arrYearInt}-${arrMonthInt.toString(10).padStart(2, '0')}-${arrDay}T${decimalHours2iso(arrTime)}`});
     }
     // in case of multiple EP5 pages, ensure flights are sorted by start date and end date
     const sortedFlights = flights.sort((a, b) => {
