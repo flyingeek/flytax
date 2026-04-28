@@ -3,13 +3,11 @@
 export class AmountError extends Error {}
 
 export const findAmount = (countryData, isoDate) => {
+    if (!countryData) throw new AmountError(`Indemnité manquante`);
     for (const [date, currency, amount] of countryData.a) {
         if (date.localeCompare(isoDate) <= 0) return [amount, currency];
     }
-    if (countryData) {
-        throw new AmountError(`Pas d'indemnité définie pour ${countryData.n} au ${isoDate}`);
-    }
-    throw new AmountError(`Indemnité manquante`);
+    throw new AmountError(`Pas d'indemnité définie pour ${countryData.n} au ${isoDate}`);
 };
 
 export const findAmountEuros = (countryData, isoDate, exrData) => {
