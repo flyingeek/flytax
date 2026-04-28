@@ -53,7 +53,7 @@ export const ep5Parser = (text, fileName, fileOrder, taxYear, taxData, base, tzC
       }
       return c;
     });
-    let rots = buildRots(sortedFlights, {base, tzConverter, "iataMap": iata2country});
+    let rots = buildRots(sortedFlights, {base, tzConverter, "iataMap": iata2country, "airline": "AF"});
     rots = addIndemnities(taxYear, rots, taxData, tzConverter, fileName);
     result.rots = rots;
     return result;
@@ -112,7 +112,7 @@ export const ep5Parserf2 = (text, fileName, fileOrder, taxYear, taxData, base, t
       }
       return c;
     });
-    let rots = buildRots(sortedFlights, {base, tzConverter, "iataMap": iata2country});
+    let rots = buildRots(sortedFlights, {base, tzConverter, "iataMap": iata2country, "airline": "AF"});
     rots = addIndemnities(taxYear, rots, taxData, tzConverter, fileName);
     result.rots = rots;
     return result;

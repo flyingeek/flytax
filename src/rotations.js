@@ -23,7 +23,7 @@ const rotSummary = (rot) => {
             .replace(CONTINUATION_MARK + '-', CONTINUATION_MARK);
 };
 
-export const buildRots = (flights, {tzConverter, base, iataMap}) => {
+export const buildRots = (flights, {tzConverter, base, iataMap, airline}) => {
     // Using parsed flights build up rots & places of stay
 
     //verify browser compatibility
@@ -187,6 +187,7 @@ export const buildRots = (flights, {tzConverter, base, iataMap}) => {
 
         // add countries
         if (iataMap) rot.countries = rot.nights.map((iata) => iataMap(iata));
+        if (airline) rot.airline = airline;
         //push rot and continue
         rots.push(rot);
         rot = null;
@@ -427,7 +428,7 @@ export const mergeRots = (data, taxYear, taxData, tzConverter) => {
     for (const rot of currentIt) {
         const next = nextIt.next().value;
         if (next && rot.isComplete === '<' && next.isComplete === '>' && rot.end.substring(0, 7) === next.end.substring(0, 7)) {
-            const [merged] = buildRots(mergeFlights(rot.flights, next.flights), {base: rot.base, tzConverter, "iataMap": iata2country});
+            const [merged] = buildRots(mergeFlights(rot.flights, next.flights), {base: rot.base, tzConverter, "iataMap": iata2country, "airline": rot.airline});
             const [mergedWithIndemnities] = addIndemnities(taxYear, [merged], taxData, tzConverter);
             mergedRots.push(mergedWithIndemnities);
             // skip next

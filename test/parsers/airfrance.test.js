@@ -36,6 +36,7 @@ test('AF EP5 parsing', () => {
         rots: [
             {
                 isComplete: '<>',
+                airline: 'AF',
                 nights: ['JFK', 'JFK', 'JFK'],
                 start: '2025-10-04T11:03+02:00',
                 end: '2025-10-06T06:58+02:00',
@@ -50,6 +51,7 @@ test('AF EP5 parsing', () => {
             },
             {
                 isComplete: '<>',
+                airline: 'AF',
                 nights: ['HAV', 'HAV', 'HAV', 'HAV', 'HAV'],
                 start: '2025-10-18T15:13+02:00',
                 end: '2025-10-22T13:14+02:00',
@@ -64,6 +66,7 @@ test('AF EP5 parsing', () => {
             },
             {
                 isComplete: '<>',
+                airline: 'AF',
                 nights: ['MIA', 'MIA', 'MIA'],
                 start: '2025-10-25T11:14+02:00',
                 end: '2025-10-27T10:29+01:00',
@@ -78,6 +81,7 @@ test('AF EP5 parsing', () => {
             },
             {
                 isComplete: '<>',
+                airline: 'AF',
                 nights: ['JFK', 'JFK', 'JFK'],
                 start: '2025-10-30T10:43+01:00',
                 end: '2025-11-01T06:53+01:00',
