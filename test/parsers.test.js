@@ -7,7 +7,7 @@
 // suite can run anywhere from a fresh clone.
 import { readFileSync } from 'fs';
 import taxData from '../data/data2025.json';
-import { iso2FR } from '../src/parsers/ep5Parser';
+import { iso2FR } from '../src/utilities/dates';
 import { router } from '../src/parsers/router';
 
 const loadFixture = (path) => readFileSync(path, 'utf8');

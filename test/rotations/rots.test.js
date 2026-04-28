@@ -1,4 +1,6 @@
-import {buildRots, iso2FR, addIndemnities, iata2country, FORMULA_ERROR} from '../../src/parsers/ep5Parser';
+import {buildRots, addIndemnities, FORMULA_ERROR} from '../../src/rotations';
+import {iso2FR} from '../../src/utilities/dates';
+import {iata2country} from '../../src/utilities/iata';
 import taxData from "../data/dataTest.json";
 import {jest} from '@jest/globals';
 

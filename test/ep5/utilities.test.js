@@ -1,4 +1,5 @@
-import {ep5Time2iso, lastDayInMonthISO, numberOfDays, diffHours, iso2TZ, iso2FR} from '../../src/parsers/ep5Parser';
+import {ep5Time2iso} from '../../src/parsers/ep5Parser';
+import {lastDayInMonthISO, numberOfDays, diffHours, iso2TZ, iso2FR} from '../../src/utilities/dates';
 test("ep5Time2iso", () => {
     // noinspection JSCheckFunctionSignatures
     expect(ep5Time2iso("00,00")).toBe('00:00Z');

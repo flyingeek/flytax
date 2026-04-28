@@ -14,7 +14,9 @@
  * Au final il y a un meilleur équilibre entre les nuits décomptées et les nuits passées à l'hotel
  */
 
-import {buildRots, iso2FR, addIndemnities, iata2country} from '../../src/parsers/ep5Parser';
+import {buildRots, addIndemnities} from '../../src/rotations';
+import {iso2FR} from '../../src/utilities/dates';
+import {iata2country} from '../../src/utilities/iata';
 import taxData from "../data/dataTest.json";
 import {jest} from '@jest/globals';
 

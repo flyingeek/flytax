@@ -3,7 +3,7 @@
     import MissionCountries from "./MissionCountries.svelte";
     import DownloadTablePDF from './DownloadTablePDF.svelte';
     import {taxYear, taxData, pairings, fraisDeMission} from '../stores';
-    import {REFNOTE1} from '../parsers/ep5Parser';
+    import {REFNOTE1} from '../rotations';
     export let tableId = "MissionTable";
     const tableIndemnitiesId = tableId + "Indemnities";
 </script>
