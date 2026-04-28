@@ -1,0 +1,89 @@
+name: Release
+on:
+  push:
+    tags:
+      - 'release/*'
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.changelog.outputs.version }}
+      release_body: ${{ steps.changelog.outputs.changes }}
+    steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+
+      - name: Read latest CHANGELOG entry 📖
+        id: changelog
+        uses: mindsers/changelog-reader-action@v2
+        with:
+          validation_level: warn # TODO: Fix issues with CHANGELOG.md before switching from `warn` to `error`
+
+      - name: Verify tag and package.json match CHANGELOG 🔎
+        run: |
+          TAG_VERSION="${GITHUB_REF#refs/tags/release/}"
+          PKG_VERSION="$(jq -r '.version' package.json)"
+          CHANGELOG_VERSION="${{ steps.changelog.outputs.version }}"
+
+          if [ "$PKG_VERSION" != "$TAG_VERSION" ]; then
+            LINE=$(grep -n '"version"' package.json | head -1 | cut -d: -f1)
+            echo "::error file=package.json,line=${LINE},title=Version mismatch::package.json version $PKG_VERSION does not match expected tag version $TAG_VERSION"
+            exit 1
+          fi
+
+          if [ "$CHANGELOG_VERSION" != "$TAG_VERSION" ]; then
+            LINE=$(grep -n "^## \[${CHANGELOG_VERSION}\]" CHANGELOG.md | head -1 | cut -d: -f1)
+            echo "::error file=CHANGELOG.md,line=${LINE},title=Version mismatch::Latest CHANGELOG version $CHANGELOG_VERSION does not match expected tag version $TAG_VERSION"
+            exit 1
+          fi
+
+      - name: Setup Node 🟢
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install, build and test 🔧
+        run: |
+          npm ci
+          npm run build
+          npm run test
+          echo "google-site-verification: googleece5115d3add3491.html" > public/googleece5115d3add3491.html
+
+      - name: Upload build artifact 📦
+        uses: actions/upload-artifact@v7
+        with:
+          name: build
+          path: public
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment: github-pages
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+
+      - name: Download build artifact 📦
+        uses: actions/download-artifact@v8
+        with:
+          name: build
+          path: public
+
+      - name: Deploy 🚀
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          branch: gh-pages
+          folder: public
+
+      - name: Create GitHub Release 📝
+        uses: softprops/action-gh-release@v3
+        with:
+          name: v${{ needs.build.outputs.version }}
+          body: ${{ needs.build.outputs.release_body }}

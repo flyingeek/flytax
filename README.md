@@ -269,4 +269,25 @@ puis Réglages/Informations/Réglage des certificats, activer la confiance pour 
 
 ## Publication du site sur GitHub Pages
 
-`.github/workflows/deploy.yml` publie automatiquement sur la branche gh-pages à chaque push sur la branche main.
+`.github/workflows/release.yml` se déclenche automatiquement lorsqu'un tag `release/X.Y.Z` est poussé. Il vérifie la cohérence des versions, lance le build et les tests, déploie le site sur la branche `gh-pages` et crée une release GitHub à partir de l'entrée correspondante du CHANGELOG.
+
+Pour publier une nouvelle version :
+
+1. Mettre à jour la version dans `package.json`.
+
+2. Ajouter une nouvelle entrée en haut de `CHANGELOG.md` au format `## [X.Y.Z] - YYYY-MM-DD`.
+
+3. Créer un commit sur `main` :
+
+   ```bash
+   git commit -am "chore: Bump version X.Y.Z"
+   ```
+
+4. Tagger et pousser :
+
+   ```bash
+   git tag release/X.Y.Z
+   git push origin main release/X.Y.Z
+   ```
+
+La version de `package.json`, la dernière entrée du CHANGELOG et le tag doivent tous correspondre, sinon le build échoue avec une annotation indiquant la divergence.
