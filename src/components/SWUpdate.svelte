@@ -16,7 +16,7 @@
     };
 </script>
 <script>
-    import {wb, paySlips, ep5, route} from '../stores';
+    import {wb, paySlips, rotations, route} from '../stores';
     import { fade } from 'svelte/transition';
     import ChangeLogModal from '../components/ChangeLogModal.svelte';
     let installLabel = 'Installer';
@@ -61,7 +61,7 @@
     }
 </script>
 
-{#if (($route !== '/' || $majorUpdate) && $swUpdated && !$swDismiss && $ep5.isEmpty() && $paySlips.isEmpty())}
+{#if (($route !== '/' || $majorUpdate) && $swUpdated && !$swDismiss && $rotations.isEmpty() && $paySlips.isEmpty())}
 <div class="modal">
     <div class="toast">   
         <div class="toast-header">
@@ -72,7 +72,7 @@
         </div>
     </div>
 </div>{install(($route === '/') ? 2000 : 700) || ''}
-{:else if $swUpdated && !$swDismiss && (!$ep5.isEmpty() || !$paySlips.isEmpty())}
+{:else if $swUpdated && !$swDismiss && (!$rotations.isEmpty() || !$paySlips.isEmpty())}
     <div class="toast" transition:fade style="position: fixed; top: 0; right: 0;">   
         <div class="toast-header">
             <strong><span>👨🏻‍✈️</span>Mise à jour disponible</strong>
