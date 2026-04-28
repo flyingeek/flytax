@@ -31,7 +31,7 @@ test('AF payslip parsing', () => {
 test('AF EP5 parsing', () => {
     const text = loadFixture('test/fixtures/af-ep4ep5.txt');
     expect(router(text, 'af-ep4ep5.pdf', 0, '2025', taxData, ['CDG', 'ORY'], iso2FR)).toEqual([{
-        type: 'ep5',
+        type: 'rotations',
         fileName: 'af-ep4ep5.pdf',
         fileOrder: 0,
         date: '2025-10',
@@ -104,7 +104,7 @@ test('AF EP5 parsing', () => {
 test('AF legacy EP5 parsing', () => {
     const text = loadFixture('test/fixtures/af-ep4ep5-legacy.txt');
     expect(router(text, 'af-ep4ep5-legacy.pdf', 0, '2025', taxData, ['CDG', 'ORY'], iso2FR)).toEqual([{
-        type: 'ep5',
+        type: 'rotations',
         fileName: 'af-ep4ep5-legacy.pdf',
         fileOrder: 0,
         date: '2025-07',
@@ -147,7 +147,7 @@ test('AF legacy EP5 parsing', () => {
 test('AF EP5 parsing — December carries over from the previous tax year', () => {
     const text = loadFixture('test/fixtures/af-ep4ep5-dec.txt');
     expect(router(text, 'af-ep4ep5-dec.pdf', 0, '2025', taxData, ['CDG', 'ORY'], iso2FR)).toEqual([{
-        type: 'ep5',
+        type: 'rotations',
         fileName: 'af-ep4ep5-dec.pdf',
         fileOrder: 0,
         date: '2025-00', // Stamped as `${taxYear}-00` so it remains alongside the next year's months.
@@ -181,7 +181,7 @@ test('AF EP5 parsing — December carries over from the previous tax year', () =
 test('AF EP5 parsing — January carries over to the previous tax year', () => {
     const text = loadFixture('test/fixtures/af-ep4ep5-jan.txt');
     expect(router(text, 'af-ep4ep5-jan.pdf', 0, '2025', taxData, ['CDG', 'ORY'], iso2FR)).toEqual([{
-        type: 'ep5',
+        type: 'rotations',
         fileName: 'af-ep4ep5-jan.pdf',
         fileOrder: 0,
         date: '2025-13', // Stamped as `${taxYear}-13` so it remains alongside the previous year's months.
@@ -215,7 +215,7 @@ test('AF EP5 parsing — January carries over to the previous tax year', () => {
 test('AF EP5 outside the tax year is recognized but not parsed', () => {
     const text = loadFixture('test/fixtures/af-ep4ep5.txt');
     expect(router(text, 'af-ep4ep5.pdf', 0, '2020', taxData, ['CDG', 'ORY'], iso2FR)).toEqual([{
-        type: 'ep5',
+        type: 'rotations',
         fileName: 'af-ep4ep5.pdf',
         fileOrder: 0,
         date: '2025-10',

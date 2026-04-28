@@ -17,7 +17,7 @@
     const computeNameLabel = (requested) => {
         const year = $taxYear;
         if (!year) return name;
-        if (data.type==="ep5") {
+        if (data.type==="rotations") {
             const prev = (parseInt(year, 10) -1).toString();
             const next = (parseInt(year, 10) +1).toString();
             return `${name} de ${monthsfr[11]} ${prev} à ${(requested.length>13) ? monthsfr[0] + ' ' + next : monthsfr[11] + ' ' + year}`;
@@ -26,7 +26,7 @@
         }
     }
     const computeRequestedMonths = (dat) => {
-        if (dat.type==="ep5") {
+        if (dat.type==="rotations") {
             const tz = ($tzConverter)  ? $tzConverter("2020-11-01T00:00Z").slice(-6) : "+01:00";
             let requestedMonthsDefault;
             if (tz === "+00:00") {

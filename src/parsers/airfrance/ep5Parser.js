@@ -52,7 +52,7 @@ const parseEP5Modern = (text, ctx) => {
     const {month, year} = findEP5Date(text, ctx, MODERN_HEADER_PATTERN);
 
     const result = {
-        type: 'ep5',
+        type: 'rotations',
         date: stampForTaxYear(month, year, ctx.taxYear),
         fileName: ctx.fileName,
         fileOrder: ctx.fileOrder,
@@ -114,7 +114,7 @@ const parseEP5Legacy = (text, ctx) => {
     const {month, year} = findEP5Date(text, ctx, LEGACY_HEADER_PATTERN);
 
     const result = {
-        type: 'ep5',
+        type: 'rotations',
         date: stampForTaxYear(month, year, ctx.taxYear),
         fileName: ctx.fileName,
         fileOrder: ctx.fileOrder,
