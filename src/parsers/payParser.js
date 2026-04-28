@@ -36,12 +36,12 @@ export const cents2decimal = (cents) => {
 }
 
 // collect first group of all matches
-// returns Array of "decimal"
+// returns Array of strings
 const matchAll = (text, re, bydefault) => {
     const results = [];
     let match;
     while(null !== (match = re.exec(text))) {
-        results.push(decimal(match[1]));
+        results.push(match[1]);
     }
     const found = results.length;
     if (found > 0) {
