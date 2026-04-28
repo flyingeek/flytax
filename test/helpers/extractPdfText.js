@@ -10,7 +10,7 @@
 // parsers).
 import { readFileSync } from 'fs';
 import { createRequire } from 'module';
-import { getPDFText, setPdfjsLib } from '../../src/utilities/pdf';
+import { getPDFText, getPDFTextByRows, setPdfjsLib } from '../../src/utilities/pdf';
 
 const nodeRequire = createRequire(import.meta.url);
 
@@ -20,10 +20,13 @@ export const setupPdfjs = () => {
     setPdfjsLib(pdfjs);
 };
 
-// getPDFTextFromFile expects a browser File and uses FileReader internally.
-// Node has no FileReader, so tests reach the underlying primitive (getPDFText)
-// directly with file-system bytes — the equivalent of what FileReader produces.
-export const extractPdfText = (path) => {
-    const data = new Uint8Array(readFileSync(path));
-    return getPDFText({data, verbosity: 0}, '_');
-};
+export const extractPdfText = (path) =>
+    getPDFText({data: getFileData(path), verbosity: 0}, '_');
+
+export const extractPdfTextByRows = (path) =>
+    getPDFTextByRows({data: getFileData(path), verbosity: 0}, '_');
+
+// FileReader is browser-only, so we synchronously read the bytes from disk
+// and pass them as data directly — equivalent to what getPDFTextFromFile
+// produces internally in the browser.
+const getFileData = (path) => new Uint8Array(readFileSync(path));
