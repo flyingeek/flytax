@@ -1,5 +1,5 @@
-import {decimal, sum} from '../utilities/numbers';
-import {matchAll, matchLast} from '../utilities/regex';
+import {decimal, sum} from '../../utilities/numbers';
+import {matchAll, matchLast} from '../../utilities/regex';
 
 // Parse PaySlip
 export const payParser = (text, fileName, fileOrder) => {

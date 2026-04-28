@@ -1,4 +1,4 @@
-import {matchFirst} from '../utilities/regex';
+import {matchFirst} from '../../utilities/regex';
 
 // Parse Attestation de décompte des nuitées AF
 export const nightsAFParser = (text, fileName, fileOrder, taxYear) => {

@@ -1,14 +1,12 @@
-// End-to-end parser tests against anonymized text fixtures.
-//
-// These tests don't read PDFs — they read .txt fixtures whose content is the
-// extracted text from the corresponding PDF, generated once via:
-// `npm run extract-pdf -- --all`
-// Source PDFs are kept private (see test/fixtures/.gitignore) so this test
-// suite can run anywhere from a fresh clone.
+// End-to-end tests for the Air France parsers, run via the router against
+// anonymized text fixtures. The .txt fixtures are the extracted text of the
+// corresponding PDFs, generated once via `npm run extract-pdf -- --all`.
+// Source PDFs are kept private (see test/fixtures/.gitignore) so this suite
+// can run from a fresh clone.
 import { readFileSync } from 'fs';
-import taxData from '../data/data2025.json';
-import { iso2FR } from '../src/utilities/dates';
-import { router } from '../src/parsers/router';
+import taxData from '../../data/data2025.json';
+import { iso2FR } from '../../src/utilities/dates';
+import { router } from '../../src/parsers/router';
 
 const loadFixture = (path) => readFileSync(path, 'utf8');
 

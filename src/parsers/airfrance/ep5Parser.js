@@ -1,6 +1,7 @@
-import {iata2country} from '../utilities/iata';
-import {decimalHours2iso} from '../utilities/dates';
-import {buildRots, addIndemnities} from '../rotations';
+import {iata2country} from '../../utilities/iata';
+import {decimalHours2iso} from '../../utilities/dates';
+import {isInTaxYearWindow, stampForTaxYear} from '../../utilities/taxYear';
+import {buildRots, addIndemnities} from '../../rotations';
 
 //months as written in EP5
 export const EP5MONTHS = ['JANVIER', 'FEVRIER', 'MARS', 'AVRIL', 'MAI', 'JUIN', 'JUILLET', 'AOUT', 'SEPTEMBRE', 'OCTOBRE', 'NOVEMBRE', 'DECEMBRE'];
