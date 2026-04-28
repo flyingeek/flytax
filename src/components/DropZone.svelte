@@ -77,7 +77,7 @@
                                         Object.assign(batchPaySlips, {[month]: result}); // this method of saving result does not refresh svelte
                                     }else if (result.type === "rotations") {
                                         Object.assign(batchEp5, {[month]: result}); // this method of saving result does not refresh svelte
-                                    }else if (result.type === "nights") {
+                                    }else if (result.type === "lodging") {
                                         $nuiteesAF = result.total;
                                     }
                                 }

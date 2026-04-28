@@ -274,7 +274,7 @@ test('AF legacy EP4 outside the tax year passes through silently', () => {
 test('AF nuitées attestation parsing', () => {
     const text = loadFixture('test/fixtures/af-nuitees.txt');
     expect(router(text, 'af-nuitees.pdf', 0, '2025', taxData, ['CDG', 'ORY'], iso2FR)).toEqual([{
-        type: 'nights',
+        type: 'lodging',
         fileName: 'af-nuitees.pdf',
         fileOrder: 0,
         errors: [],
@@ -287,7 +287,7 @@ test('AF nuitées attestation parsing', () => {
 test('AF legacy nuitées attestation parsing', () => {
     const text = loadFixture('test/fixtures/af-nuitees-legacy.txt');
     expect(router(text, 'af-nuitees-legacy.pdf', 0, '2024', taxData, ['CDG', 'ORY'], iso2FR)).toEqual([{
-        type: 'nights',
+        type: 'lodging',
         fileName: 'af-nuitees-legacy.pdf',
         fileOrder: 0,
         errors: [],
@@ -300,7 +300,7 @@ test('AF legacy nuitées attestation parsing', () => {
 test('AF nuitées attestation for the wrong year surfaces an error', () => {
     const text = loadFixture('test/fixtures/af-nuitees.txt');
     expect(router(text, 'af-nuitees.pdf', 0, '2020', taxData, ['CDG', 'ORY'], iso2FR)).toEqual([{
-        type: 'nuitées',
+        type: 'lodging',
         error: 'année ≠ 2020',
         fileName: 'af-nuitees.pdf',
         fileOrder: 0,
