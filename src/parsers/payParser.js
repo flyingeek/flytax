@@ -93,7 +93,7 @@ export const payParser = (text, fileName, fileOrder) => {
     try {
         result.cumul = decimal(matchLast(text, /_Annuel_[\-0-9, ]+_{1,2}([\-0-9, ]+)_/g));
     } catch (err) {
-        result.errors.push({"type": "error", "msg":"Cumul Net imposable non trouvé"});
+        result.errors.push({"type": "error", "message":"Cumul Net imposable non trouvé"});
         result.cumul = "0";
     }
     try {
