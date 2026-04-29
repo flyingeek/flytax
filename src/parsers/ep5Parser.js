@@ -1,5 +1,6 @@
 import airportsData from "../../data/airports.json";
 import {localeFormat, months14} from "../components/utils";
+import {isInTaxYearWindow, stampForTaxYear} from "../utilities/taxYear";
 
 export const WITHIN_BASE_TEXT = "rotation sur base";
 export const NIGHT_OVERFLOW_TEXT = "Erreur: nuitées > nb de jours";
@@ -536,8 +537,6 @@ export const mergeRots = (data, taxYear, taxData, tzConverter) => {
 
 export const ep5Parser = (text, fileName, fileOrder, taxYear, taxData, base, tzConverter) => {
     const result = {"type": "ep5", fileName, fileOrder};
-    const previousTaxYear = (parseInt(taxYear, 10) - 1).toString();
-    const nextTaxYear = (parseInt(taxYear, 10) + 1).toString();
     let match;
     let pattern;
     let month;
@@ -554,14 +553,8 @@ export const ep5Parser = (text, fileName, fileOrder, taxYear, taxData, base, tzC
     }
 
     //search EP5 for flights
-    if (month === "01" && year === nextTaxYear) {
-        result.date = `${taxYear}-13`;
-    }else if (month === "12" && year === previousTaxYear) {
-        result.date = `${taxYear}-00`;
-    } else {
-        result.date = `${year}-${month}`;
-        if ((year) !== taxYear) return result;
-    }
+    result.date = stampForTaxYear(month, year, taxYear);
+    if (!isInTaxYearWindow(month, year, taxYear)) return result;
 
     //0,00 T-77W  GSQY 0 PEK  01 00,00 CDG  01 04,03
     //Ce pattern ne prend pas les simus
@@ -597,8 +590,6 @@ export const ep5Parser = (text, fileName, fileOrder, taxYear, taxData, base, tzC
 
 export const ep5Parserf2 = (text, fileName, fileOrder, taxYear, taxData, base, tzConverter) => {
     const result = {"type": "ep5", fileName, fileOrder};
-    const previousTaxYear = (parseInt(taxYear, 10) - 1).toString();
-    const nextTaxYear = (parseInt(taxYear, 10) + 1).toString();
     let match;
     let pattern;
     let month;
@@ -616,14 +607,8 @@ export const ep5Parserf2 = (text, fileName, fileOrder, taxYear, taxData, base, t
     }
 
     //search EP5 for flights
-    if (month === "01" && year === nextTaxYear) {
-        result.date = `${taxYear}-13`;
-    }else if (month === "12" && year === previousTaxYear) {
-        result.date = `${taxYear}-00`;
-    } else {
-        result.date = `${year}-${month}`;
-        if ((year) !== taxYear) return result;
-    }
+    result.date = stampForTaxYear(month, year, taxYear);
+    if (!isInTaxYearWindow(month, year, taxYear)) return result;
     //_OTP_3.08_1.83_OOA_01 | 04.07_L-21_CDG_1.25_01 | 07.15_0_GTAY
     pattern = /_(\S{3})_(?:[0-9.]+(?:_[0-9.]+)?_[^_]+|[^_]+_[0-9.]+)_(\d+)\s\|\s([0-9.]+)_(?:[^_]+_(\S{3})(?:_[0-9.]+)?_(\d+)\s\|\s([0-9.]+)_\d_(?:[A-Z]{4})|\sZZ_(\S{3})_(\d+)\s\|\s([0-9.]+))/g;
     //1 : escale départ
