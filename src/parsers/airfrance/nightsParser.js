@@ -1,16 +1,61 @@
-import {matchFirst} from '../../utilities/regex';
+import { matchFirst } from '../../utilities/regex';
 
-// Parse Attestation de décompte des nuitées AF
-export const nightsAFParser = (text, fileName, fileOrder, taxYear) => {
-    let result = {"type": "nights", fileName, fileOrder, errors: []};
-    let total;
-    try {
-        total = matchFirst(text, /compte s'élève à\s?:\s([\-0-9,. ]+)\sEuros/);
-        total = parseFloat(total.replace(/\s+/g, '').replace(',', '.'));
-    }catch(err) {
-        result.errors.push({"type": "error", "message":"Montant des nuitées AF non trouvé"})
+/**
+ * Whether `text` looks like an Air France nuitées attestation.
+ *
+ * @param {string} text
+ * @returns {boolean}
+ */
+export const isNuitees = (text) => text.indexOf(ATTESTATION_MARKER) !== -1;
+
+/**
+ * Parse an Air France "Attestation de décompte des nuitées" — the
+ * annual statement of hotel-night expenses paid by the company.
+ *
+ * If the document's year doesn't match `ctx.taxYear`, returns the
+ * wrong-year error envelope (`type: "nuitées"`); otherwise returns
+ * the success envelope with the parsed total.
+ *
+ * @param {string} text
+ * @param {import('./index.js').ParserContext} ctx
+ * @returns {Array<object>}
+ */
+export const nightsAFParser = (text, ctx) => {
+    const {fileName, fileOrder, taxYear} = ctx;
+
+    const yearMatch = ATTESTATION_RE.exec(text);
+
+    if (!yearMatch || yearMatch[1] !== taxYear) {
+        return [{
+            type: 'nuitées',
+            error: `année ≠ ${taxYear}`,
+            fileName,
+            fileOrder,
+            content: text,
+        }];
     }
-    result.total = total;
-    result.date = taxYear;
-    return result;
+
+    const result = {
+        type: 'nights',
+        fileName,
+        fileOrder,
+        errors: [],
+        date: taxYear,
+    };
+
+    try {
+        const rawTotal = matchFirst(text, /compte s'élève à\s?:\s([\-0-9,. ]+)\sEuros/);
+
+        result.total = parseFloat(rawTotal.replace(/\s+/g, '').replace(',', '.'));
+    } catch (err) {
+        result.errors.push({
+            type: 'error',
+            message: 'Montant des nuitées AF non trouvé',
+        });
+    }
+
+    return [result];
 };
+
+const ATTESTATION_MARKER = "ATTESTATION DE DECOMPTE DES NUITEES POUR L'ANNEE ";
+const ATTESTATION_RE = new RegExp(`${ATTESTATION_MARKER}(\\d+)`);
