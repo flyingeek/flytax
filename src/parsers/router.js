@@ -1,6 +1,7 @@
 import {payParser} from "./airfrance/payParser";
-import {ep5Parser, ep5Parserf2, EP5MONTHS} from "./airfrance/ep5Parser";
+import {ep5Parser, ep5Parserf2} from "./airfrance/ep5Parser";
 import {nightsAFParser} from "./airfrance/nightsParser";
+import {ep4Parser} from "./airfrance/ep4Parser";
 
 // Based on PDF text content, performs task(s)
 // Return array of result
@@ -38,21 +39,10 @@ export const router = (text, fileName, fileOrder, taxYear, taxData, base, tzConv
         if(text.indexOf("ATTESTATION DE DECOMPTE DES NUITEES POUR L'ANNEE ") !== -1) {
             results.push({"type": "nuitées", "error":`année ≠ ${taxYear}`, fileName, fileOrder, "content": text})
         } else if(text.indexOf('CARNET _DE _VOL _- _EP _5')=== -1){
-            const pattern = String.raw`[_\s]EP\s?_?4.+?_(${EP5MONTHS.join('|')})[\s_]+?(20\d{2})`;
-            const regex = new RegExp(pattern);
-            let match;
-            if (null !== (match = regex.exec(text))) {
-                const monthIndex = EP5MONTHS.indexOf(match[1]);
-                const month = (monthIndex + 1).toString(10).padStart(2, '0');
-                const year = match[2];
-                const previousTaxYear = (parseInt(taxYear, 10) - 1).toString();
-                const nextTaxYear = (parseInt(taxYear, 10) + 1).toString();
-                if (year === taxYear || (month === "01" && year === nextTaxYear) || (month === "12" && year === previousTaxYear)) {
-                    results.push({"type": "ep4", "warning": `absence d'EP5`, fileName, fileOrder, "content": text});
-                } else {
-                    results.push({"type": "ep4", "date": `${year}-${month}`, fileName, fileOrder, "content": text});
-                }
-            }else{
+            const ep4Result = ep4Parser(text, fileName, fileOrder, taxYear);
+            if (ep4Result) {
+                results.push(ep4Result);
+            } else {
                 results.push({"type": "error", "msg":"fichier non reconnu", fileName, fileOrder, "content": text});
             }
         }else{
