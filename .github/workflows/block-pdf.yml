@@ -1,0 +1,30 @@
+name: Block PDF
+on:
+  push:
+    branches:
+      - '**'
+  pull_request:
+    branches:
+      - '**'
+jobs:
+  check-no-pdf:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+
+      - name: Check no PDF is tracked 🚫
+        run: |
+          PDF_FILES=$(git ls-files '*.pdf')
+          if [ -n "$PDF_FILES" ]; then
+            echo "::error title=PDF files detected::The following PDF files are tracked in the repository and must be removed:"
+            for f in $PDF_FILES; do
+              echo "::error file=${f}::PDF file tracked: ${f}"
+            done
+            exit 1
+          fi
+          echo "No PDF files tracked. ✓"

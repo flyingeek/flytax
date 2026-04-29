@@ -1,6 +1,8 @@
 /node_modules/
 public/
 
+*.pdf
+
 .DS_Store
 .env
 workspaceConfiguration/LoadTerminal.json
