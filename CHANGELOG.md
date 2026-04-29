@@ -5,15 +5,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.4.8] - 2026-04-27
 
-### Fixed
+### Added
 
-- regex for getting month/year of EP4 when no EP5 fixed (@jcricaud)
-- AF nights parser fixed (@clarkewing)
-- changelog dates fixed (@clarkewing)
+- Extraction PDF par lignes (`getPDFTextByRows`) pour les documents au format tabulaire ([@clarkewing](https://github.com/clarkewing))
+- Suite de tests *end-to-end* des parseurs ([@clarkewing](https://github.com/clarkewing))
+- Utilitaire CLI `extract-pdf` pour régénérer les fixtures `.txt` depuis les PDF ([@clarkewing](https://github.com/clarkewing))
 
 ### Changed
 
-- dev environment updated (@clarkewing)
+- Modernisation de l'environnement de développement : Jest v30, modernisation CI, refresh `package-lock.json` ([@clarkewing](https://github.com/clarkewing))
+
+### Fixed
+
+- Reconnaissance des EP4 sans EP5 ([@jcricaud](https://github.com/jcricaud))
+- Reconnaissance des attestations de nuitées AF 2025 ([@clarkewing](https://github.com/clarkewing))
+- Correction des dates du changelog ([@clarkewing](https://github.com/clarkewing))
+
+### Security
+
+- Remplacement de la librairie `rollup-plugin-workbox-inject` abandonnée ([@clarkewing](https://github.com/clarkewing))
+- Remplacement de la librairie `md-2-json` abandonnée ([@clarkewing](https://github.com/clarkewing))
 
 ## [1.4.7] - 2026-03-12
 
