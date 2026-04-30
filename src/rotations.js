@@ -266,7 +266,7 @@ export const addIndemnities = (taxYear, rots, taxData, tzConverter, fileName) =>
         } else if  (rot.nights.length > rot.days || rot.countries.length > rot.days) {
             rot.formula = NIGHT_OVERFLOW_TEXT;
             rot.currencyFormula = 'Vérifiez le choix de la base';
-            console.log(`%c${fileName}\n%ctype [ep5] %cVérifiez la base`, 'font-family: monospace;', 'color: black;', 'color: red;');
+            console.log(`%c${fileName}\n%ctype [rotations] %cVérifiez la base`, 'font-family: monospace;', 'color: black;', 'color: red;');
             hasError = true;
         } else {
             // if at least one of the stopover is LC, count all nights
@@ -419,7 +419,7 @@ export const mergeFlights = (flights1, flights2) => {
     return f1.concat(f2);
 };
 
-// Merge rots without needing to copy the EP5/months structure.
+// Merge rots without needing to copy the rotations/months structure.
 export const mergeRots = (data, taxYear, taxData, tzConverter) => {
     const currentIt = Array.isArray(data) ? arrayRotsIterator(data) : monthsRotsIterator(data);
     const nextIt = Array.isArray(data) ? arrayRotsIterator(data) : monthsRotsIterator(data);

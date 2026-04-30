@@ -3,7 +3,7 @@
     import DropZone from '../components/DropZone.svelte';
     import MonthStatus from "../components/MonthStatus.svelte";
     import MissionActivities from '../components/MissionActivities.svelte';
-    import {ep5, base, tzConverter, BASES} from '../stores';
+    import {rotations, base, tzConverter, BASES} from '../stores';
 
     const baseChange = (e) => {
         // we can change base on a month to month basis, so do not empty
@@ -30,12 +30,12 @@
                 Déposez vos <strong>EP5</strong> dans la zone ou Cliquez
             </div>
             <div slot="bottom">
-            <MonthStatus data={$ep5} name="EP5" />
+            <MonthStatus data={$rotations} name="EP5" />
             </div>
         </DropZone>
         <MissionActivities />
     </div>
-    {#if !$ep5.isEmpty()}<Disclaimer/>{/if}
+    {#if !$rotations.isEmpty()}<Disclaimer/>{/if}
 </main>
 <style>
     .header{min-height: 50px}

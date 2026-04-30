@@ -12,9 +12,9 @@ export const isNuitees = (text) => text.indexOf(ATTESTATION_MARKER) !== -1;
  * Parse an Air France "Attestation de décompte des nuitées" — the
  * annual statement of hotel-night expenses paid by the company.
  *
- * If the document's year doesn't match `ctx.taxYear`, returns the
- * wrong-year error envelope (`type: "nuitées"`); otherwise returns
- * the success envelope with the parsed total.
+ * If the document's year doesn't match `ctx.taxYear`, returns a
+ * `type: "lodging"` envelope carrying an `error`; otherwise returns
+ * the same envelope with the parsed total.
  *
  * @param {string} text
  * @param {import('./index.js').ParserContext} ctx
@@ -27,7 +27,7 @@ export const nightsAFParser = (text, ctx) => {
 
     if (!yearMatch || yearMatch[1] !== taxYear) {
         return [{
-            type: 'nuitées',
+            type: 'lodging',
             error: `année ≠ ${taxYear}`,
             fileName,
             fileOrder,
@@ -36,7 +36,7 @@ export const nightsAFParser = (text, ctx) => {
     }
 
     const result = {
-        type: 'nights',
+        type: 'lodging',
         fileName,
         fileOrder,
         errors: [],

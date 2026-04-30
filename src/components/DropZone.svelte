@@ -1,6 +1,6 @@
 <script context="module">
     import { onMount } from "svelte";
-    import { nuiteesAF } from '../stores';
+    import { fraisHebergement } from '../stores';
     import { getPDFTextFromFile, setPdfjsLib } from '../utilities/pdf';
     import loader from "./async-script-loader.js";
     import { Deferred } from "./utils.js";
@@ -13,7 +13,7 @@
 
 <script>
     import { router } from '../parsers/router';
-    import { base, ep5, paySlips, taxData, taxYear, tzConverter } from '../stores';
+    import { base, rotations, paySlips, taxData, taxYear, tzConverter } from '../stores';
     const acceptedType = 'application/pdf';
     let disabled = false; // locally during file processing
     let ready = new Deferred();
@@ -45,7 +45,7 @@
             const promises = [];
             const basename = (file) => file.name.split(/([\\/])/g).pop();
             let batchPaySlips = {};
-            let batchEp5 = {};
+            let batchRotations = {};
             for (let i = 0; i < files.length; i++) {
                 const file = files[i];
                 if (file) {
@@ -75,10 +75,10 @@
                                     }
                                     if (result.type === "pay") {
                                         Object.assign(batchPaySlips, {[month]: result}); // this method of saving result does not refresh svelte
-                                    }else if (result.type === "ep5") {
-                                        Object.assign(batchEp5, {[month]: result}); // this method of saving result does not refresh svelte
-                                    }else if (result.type === "nights") {
-                                        $nuiteesAF = result.total;
+                                    }else if (result.type === "rotations") {
+                                        Object.assign(batchRotations, {[month]: result}); // this method of saving result does not refresh svelte
+                                    }else if (result.type === "lodging") {
+                                        $fraisHebergement = result.total;
                                     }
                                 }
                             });
@@ -94,10 +94,10 @@
                     return Object.assign(theStore, batchPaySlips);
                 });
                 batchPaySlips = {};
-                ep5.update((theStore) => {
-                    return Object.assign(theStore, batchEp5);
+                rotations.update((theStore) => {
+                    return Object.assign(theStore, batchRotations);
                 });
-                batchEp5 = {};
+                batchRotations = {};
             };
             Promise.all(promises)
                 .then(() => {

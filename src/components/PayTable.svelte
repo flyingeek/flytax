@@ -1,7 +1,7 @@
 <script>
     import {decimal2cents, cents2decimal} from '../utilities/numbers';
     import {iso2FR} from '../utilities/dates';
-    import { taxYear, taxData, fraisDeMission, nuiteesInput, nuiteesAF, pairings} from '../stores';
+    import { taxYear, taxData, fraisDeMission, fraisHebergementInput, fraisHebergement, pairings} from '../stores';
     import {months, monthsfr, localeCurrency} from './utils';
     import DownloadTablePDF from './DownloadTablePDF.svelte';
     import {fade} from 'svelte/transition';
@@ -29,11 +29,11 @@
         }
         return cents2decimal(total);
     };
-    const updateNuiteesInput = (real, estimated) => {
+    const updateFraisHebergementInput = (real, estimated) => {
         if (real !== undefined) {
-            $nuiteesInput = real;
+            $fraisHebergementInput = real;
         }else if (estimated){
-            $nuiteesInput = estimated;
+            $fraisHebergementInput = estimated;
         }
     }
 
@@ -68,8 +68,8 @@
     $: totalDecouchersFPRO = computeTotalDecouchersFPRO(data);
     $: estimateRatio = ( parseInt($taxYear, 10)  >= 2021) ? 2.7 : 3.31;
     $: nightsCostEstimate = (Math.ceil(parseFloat(totalDecouchersFPRO) * estimateRatio/100) * 100).toFixed(0);
-    $: updateNuiteesInput($nuiteesAF, nightsCostEstimate);
-    $: fraisReels = parseFloat($fraisDeMission) - parseFloat($nuiteesAF || $nuiteesInput || nightsCostEstimate) - parseFloat(totalFrais);
+    $: updateFraisHebergementInput($fraisHebergement, nightsCostEstimate);
+    $: fraisReels = parseFloat($fraisDeMission) - parseFloat($fraisHebergement || $fraisHebergementInput || nightsCostEstimate) - parseFloat(totalFrais);
     $: roadTripInformation = roadTrips($pairings, $taxYear);
 
 </script>
@@ -84,7 +84,7 @@
     <tr>
         <th colspan="3">
             Comparatif {$taxYear}
-            {#if (!$nuiteesInput || $nuiteesInput == nightsCostEstimate)}
+            {#if (!$fraisHebergementInput || $fraisHebergementInput == nightsCostEstimate)}
                 <div class="estimate" transition:fade|local><small>basé sur une estimation des nuitées à ±20%</small></div>
             {/if}
         </th>
@@ -101,9 +101,9 @@
 <tbody>
     <tr>
         <td>
-            <input name="nuitees" type="number" disabled={!!$nuiteesAF} bind:value="{$nuiteesInput}" min="0" step="100" placeholder="{($nuiteesAF) ? $nuiteesAF : nightsCostEstimate}"/>
+            <input name="nuitees" type="number" disabled={!!$fraisHebergement} bind:value="{$fraisHebergementInput}" min="0" step="100" placeholder="{($fraisHebergement) ? $fraisHebergement : nightsCostEstimate}"/>
         </td>
-        <td>{$fraisDeMission} - {parseFloat($nuiteesAF || $nuiteesInput || nightsCostEstimate).toFixed(0)} - {parseFloat(totalFrais).toFixed(0)} = {fraisReels.toFixed(0)} €</td>
+        <td>{$fraisDeMission} - {parseFloat($fraisHebergement || $fraisHebergementInput || nightsCostEstimate).toFixed(0)} - {parseFloat(totalFrais).toFixed(0)} = {fraisReels.toFixed(0)} €</td>
         <td>{abbattement.toFixed(0)} €</td>
     </tr>
 </tbody>
