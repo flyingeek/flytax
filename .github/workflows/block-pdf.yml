@@ -165,23 +165,20 @@ jobs:
                 '### How to clean up',
                 '',
                 '> [!CAUTION]',
-                "> Removing PDFs from the head tree alone is **not enough** — the bytes remain in the branch's history. You need to rewrite the affected commits.",
+                "> Removing PDFs from the head tree alone is **not enough** — the bytes remain in the branch's history. Follow GitHub's [official guidance for removing sensitive data](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/removing-sensitive-data-from-a-repository) to scrub them from the commit history.",
                 '',
                 '```bash',
-                '# Option 1: interactive rebase, drop or amend each commit that touched a PDF',
-                'git rebase -i origin/main',
-                '',
-                '# Option 2: scrub the file from history wholesale (uses git-filter-repo)',
-                "git filter-repo --path '<path-to.pdf>' --invert-paths",
+                '# Scrub the file from history wholesale (uses git-filter-repo)',
+                'git-filter-repo --sensitive-data-removal --invert-paths --path PATH-TO-YOUR-FILE-WITH-SENSITIVE-DATA',
                 '',
                 '# Then force-push your branch',
-                'git push --force-with-lease',
+                'git push --force --mirror origin',
                 '```',
                 '',
                 '> [!WARNING]',
-                "> If the PDFs contained any personal or sensitive data, please notify @flyingeek or @clarkewing so the bytes can be cleaned from the repository's storage.",
+                "> If the PDFs contained any personal or sensitive data, please notify @flyingeek so cached references to them can be purged per [GitHub's documented process](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/removing-sensitive-data-from-a-repository).",
                 '>',
-                "> Orphan commits remain accessible via the API until GitHub's internal GC runs.",
+                "> Even after a force-push, orphan commits remain accessible via direct SHA lookup until cleared from GitHub's cache.",
               );
               body = lines.join('\n');
             } else if (action === 'post-success') {
@@ -192,9 +189,9 @@ jobs:
                 "The PDFs previously flagged are no longer present in this PR's commit range and HEAD tree. Thanks for the cleanup.",
                 '',
                 '> [!WARNING]',
-                "> Orphan commits from the force-push remain in the repository's storage until GitHub's internal GC runs.",
+                "> If the PDFs contained any personal or sensitive data, please notify @flyingeek so cached references to them can be purged per [GitHub's documented process](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/removing-sensitive-data-from-a-repository).",
                 '>',
-                "> If any of the PDFs contained personal or sensitive data, please notify @flyingeek or @clarkewing to escalate to GitHub support for full removal.",
+                "> Even after a force-push, orphan commits remain accessible via direct SHA lookup until cleared from GitHub's cache.",
               ].join('\n');
             }
             core.setOutput('body', body);
