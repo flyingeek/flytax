@@ -3,7 +3,9 @@
  *
  */
 
-import {buildRots, iso2FR, addIndemnities, iata2country, numberOfDays, lastDayInMonthISO, mergeRots, mergeFlights} from '../../src/parsers/ep5Parser';
+import {buildRots, addIndemnities, mergeRots, mergeFlights} from '../../src/rotations';
+import {iso2FR, numberOfDays, lastDayInMonthISO} from '../../src/utilities/dates';
+import {iata2country} from '../../src/utilities/iata';
 import taxData from "../data/dataTest.json";
 import {jest} from '@jest/globals';
 test("memento13 arrival dxb next day", () => {

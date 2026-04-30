@@ -1,4 +1,6 @@
-import {buildRots, iso2FR, iata2country, addIndemnities, CONTINUATION_MARK, mergeRots, REFNOTE1} from '../../src/parsers/ep5Parser';
+import {buildRots, addIndemnities, CONTINUATION_MARK, mergeRots, REFNOTE1} from '../../src/rotations';
+import {iso2FR} from '../../src/utilities/dates';
+import {iata2country} from '../../src/utilities/iata';
 import taxData from "../data/dataTest.json";
 
 test('mergeRots', () => {

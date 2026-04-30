@@ -1,14 +1,12 @@
-// End-to-end parser tests against anonymized text fixtures.
-//
-// These tests don't read PDFs — they read .txt fixtures whose content is the
-// extracted text from the corresponding PDF, generated once via:
-// `npm run extract-pdf -- --all`
-// Source PDFs are kept private (see test/fixtures/.gitignore) so this test
-// suite can run anywhere from a fresh clone.
+// End-to-end tests for the Air France parsers, run via the router against
+// anonymized text fixtures. The .txt fixtures are the extracted text of the
+// corresponding PDFs, generated once via `npm run extract-pdf -- --all`.
+// Source PDFs are kept private (see test/fixtures/.gitignore) so this suite
+// can run from a fresh clone.
 import { readFileSync } from 'fs';
-import taxData from '../data/data2025.json';
-import { iso2FR } from '../src/parsers/ep5Parser';
-import { router } from '../src/parsers/router';
+import taxData from '../../data/data2025.json';
+import { iso2FR } from '../../src/utilities/dates';
+import { router } from '../../src/parsers/router';
 
 const loadFixture = (path) => readFileSync(path, 'utf8');
 
@@ -38,6 +36,7 @@ test('AF EP5 parsing', () => {
         rots: [
             {
                 isComplete: '<>',
+                airline: 'AF',
                 nights: ['JFK', 'JFK', 'JFK'],
                 start: '2025-10-04T11:03+02:00',
                 end: '2025-10-06T06:58+02:00',
@@ -52,6 +51,7 @@ test('AF EP5 parsing', () => {
             },
             {
                 isComplete: '<>',
+                airline: 'AF',
                 nights: ['HAV', 'HAV', 'HAV', 'HAV', 'HAV'],
                 start: '2025-10-18T15:13+02:00',
                 end: '2025-10-22T13:14+02:00',
@@ -66,6 +66,7 @@ test('AF EP5 parsing', () => {
             },
             {
                 isComplete: '<>',
+                airline: 'AF',
                 nights: ['MIA', 'MIA', 'MIA'],
                 start: '2025-10-25T11:14+02:00',
                 end: '2025-10-27T10:29+01:00',
@@ -80,6 +81,7 @@ test('AF EP5 parsing', () => {
             },
             {
                 isComplete: '<>',
+                airline: 'AF',
                 nights: ['JFK', 'JFK', 'JFK'],
                 start: '2025-10-30T10:43+01:00',
                 end: '2025-11-01T06:53+01:00',

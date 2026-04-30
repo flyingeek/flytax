@@ -1,5 +1,6 @@
 import { writable, readable, derived } from 'svelte/store';
-import {iso2FR, iso2AST, mergeRots} from './parsers/ep5Parser';
+import {iso2FR, iso2AST} from './utilities/dates';
+import {mergeRots} from './rotations';
 
 export const BASES = [
     {label: "Marseille", selected: false, value: ['MRS'], tzConverter: iso2FR},

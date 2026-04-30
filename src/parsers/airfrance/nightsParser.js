@@ -1,17 +1,4 @@
-// returns first group of first match
-// Throws if no match found
-// returns string
-export const matchFirst = (text, re, bydefault) => {
-    let match;
-    if (null !== (match = re.exec(text))) {
-        return match[1];
-    }
-    if (bydefault === undefined) {
-        throw new Error(`No match found for ${re}`);
-    } else {
-        return bydefault;
-    }
-};
+import {matchFirst} from '../../utilities/regex';
 
 // Parse Attestation de décompte des nuitées AF
 export const nightsAFParser = (text, fileName, fileOrder, taxYear) => {

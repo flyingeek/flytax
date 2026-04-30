@@ -1,74 +1,13 @@
-import airportsData from "../../data/airports.json";
-import {localeFormat, months14} from "../components/utils";
-import {isInTaxYearWindow, stampForTaxYear} from "../utilities/taxYear";
+import {localeFormat, months14} from "./components/utils";
+import {lastDayInMonthISO, numberOfDays, diffHours} from './utilities/dates';
+import {iata2country} from './utilities/iata';
+import {findAmountEuros, findAmount, AmountError} from './utilities/indemnity';
 
 export const WITHIN_BASE_TEXT = "rotation sur base";
 export const NIGHT_OVERFLOW_TEXT = "Erreur: nuitées > nb de jours";
 export const CONTINUATION_MARK = "...";
-export const REFNOTE1 = "\u202f¹";
-export const FORMULA_ERROR = "!ERREUR!"
-//months as written in EP5
-export const EP5MONTHS = ['JANVIER', 'FEVRIER', 'MARS', 'AVRIL', 'MAI', 'JUIN', 'JUILLET', 'AOUT', 'SEPTEMBRE', 'OCTOBRE', 'NOVEMBRE', 'DECEMBRE'];
-
-//converts EP5 time hh,dd to hh:mmZ
-//returns a string
-export const ep5Time2iso = (text) => {
-    const [hours, cs] = text.split(",");
-    const minutes = (parseFloat(cs) * 0.6).toFixed(0).padStart(2, '0');
-    return `${hours}:${minutes}Z`;
-}
-
-//https://stackoverflow.com/questions/222309/calculate-last-day-of-month-in-javascript
-//months must be 1 based (1->12)
-const getDaysInMonth = (m, y) => {
-    return m===2 ? y & 3 || !(y%25) && y & 15 ? 28 : 29 : 30 + (m+(m>>3)&1);
-}
-
-export const lastDayInMonthISO = (mString, yString) => {
-    const day = getDaysInMonth(parseInt(mString, 10), parseInt(yString, 10));
-    // 28<=day<=31, so no paddding needed
-    return `${yString}-${mString}-${day}`;
-}
-
-//return intervals between to ISO dates, in hours and in days
-export const numberOfDays = (startISO, endISO) => {
-    const diff = Date.parse(endISO.replace("24:00", "23:59")) - Date.parse(startISO.replace(/\d\d:\d\d/, "00:00"));
-    return Math.floor(diff/ 86400000);
-};
-export const diffHours = (startISO, endISO) => {
-    return (Date.parse(endISO) - Date.parse(startISO)) / 3600000;
-};
-
-// Converts timezone
-// 2020-11-01T00:00Z -> 2020-11-01+01:00 for "Europe/Paris"
-// 2020-11-01T00:00+01:00 -> 2020-11-01+01:00 for "Europe/Paris"
-export const iso2TZ = (timeZone, isoString, deltaDays=0) => {
-    if (isoString === undefined) return timeZone; // This is used in buildRots to check browser compatibility
-    let event = new Date(Date.parse(isoString));
-    if (deltaDays) event.setUTCDate(event.getUTCDate() + deltaDays);
-    // British English uses day/month/year order and 24-hour time without AM/PM
-    const loc = event.toLocaleString("en-GB", {timeZone});
-    const re = /(\d\d)\/(\d\d)\/(\d\d\d\d), (\d\d):(\d\d):\d\d/
-    let match;
-    if (null !== (match = re.exec(loc))) {
-        const [, day, month, year, hour, minute] = match;
-        let baseIsoString = `${year}-${month}-${day}T${hour}:${minute}`;
-        const baseEvent = new Date(Date.parse(baseIsoString + "Z"));
-        const delta = (baseEvent - event)/3600000;
-        let tzOffset = Math.trunc(delta);
-        let minutes = Math.round((Math.abs(delta) - Math.abs(tzOffset))*60/100);
-        if (tzOffset === 0) {
-            return baseIsoString + "Z";
-        }
-        baseIsoString += (tzOffset >= 0) ? '+' : '-';
-        baseIsoString += Math.abs(tzOffset).toString().padStart(2, "0") + ":" + minutes.toString().padStart(2, "0");
-        return baseIsoString;
-    } else {
-        throw new Error(`Can not convert ${isoString} to timeZone ${timeZone}`);
-    }
-}
-export const iso2FR = iso2TZ.bind(null, "Europe/Paris");
-export const iso2AST = iso2TZ.bind(null, "America/Puerto_Rico"); // Atlantic Standard Time
+export const REFNOTE1 = " ¹";
+export const FORMULA_ERROR = "!ERREUR!";
 
 const rotSummary = (rot) => {
     // construct a summary (nights not repeated)
@@ -80,11 +19,11 @@ const rotSummary = (rot) => {
         return accumulator;
     }, []);
     return [rot.dep, ...stopovers, rot.arr].join('-')
-            .replace('-'+ CONTINUATION_MARK, CONTINUATION_MARK)
-            .replace(CONTINUATION_MARK +'-', CONTINUATION_MARK);
-}
+            .replace('-' + CONTINUATION_MARK, CONTINUATION_MARK)
+            .replace(CONTINUATION_MARK + '-', CONTINUATION_MARK);
+};
 
-export const buildRots = (flights, {tzConverter, base, iataMap}) => {
+export const buildRots = (flights, {tzConverter, base, iataMap, airline}) => {
     // Using parsed flights build up rots & places of stay
 
     //verify browser compatibility
@@ -148,7 +87,6 @@ export const buildRots = (flights, {tzConverter, base, iataMap}) => {
             standbyDays += numberOfDays(nextFlight.start, nextFlight.end); // for flights like LAX-PPT
             standbyDays = Math.max(standbyDays, 1); // for single day rot
             if (standbyHours >= 7 && !isBase(flight.arr)) {
-                //console.log(numberOfDays(flight.end, nextFlight.start), standbyHours, localDays, flight.arr);
                 //escale hors base de plus de 7h
                 for (let j=0; j<standbyDays; j++) {
                     rot.nights.push(flight.arr);
@@ -209,7 +147,6 @@ export const buildRots = (flights, {tzConverter, base, iataMap}) => {
             rot.base = base;
         }
         // some defaults if not already set
-        // a ||= b; only is ES2021 and node 15 <=> a || (a = b);
         rot.end || (rot.end = flight.end);
         rot.days|| (rot.days = numberOfDays(rot.start, rot.end) + 1); // 0 days <=> 1ON
 
@@ -250,11 +187,12 @@ export const buildRots = (flights, {tzConverter, base, iataMap}) => {
 
         // add countries
         if (iataMap) rot.countries = rot.nights.map((iata) => iataMap(iata));
+        if (airline) rot.airline = airline;
         //push rot and continue
         rots.push(rot);
         rot = null;
     }
-    return rots
+    return rots;
 };
 
 export const optimizeNightsRepartition = (rot, stays) => {
@@ -292,41 +230,6 @@ export const optimizeNightsRepartition = (rot, stays) => {
         }
     }
     return [nights, countries];
-};
-
-export const iata2country = (iata) => {
-    const index = airportsData.indexOf(iata + ':');
-    return (index >= 0) ? airportsData.substring(index + 4, index + 6): iata;
-}
-
-// Also we ensure at build time there is no possible errors
-// due to inconsistency between airportsData, countriesData and exrData,
-// we are still handling AmountError in findAmount* functions.
-class AmountError extends Error {};
-
-export const findAmountEuros = (countryData, isoDate, exrData) => {
-    const [amount, currency] = findAmount(countryData, isoDate);
-    const exr = exrData[currency];
-    if (exr) {
-        const rate = parseFloat(exr[2]);
-        const euros = parseFloat((parseFloat(amount) / rate).toFixed(2));
-        return euros;
-    } else {
-        throw new AmountError(`Taux de change inconnu pour ${currency}`);
-    }
-};
-
-export const findAmount = (countryData, isoDate) => {
-    for (const [date, currency, amount] of countryData.a) {
-        if (date.localeCompare(isoDate) <= 0) {
-            return [amount, currency];
-        }
-    }
-    if (countryData) {
-        throw new AmountError(`Pas d'indemnité définie pour ${countryData.n} au ${isoDate}`);
-    } else {
-        throw new AmountError(`Indemnité manquante`);
-    }
 };
 
 export const addIndemnities = (taxYear, rots, taxData, tzConverter, fileName) => {
@@ -483,22 +386,24 @@ export const addIndemnities = (taxYear, rots, taxData, tzConverter, fileName) =>
         results.push(rot);
     }
     return results;
-}
-// ep5 iterable
-export function* ep5Iterator(data){
+};
+
+// Iterates rots stored in a {monthKey: {rots: [...]}} structure (months14-keyed).
+export function* monthsRotsIterator(data) {
     for (const m of months14) {
         const monthData = data[m];
         if (monthData) {
             yield* monthData.rots;
         }
     }
-};
-// in tests we use array to pass rots
-export function* testIterator(data) {
+}
+
+// In tests we pass rots as a plain array.
+export function* arrayRotsIterator(data) {
     for (const a of data) {
         yield* a;
     }
-};
+}
 
 export const mergeFlights = (flights1, flights2) => {
     const f1 = [...flights1];
@@ -513,17 +418,18 @@ export const mergeFlights = (flights1, flights2) => {
     }
     return f1.concat(f2);
 };
-//merge Rot without needing to copy the EP5 structure
+
+// Merge rots without needing to copy the EP5/months structure.
 export const mergeRots = (data, taxYear, taxData, tzConverter) => {
-    const currentIt = Array.isArray(data) ? testIterator(data) : ep5Iterator(data);
-    const nextIt = Array.isArray(data) ? testIterator(data) : ep5Iterator(data);
+    const currentIt = Array.isArray(data) ? arrayRotsIterator(data) : monthsRotsIterator(data);
+    const nextIt = Array.isArray(data) ? arrayRotsIterator(data) : monthsRotsIterator(data);
     nextIt.next();
     const mergedRots = [];
     for (const rot of currentIt) {
         const next = nextIt.next().value;
         if (next && rot.isComplete === '<' && next.isComplete === '>' && rot.end.substring(0, 7) === next.end.substring(0, 7)) {
-            const [merged] = buildRots(mergeFlights(rot.flights, next.flights), {base:rot.base, tzConverter, "iataMap": iata2country});
-            const [mergedWithIndemnities] = addIndemnities(taxYear,[merged], taxData, tzConverter);
+            const [merged] = buildRots(mergeFlights(rot.flights, next.flights), {base: rot.base, tzConverter, "iataMap": iata2country, "airline": rot.airline});
+            const [mergedWithIndemnities] = addIndemnities(taxYear, [merged], taxData, tzConverter);
             mergedRots.push(mergedWithIndemnities);
             // skip next
             currentIt.next();
@@ -533,116 +439,4 @@ export const mergeRots = (data, taxYear, taxData, tzConverter) => {
         }
     }
     return mergedRots;
-};
-
-export const ep5Parser = (text, fileName, fileOrder, taxYear, taxData, base, tzConverter) => {
-    const result = {"type": "ep5", fileName, fileOrder};
-    let match;
-    let pattern;
-    let month;
-    let year;
-    // search EP5 Date like JANVIER 2020
-    pattern = String.raw`\s(${EP5MONTHS.join('|')})\s+?(20\d{2})`;
-    const regex = new RegExp(pattern);
-    if (null !== (match = regex.exec(text))) {
-        const monthIndex = EP5MONTHS.indexOf(match[1]);
-        month = (monthIndex + 1).toString(10).padStart(2, '0');
-        year = match[2];
-    }else{
-        throw new Error(`EP5 parser:  Date not found in ${fileName}`);
-    }
-
-    //search EP5 for flights
-    result.date = stampForTaxYear(month, year, taxYear);
-    if (!isInTaxYearWindow(month, year, taxYear)) return result;
-
-    //0,00 T-77W  GSQY 0 PEK  01 00,00 CDG  01 04,03
-    //Ce pattern ne prend pas les simus
-    //1 : temps d'arrêt précédent 0,00 si à cheval sur mois precedent
-    //2 : type avion ou espace si mep
-    //3 : immatriculation
-    //4 : type activité (0)
-    //5 : escale départ
-    //6 : jour départ
-    //7 : heure decimale tu départ (00,00 si début de mois)
-    //8 : escale arrivée
-    //9 : jour arrivée
-    //10: heure decimale tu arrivée  (24,00 si fin de mois et à cheval)
-    pattern = /([0-9,]+)\s(?:.{5})\s{2}(?:\S{4})\s(?:.+?)\s(\S{3})\s+(\d+)\s+([0-9,]+)\s+(\S{3})\s+(\d+)\s+([0-9,]+)/g;
-    const flights = [];
-    while (null !== (match = pattern.exec(text))) {
-        const [, stop, dep, depDay, depTime, arr, arrDay, arrTime] = match;
-        flights.push({stop, dep, "start": `${year}-${month}-${depDay}T${ep5Time2iso(depTime)}`, arr, "end": `${year}-${month}-${arrDay}T${ep5Time2iso(arrTime)}`});
-    }
-    // in case of multiple EP5 pages, ensure flights are sorted by start date
-    const sortedFlights = flights.sort((a, b) => {
-      const c = a.start.localeCompare(b.start);
-      if (c === 0) {
-        return a.end.localeCompare(b.end);
-      }
-      return c;
-    });
-    let rots = buildRots(sortedFlights, {base, tzConverter, "iataMap": iata2country});
-    rots = addIndemnities(taxYear, rots, taxData, tzConverter, fileName);
-    result.rots = rots;
-    return result;
-};
-
-export const ep5Parserf2 = (text, fileName, fileOrder, taxYear, taxData, base, tzConverter) => {
-    const result = {"type": "ep5", fileName, fileOrder};
-    let match;
-    let pattern;
-    let month;
-    let year;
-
-    // search EP5 Date like JANVIER 2020
-    pattern = String.raw`_(${EP5MONTHS.join('|')})\s+?(20\d{2})_`;
-    const regex = new RegExp(pattern);
-    if (null !== (match = regex.exec(text))) {
-        const monthIndex = EP5MONTHS.indexOf(match[1]);
-        month = (monthIndex + 1).toString(10).padStart(2, '0');
-        year = match[2];
-    }else{
-        throw new Error(`EP5 parser:  Date not found in ${fileName}`);
-    }
-
-    //search EP5 for flights
-    result.date = stampForTaxYear(month, year, taxYear);
-    if (!isInTaxYearWindow(month, year, taxYear)) return result;
-    //_OTP_3.08_1.83_OOA_01 | 04.07_L-21_CDG_1.25_01 | 07.15_0_GTAY
-    pattern = /_(\S{3})_(?:[0-9.]+(?:_[0-9.]+)?_[^_]+|[^_]+_[0-9.]+)_(\d+)\s\|\s([0-9.]+)_(?:[^_]+_(\S{3})(?:_[0-9.]+)?_(\d+)\s\|\s([0-9.]+)_\d_(?:[A-Z]{4})|\sZZ_(\S{3})_(\d+)\s\|\s([0-9.]+))/g;
-    //1 : escale départ
-    //2 : jour départ
-    //3 : heure decimale tu départ
-    //4 : escale arrivée
-    //5 : jour arrivée
-    //6: heure decimale tu arrivée
-    const flights = [];
-    while (null !== (match = pattern.exec(text))) {
-        let [,dep, depDay, depTime, arr, arrDay, arrTime, mepArr, mepArrDay, mepArrTime] = match;
-        arr = (typeof arr === 'undefined') ? mepArr : arr;
-        arrDay = (typeof arrDay === 'undefined') ? mepArrDay : arrDay;
-        arrTime = (typeof arrTime === 'undefined') ? mepArrTime : arrTime;
-        let arrMonthInt = parseInt(month, 10), arrYearInt = parseInt(year, 10);
-        if (/^\d+$/.test(depDay) && /^\d+$/.test(arrDay) && parseInt(arrDay, 10) < parseInt(depDay, 10)){
-          arrMonthInt += 1;
-          if (arrMonthInt > 12) {
-            arrMonthInt = 1;
-            arrYearInt += 1;
-          }
-        }
-        flights.push({"stop": "", dep, "start": `${year}-${month}-${depDay}T${ep5Time2iso(depTime.replace('.', ','))}`, arr, "end": `${arrYearInt}-${arrMonthInt.toString(10).padStart(2, '0')}-${arrDay}T${ep5Time2iso(arrTime.replace('.', ','))}`});
-    }
-    // in case of multiple EP5 pages, ensure flights are sorted by start date and end date
-    const sortedFlights = flights.sort((a, b) => {
-      const c = a.start.localeCompare(b.start);
-      if (c === 0) {
-        return a.end.localeCompare(b.end);
-      }
-      return c;
-    });
-    let rots = buildRots(sortedFlights, {base, tzConverter, "iataMap": iata2country});
-    rots = addIndemnities(taxYear, rots, taxData, tzConverter, fileName);
-    result.rots = rots;
-    return result;
 };

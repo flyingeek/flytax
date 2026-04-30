@@ -1,6 +1,6 @@
 <script>
-    import {decimal2cents, cents2decimal} from '../parsers/payParser';
-    import {iso2FR} from '../parsers/ep5Parser';
+    import {decimal2cents, cents2decimal} from '../utilities/numbers';
+    import {iso2FR} from '../utilities/dates';
     import { taxYear, taxData, fraisDeMission, nuiteesInput, nuiteesAF, pairings} from '../stores';
     import {months, monthsfr, localeCurrency} from './utils';
     import DownloadTablePDF from './DownloadTablePDF.svelte';

@@ -1,6 +1,6 @@
-import {payParser} from "./payParser";
-import {ep5Parser, ep5Parserf2, EP5MONTHS} from "./ep5Parser";
-import {nightsAFParser} from "./nightsAFParser";
+import {payParser} from "./airfrance/payParser";
+import {ep5Parser, ep5Parserf2, EP5MONTHS} from "./airfrance/ep5Parser";
+import {nightsAFParser} from "./airfrance/nightsParser";
 
 // Based on PDF text content, performs task(s)
 // Return array of result
