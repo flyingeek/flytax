@@ -1,63 +1,39 @@
-import {payParser} from "./airfrance/payParser";
-import {ep5Parser, ep5Parserf2, EP5MONTHS} from "./airfrance/ep5Parser";
-import {nightsAFParser} from "./airfrance/nightsParser";
+import { airfranceDetectors } from './airfrance';
 
-// Based on PDF text content, performs task(s)
-// Return array of result
+const detectors = [...airfranceDetectors];
+
+/**
+ * Dispatch a piece of extracted PDF text to the first matching parser.
+ *
+ * Iterates the registered detectors in order; the first one whose
+ * `match` returns true wins, and its `parse` produces the result
+ * envelope(s). Files that match nothing fall through to a
+ * "fichier non reconnu" error envelope.
+ *
+ * Each parser returns an array of result objects so the same call can
+ * yield both a primary result and accompanying warnings.
+ *
+ * @param {string} text - Extracted PDF text.
+ * @param {string} fileName
+ * @param {number} fileOrder - Position in the upload batch.
+ * @param {string} taxYear - 4-digit year of the declaration.
+ * @param {Object} taxData
+ * @param {string[]} base - Base IATA codes, e.g. ["CDG", "ORY"].
+ * @param {Function} tzConverter - Time-zone converter.
+ * @returns {Array<object>}
+ */
 export const router = (text, fileName, fileOrder, taxYear, taxData, base, tzConverter) => {
-    const results = [];
-    if (text.match(/BULLETIN DE PAIE_(AIR FRANCE|BASE|DP GN)/)) {
-        try  {
-            const result = payParser(text, fileName, fileOrder);
-            if (result.errors) {
-                for (const error of result.errors) {
-                    results.push({"type": error.type, "msg": error.message, fileName, fileOrder, "content": text});
-                }
-            }
-            results.push(result);
-        } catch (err) {
-            results.push({"type": "error", "msg":`${err.message}`, fileName, fileOrder, "content": err});
-        }
-    }else{
-        const isNuiteesAF = text.indexOf(`ATTESTATION DE DECOMPTE DES NUITEES POUR L'ANNEE ${taxYear}`) !== -1;
-        const isEP5f1 = text.indexOf('CARNET _DE _VOL _- _EP _5')!== -1;
-        const isEP5f2 = text.indexOf(`_CARNET DE VOL -  EP5_`) !== -1;
-        if(isEP5f1 || isEP5f2) {
-            if(isNuiteesAF) {
-                results.push(nightsAFParser(text, fileName, fileOrder, taxYear));
-            }else if(isEP5f1){
-                results.push(ep5Parser(text, fileName, fileOrder, taxYear, taxData, base, tzConverter));
-            }else if(isEP5f2){
-                results.push(ep5Parserf2(text, fileName, fileOrder, taxYear, taxData, base, tzConverter));
-            }
-        }else if(isNuiteesAF) {
-            results.push(nightsAFParser(text, fileName, fileOrder, taxYear));
-        }
+    const ctx = { fileName, fileOrder, taxYear, taxData, base, tzConverter };
+
+    for (const { match, parse } of detectors) {
+        if (match(text, ctx)) return parse(text, ctx);
     }
-    if (results.length === 0) {
-        if(text.indexOf("ATTESTATION DE DECOMPTE DES NUITEES POUR L'ANNEE ") !== -1) {
-            results.push({"type": "nuitées", "error":`année ≠ ${taxYear}`, fileName, fileOrder, "content": text})
-        } else if(text.indexOf('CARNET _DE _VOL _- _EP _5')=== -1){
-            const pattern = String.raw`[_\s]EP\s?_?4.+?_(${EP5MONTHS.join('|')})[\s_]+?(20\d{2})`;
-            const regex = new RegExp(pattern);
-            let match;
-            if (null !== (match = regex.exec(text))) {
-                const monthIndex = EP5MONTHS.indexOf(match[1]);
-                const month = (monthIndex + 1).toString(10).padStart(2, '0');
-                const year = match[2];
-                const previousTaxYear = (parseInt(taxYear, 10) - 1).toString();
-                const nextTaxYear = (parseInt(taxYear, 10) + 1).toString();
-                if (year === taxYear || (month === "01" && year === nextTaxYear) || (month === "12" && year === previousTaxYear)) {
-                    results.push({"type": "ep4", "warning": `absence d'EP5`, fileName, fileOrder, "content": text});
-                } else {
-                    results.push({"type": "ep4", "date": `${year}-${month}`, fileName, fileOrder, "content": text});
-                }
-            }else{
-                results.push({"type": "error", "msg":"fichier non reconnu", fileName, fileOrder, "content": text});
-            }
-        }else{
-            results.push({"type": "error", "msg":"fichier non reconnu", fileName, fileOrder, "content": text});
-        }
-    }
-    return results;
-}
+
+    return [{
+        type: 'error',
+        msg: 'fichier non reconnu',
+        fileName,
+        fileOrder,
+        content: text,
+    }];
+};
