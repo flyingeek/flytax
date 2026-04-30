@@ -3,6 +3,20 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.9] - 2026-04-29
+
+### Changed
+
+- Gel de la version de Node.js à 24 en CI et `.nvmrc` ([@flyingeek](https://github.com/flyingeek))
+
+### Fixed
+
+- Rectification de l'erreur « undefined » lorsqu'il n'était pas possible de lire le Cumul d'une fiche de paie AF ([@clarkewing](https://github.com/clarkewing))
+
+### Security
+
+- Protection contre l'ajout accidentel de fichiers PDF dans le code source ([@flyingeek](https://github.com/flyingeek))
+
 ## [1.4.8] - 2026-04-27
 
 ### Added
