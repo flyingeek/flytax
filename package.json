@@ -27,7 +27,7 @@
     "chalk": "^2.4.2",
     "console-table-printer": "^2.7.5",
     "dotenv": "^8.2.0",
-    "got": "^11.8.1",
+    "got": "^15.0.3",
     "iconv-lite": "^0.4.24",
     "jest": "^30.3.0",
     "mustache": "^4.1.0",
