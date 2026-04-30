@@ -50,45 +50,6 @@ jobs:
             echo "found=false" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Comment on every offending commit 💬
-        if: steps.scan.outputs.found == 'true' && steps.scan.outputs.per_commit != ''
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const perCommit = `${{ steps.scan.outputs.per_commit }}`.trim();
-
-            // Group "<sha> <path>" lines by sha
-            const bySha = new Map();
-
-            for (const line of perCommit.split('\n')) {
-              const [sha, ...rest] = line.split(' ');
-              const path = rest.join(' ');
-
-              if (!sha || !path) continue;
-
-              if (!bySha.has(sha)) bySha.set(sha, []);
-
-              bySha.get(sha).push(path);
-            }
-
-            for (const [sha, paths] of bySha) {
-              const body = [
-                "<!-- check-no-pdf-bot:commit -->",
-                ":no_entry: **PDF file(s) added in this commit:**",
-                "",
-                ...paths.map((p) => `- \`${p}\``),
-                "",
-                "PDFs may contain personal data and must not be committed. See the PR conversation for cleanup instructions.",
-              ].join("\n");
-
-              await github.rest.repos.createCommitComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                commit_sha: sha,
-                body,
-              });
-            }
-
       - name: Determine PR-comment action and build body 🧠
         id: state
         uses: actions/github-script@v7
