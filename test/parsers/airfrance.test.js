@@ -15,10 +15,12 @@ test('AF payslip parsing', () => {
     const text = loadFixture('test/fixtures/af-payslip.txt');
     expect(router(text, 'af-payslip.pdf', 0, '2025', taxData, ['CDG', 'ORY'], iso2FR)).toEqual([{
         type: 'pay',
+        airline: 'AF',
         fileName: 'af-payslip.pdf',
         fileOrder: 0,
         errors: [],
         date: '2025-11',
+        paymentDate: '2025-11-30',
         imposable: '8811.55',
         cumul: '56644.85',
         repas: ['526.36'],
