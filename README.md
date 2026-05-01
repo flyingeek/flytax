@@ -275,15 +275,21 @@ Pour publier une nouvelle version :
 
 1. Mettre à jour la version dans `package.json`.
 
-2. Ajouter une nouvelle entrée en haut de `CHANGELOG.md` au format `## [X.Y.Z] - YYYY-MM-DD`.
+2. Mettre à jour `package-lock.json` :
 
-3. Créer un commit sur `main` :
+   ```bash
+   npm install --package-lock-only
+   ```
+
+3. Ajouter une nouvelle entrée en haut de `CHANGELOG.md` au format `## [X.Y.Z] - YYYY-MM-DD`.
+
+4. Créer un commit sur `main` :
 
    ```bash
    git commit -am "chore: Bump version X.Y.Z"
    ```
 
-4. Tagger et pousser :
+5. Tagger et pousser :
 
    ```bash
    git tag release/X.Y.Z

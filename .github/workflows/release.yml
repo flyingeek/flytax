@@ -21,21 +21,28 @@ jobs:
         with:
           validation_level: warn # TODO: Fix issues with CHANGELOG.md before switching from `warn` to `error`
 
-      - name: Verify tag and package.json match CHANGELOG 🔎
+      - name: Verify package.json and CHANGELOG.md versions match tag 🔎
         run: |
           TAG_VERSION="${GITHUB_REF#refs/tags/release/}"
           PKG_VERSION="$(jq -r '.version' package.json)"
+          LOCK_VERSION="$(jq -r '.version' package-lock.json)"
           CHANGELOG_VERSION="${{ steps.changelog.outputs.version }}"
 
           if [ "$PKG_VERSION" != "$TAG_VERSION" ]; then
             LINE=$(grep -n '"version"' package.json | head -1 | cut -d: -f1)
-            echo "::error file=package.json,line=${LINE},title=Version mismatch::package.json version $PKG_VERSION does not match expected tag version $TAG_VERSION"
+            echo "::error file=package.json,line=${LINE},title=Version mismatch::`package.json` version $PKG_VERSION does not match expected tag version $TAG_VERSION"
+            exit 1
+          fi
+
+          if [ "$LOCK_VERSION" != "$TAG_VERSION" ]; then
+            LINE=$(grep -n '"version"' package-lock.json | head -1 | cut -d: -f1)
+            echo "::error file=package-lock.json,line=${LINE},title=Version mismatch::`package-lock.json` version $LOCK_VERSION does not match expected tag version $TAG_VERSION"
             exit 1
           fi
 
           if [ "$CHANGELOG_VERSION" != "$TAG_VERSION" ]; then
             LINE=$(grep -n "^## \[${CHANGELOG_VERSION}\]" CHANGELOG.md | head -1 | cut -d: -f1)
-            echo "::error file=CHANGELOG.md,line=${LINE},title=Version mismatch::Latest CHANGELOG version $CHANGELOG_VERSION does not match expected tag version $TAG_VERSION"
+            echo "::error file=CHANGELOG.md,line=${LINE},title=Version mismatch::Latest `CHANGELOG.md` version $CHANGELOG_VERSION does not match expected tag version $TAG_VERSION"
             exit 1
           fi
 
