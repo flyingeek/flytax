@@ -1,30 +1,169 @@
-name: Block PDF
+name: Prevent PDF commits
 on:
-  push:
-    branches:
-      - '**'
   pull_request:
-    branches:
-      - '**'
 jobs:
   check-no-pdf:
     runs-on: ubuntu-latest
     permissions:
       contents: read
+      pull-requests: write   # for the PR-level comment + per-commit comments
     steps:
       - name: Checkout 🛎️
         uses: actions/checkout@v6
         with:
           persist-credentials: false
+          fetch-depth: 0  # full history needed to scan the PR's commit range
 
-      - name: Check no PDF is tracked 🚫
+      - name: Scan PR for PDF files 🔍
+        id: scan
         run: |
-          PDF_FILES=$(git ls-files '*.pdf')
-          if [ -n "$PDF_FILES" ]; then
-            echo "::error title=PDF files detected::The following PDF files are tracked in the repository and must be removed:"
-            for f in $PDF_FILES; do
-              echo "::error file=${f}::PDF file tracked: ${f}"
-            done
-            exit 1
+          BASE_SHA="${{ github.event.pull_request.base.sha }}"
+          HEAD_SHA="${{ github.event.pull_request.head.sha }}"
+
+          # For each commit in the PR, list any PDFs added in that commit.
+          # Output format: "<sha> <path>" — one entry per (commit, file) pair.
+          # Catches add-then-remove patterns where a PDF was committed in one
+          # commit and deleted in a later one on the same branch — the bytes
+          # remain in pack files even if absent from HEAD.
+          PER_COMMIT=$(git log --diff-filter=A --name-only \
+            --pretty=format:'__commit__ %H' \
+            "${BASE_SHA}..${HEAD_SHA}" -- ':(icase)*.pdf' \
+            | awk '
+                /^__commit__ / { sha = $2; next }
+                tolower($0) ~ /\.pdf$/ { print sha " " $0 }
+              ')
+
+          # List files currently tracked in the head tree.
+          TRACKED=$(git ls-files ':(icase)*.pdf')
+
+          if [ -n "$PER_COMMIT" ] || [ -n "$TRACKED" ]; then
+            {
+              echo "found=true"
+              echo "per_commit<<__EOF__"
+              echo "$PER_COMMIT"
+              echo "__EOF__"
+              echo "tracked<<__EOF__"
+              echo "$TRACKED"
+              echo "__EOF__"
+            } >> "$GITHUB_OUTPUT"
+          else
+            echo "found=false" >> "$GITHUB_OUTPUT"
           fi
-          echo "No PDF files tracked. ✓"
+
+      - name: Determine PR-comment action and build body 🧠
+        id: state
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const FOUND_MARKER = '<!-- check-no-pdf-bot:pr-found -->';
+            const SUCCESS_MARKER = '<!-- check-no-pdf-bot:pr-success -->';
+
+            const found = `${{ steps.scan.outputs.found }}` === 'true';
+            const perCommitRaw = `${{ steps.scan.outputs.per_commit }}`.trim();
+            const trackedRaw = `${{ steps.scan.outputs.tracked }}`.trim();
+
+            // Find the most recent prior bot comment to decide whether the
+            // current scan represents a transition from "found" to "clean".
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              per_page: 100,
+            });
+            const lastBot = comments
+              .filter((c) => c.body.includes(FOUND_MARKER) || c.body.includes(SUCCESS_MARKER))
+              .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))[0];
+            const lastWasFound = lastBot && lastBot.body.includes(FOUND_MARKER);
+
+            let action = 'none';
+            if (found) {
+              action = 'post-found';
+            } else if (lastWasFound) {
+              // Transition from "found" to "clean" — celebrate the cleanup.
+              action = 'post-success';
+            }
+            core.setOutput('action', action);
+
+            // Build the comment body matching the chosen action.
+            let body = '';
+            if (action === 'post-found') {
+              // Group "<sha> <path>" lines by sha for compact rendering.
+              // GitHub auto-links 7+ char SHAs in comments, so a bare SHA is
+              // a clickable link to the commit view.
+              const bySha = new Map();
+              for (const line of perCommitRaw.split('\n')) {
+                const [sha, ...rest] = line.split(' ');
+                const path = rest.join(' ');
+                if (!sha || !path) continue;
+                if (!bySha.has(sha)) bySha.set(sha, []);
+                bySha.get(sha).push(path);
+              }
+              const commitLines = [...bySha.entries()].map(
+                ([sha, paths]) =>
+                  paths.length === 1
+                    ? `- ${sha}: \`${paths[0]}\``
+                    : `- ${sha}:\n${paths.map((p) => `  - \`${p}\``).join('\n')}`
+              );
+              const trackedLines = trackedRaw
+                .split('\n')
+                .filter(Boolean)
+                .map((p) => `- \`${p}\``);
+
+              const lines = [
+                FOUND_MARKER,
+                '### :no_entry: PDF files detected in this PR',
+                '',
+                'PDFs may contain personal data and must not be committed to this repository.',
+                '',
+              ];
+              if (commitLines.length) {
+                lines.push('**Added in commits:**', '', ...commitLines, '');
+              }
+              if (trackedLines.length) {
+                lines.push('**Currently tracked in HEAD:**', '', ...trackedLines, '');
+              }
+              lines.push(
+                '### How to clean up',
+                '',
+                '> [!CAUTION]',
+                "> Removing PDFs from the head tree alone is **not enough** — the bytes remain in the branch's history. Follow GitHub's [official guidance for removing sensitive data](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/removing-sensitive-data-from-a-repository) to scrub them from the commit history.",
+                '',
+                '```bash',
+                '# Scrub the file from history wholesale (uses git-filter-repo)',
+                'git-filter-repo --sensitive-data-removal --invert-paths --path PATH-TO-YOUR-FILE-WITH-SENSITIVE-DATA',
+                '',
+                '# Then force-push your branch',
+                'git push --force --mirror origin',
+                '```',
+                '',
+                '> [!WARNING]',
+                "> If the PDFs contained any personal or sensitive data, please notify @flyingeek so cached references to them can be purged per [GitHub's documented process](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/removing-sensitive-data-from-a-repository).",
+                '>',
+                "> Even after a force-push, orphan commits remain accessible via direct SHA lookup until cleared from GitHub's cache.",
+              );
+              body = lines.join('\n');
+            } else if (action === 'post-success') {
+              body = [
+                SUCCESS_MARKER,
+                '### :white_check_mark: PDFs cleaned up',
+                '',
+                "The PDFs previously flagged are no longer present in this PR's commit range and HEAD tree. Thanks for the cleanup.",
+                '',
+                '> [!WARNING]',
+                "> If the PDFs contained any personal or sensitive data, please notify @flyingeek so cached references to them can be purged per [GitHub's documented process](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/removing-sensitive-data-from-a-repository).",
+                '>',
+                "> Even after a force-push, orphan commits remain accessible via direct SHA lookup until cleared from GitHub's cache.",
+              ].join('\n');
+            }
+            core.setOutput('body', body);
+
+      - name: Post a fresh PR-level comment 📌
+        if: steps.state.outputs.action != 'none'
+        uses: peter-evans/create-or-update-comment@v4
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          body: ${{ steps.state.outputs.body }}
+
+      - name: Fail the check
+        if: steps.scan.outputs.found == 'true'
+        run: exit 1
