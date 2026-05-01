@@ -29,6 +29,7 @@ export const payParser = (text, ctx) => {
 
     const result = {
         type: 'pay',
+        airline: 'AF',
         fileName,
         fileOrder,
         errors: [],
