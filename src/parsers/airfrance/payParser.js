@@ -50,6 +50,17 @@ export const payParser = (text, ctx) => {
     }
 
     try {
+        result.paymentDate = matchLast(text, PAYMENT_DATE_RE).split('/').reverse().join('-');
+    } catch (err) {
+        result.paymentDate = '';
+
+        result.errors.push({
+            type: 'error',
+            message: 'Date de paiement non trouvée',
+        });
+    }
+
+    try {
         const net = matchAll(text, NET_RE);
 
         result.imposable = sum(net.map(decimal));
@@ -96,6 +107,7 @@ export const payParser = (text, ctx) => {
 };
 
 const DATE_RE = /PERIODE DU \d{2}\/(\d{2}\/\d{4})/g;
+const PAYMENT_DATE_RE = /PAYE LE\s*:\s*(\d{2}\/\d{2}\/\d{4})/g;
 const NET_RE = /_Mensuel_[\-0-9, ]+_{1,2}([\-0-9, ]+)_/g;
 const CUMUL_RE = /_Annuel_[\-0-9, ]+_{1,2}([\-0-9, ]+)_/g;
 const REPAS_RE = /(?:IND\.REPAS_+|INDEMNITE REPAS_+|IR\.FIN ANNEE DOUBL_+|IR EXONEREES_+|IR NON EXONEREES_+)([\-0-9, ]+)/g;

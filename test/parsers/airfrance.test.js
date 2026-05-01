@@ -20,6 +20,7 @@ test('AF payslip parsing', () => {
         fileOrder: 0,
         errors: [],
         date: '2025-11',
+        paymentDate: '2025-11-30',
         imposable: '8811.55',
         cumul: '56644.85',
         repas: ['526.36'],
