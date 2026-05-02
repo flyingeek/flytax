@@ -1,6 +1,6 @@
-import { writable, readable, derived } from 'svelte/store';
-import {iso2FR, iso2AST} from './utilities/dates';
-import {mergeRots} from './rotations';
+import { derived, readable, writable } from 'svelte/store';
+import { mergeRots } from './rotations';
+import { iso2AST, iso2FR } from './utilities/dates';
 
 export const BASES = [
     {label: "Marseille", selected: false, value: ['MRS'], tzConverter: iso2FR},
@@ -75,7 +75,11 @@ function isRegisterEmpty () {
     return Object.keys(this).length === 2;
 }
 export const rotations = resettable({type: "rotations", isEmpty: isRegisterEmpty});
-export const paySlips = resettable({type: "pay", isEmpty: isRegisterEmpty});
+export const paySlips = resettable({
+    type: "pay",
+    items: [],
+    isEmpty() { return this.items.length === 0; },
+});
 export const fraisHebergementInput = resettable();
 export const fraisHebergement = resettable();
 

@@ -1,6 +1,7 @@
 <script>
     import {months, monthsfr} from "./utils";
     import {taxYear, tzConverter} from '../stores';
+    import {loadedMonths} from '../utilities/payslips';
     export let data = [];
     export let name = "Mois";
     let nameLabel;
@@ -63,12 +64,18 @@
         }
     };
     $: requestedMonths = computeRequestedMonths(data);
+    // Months populated with at least one entry. Computed once per `data`
+    // change so the template doesn't need to know which shape carries the
+    // payload (rotations: month-keyed object; payslips: flat `items` array).
+    $: monthsLoaded = (data.type === "pay")
+        ? loadedMonths(data.items ?? [])
+        : new Set(Object.keys(data).filter(k => /^\d{2}$/.test(k)));
 </script>
 <div>
     <div>{nameLabel}<slot></slot></div>
     <ul>
     {#each requestedMonths as [month, optional]}
-    <li class:loaded="{data[month] !== undefined}" class:optional="{optional === true}">{label(month)}</li>
+    <li class:loaded="{monthsLoaded.has(month)}" class:optional="{optional === true}">{label(month)}</li>
     {/each}
     </ul>
 </div>
