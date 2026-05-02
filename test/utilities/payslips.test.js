@@ -1,4 +1,6 @@
-import { payslipSignature } from '../../src/utilities/payslips';
+import { findIn, groupByMonth, loadedMonths, payslipSignature } from '../../src/utilities/payslips';
+
+// payslipSignature
 
 test("payslipSignature combines airline, paymentDate, and imposable", () => {
     expect(payslipSignature({
@@ -54,4 +56,76 @@ test("payslipSignature distinguishes different imposable amounts", () => {
     const b = payslipSignature({airline: 'AF', paymentDate: '2025-11-30', imposable: '8811.56'});
 
     expect(a).not.toBe(b);
+});
+
+
+// groupByMonth
+
+test("groupByMonth groups payslips by their period month", () => {
+    const nov = {date: '2025-11', airline: 'AF', imposable: '8000.00'};
+    const dec = {date: '2025-12', airline: 'AF', imposable: '9000.00'};
+    const novBis = {date: '2025-11', airline: 'TO', imposable: '500.00'};
+
+    expect(groupByMonth([nov, dec, novBis])).toEqual({
+        '11': [nov, novBis],
+        '12': [dec],
+    });
+});
+
+test("groupByMonth preserves insertion order within each month", () => {
+    const a = {date: '2025-11', imposable: '1000.00'};
+    const b = {date: '2025-11', imposable: '2000.00'};
+    const c = {date: '2025-11', imposable: '3000.00'};
+
+    expect(groupByMonth([a, b, c])).toEqual({'11': [a, b, c]});
+    expect(groupByMonth([b, a, c])).toEqual({'11': [b, a, c]});
+});
+
+test("groupByMonth returns an empty object for an empty array", () => {
+    expect(groupByMonth([])).toEqual({});
+});
+
+
+// findIn
+
+test("findIn returns the existing payslip whose signature matches the candidate", () => {
+    const a = {airline: 'AF', paymentDate: '2025-11-30', imposable: '8811.55'};
+    const b = {airline: 'AF', paymentDate: '2025-12-31', imposable: '9000.00'};
+    const candidate = {...a, fileName: 'reupload.pdf'};
+
+    expect(findIn([a, b], candidate)).toBe(a);
+});
+
+test("findIn returns undefined when no signature matches", () => {
+    const a = {airline: 'AF', paymentDate: '2025-11-30', imposable: '8811.55'};
+    const candidate = {airline: 'AF', paymentDate: '2025-12-31', imposable: '9000.00'};
+
+    expect(findIn([a], candidate)).toBeUndefined();
+});
+
+test("findIn returns undefined for an empty array", () => {
+    const candidate = {airline: 'AF', paymentDate: '2025-11-30', imposable: '8811.55'};
+
+    expect(findIn([], candidate)).toBeUndefined();
+});
+
+
+// loadedMonths
+
+test("loadedMonths returns the set of period months represented in items", () => {
+    expect(loadedMonths([
+        {date: '2025-11'},
+        {date: '2025-12'},
+        {date: '2025-11'},
+    ])).toEqual(new Set(['11', '12']));
+});
+
+test("loadedMonths returns an empty Set for an empty array", () => {
+    expect(loadedMonths([])).toEqual(new Set());
+});
+
+test("loadedMonths deduplicates months that appear multiple times", () => {
+    const items = Array.from({length: 5}, () => ({date: '2025-04'}));
+
+    expect(loadedMonths(items)).toEqual(new Set(['04']));
 });
