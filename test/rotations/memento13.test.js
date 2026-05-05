@@ -91,7 +91,7 @@ test("memento13 mergeRots #1", () => {
     //expect(rots2[0].stays).toEqual([]);
     const originalLog = console.log;
     console.log = jest.fn();
-    let rots = mergeRots([rots1, rots2], "2019", taxData, iso2FR);
+    let rots = mergeRots([rots1, rots2].flat(), "2019", taxData, iso2FR);
     expect(console.log.mock.calls[0][0].startsWith('Optimisation')).toBeTruthy();
     console.log = originalLog;
     expect(rots.length).toBe(1);
@@ -114,7 +114,7 @@ test("memento13 mergeRots #2", () => {
     //expect(rots2[0].stays).toEqual([]);
     const originalLog = console.log;
     console.log = jest.fn();
-    let rots = mergeRots([rots1, rots2], "2019", taxData, iso2FR);
+    let rots = mergeRots([rots1, rots2].flat(), "2019", taxData, iso2FR);
     expect(console.log.mock.calls[0][0].startsWith('Optimisation')).toBeTruthy();
     console.log = originalLog;
     expect(rots.length).toBe(1);
@@ -138,7 +138,7 @@ test("memento13 mergeRots #3", () => {
     //expect(rots2[0].stays).toEqual(['HKG']);
     const originalLog = console.log;
     console.log = jest.fn();
-    let rots = mergeRots([rots1, rots2], "2019", taxData, iso2FR);
+    let rots = mergeRots([rots1, rots2].flat(), "2019", taxData, iso2FR);
     expect(console.log.mock.calls[0][0].startsWith('Optimisation')).toBeTruthy();
     console.log = originalLog;
     expect(rots.length).toBe(1);
@@ -163,7 +163,7 @@ test("memento13 mergeRots #4", () => {
     expect(rots2[0].nights).toEqual(['HKG', 'HKG', 'HKG', 'HKG']);
     const originalLog = console.log;
     console.log = jest.fn();
-    let rots = mergeRots([rots1, rots2], "2019", taxData, iso2FR);
+    let rots = mergeRots([rots1, rots2].flat(), "2019", taxData, iso2FR);
     expect(console.log.mock.calls[0][0].startsWith('Optimisation')).toBeTruthy();
     console.log = originalLog;
     expect(rots.length).toBe(1);
@@ -186,7 +186,7 @@ test("memento13 mergeRots #5", () => {
     //expect(rots2[0].stays).toEqual(['DXB', 'HKG', 'HKG']);
     const originalLog = console.log;
     console.log = jest.fn();
-    let rots = mergeRots([rots1, rots2], "2019", taxData, iso2FR);
+    let rots = mergeRots([rots1, rots2].flat(), "2019", taxData, iso2FR);
     expect(console.log.mock.calls[0][0].startsWith('Optimisation')).toBeTruthy();
     console.log = originalLog;
     expect(rots.length).toBe(1);
@@ -211,7 +211,7 @@ test("memento13 with dxb next day mergeRots #1", () => {
     //expect(rots2[0].stays).toEqual(['DXB', 'HKG', 'HKG']);
     const originalLog = console.log;
     console.log = jest.fn();
-    let rots = mergeRots([rots1, rots2], "2019", taxData, iso2FR);
+    let rots = mergeRots([rots1, rots2].flat(), "2019", taxData, iso2FR);
     expect(console.log.mock.calls.length).toBe(0);
     console.log = originalLog;
     expect(rots.length).toBe(1);

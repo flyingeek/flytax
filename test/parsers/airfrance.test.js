@@ -52,6 +52,7 @@ test('AF EP5 parsing', () => {
                 currencyFormula: '3 x 490USD',
                 indemnity: 1330.8,
                 error: false,
+                taxDate: '2025-10',
             },
             {
                 isComplete: '<>',
@@ -67,6 +68,7 @@ test('AF EP5 parsing', () => {
                 currencyFormula: '5 x 200EUR',
                 indemnity: 1000,
                 error: false,
+                taxDate: '2025-10',
             },
             {
                 isComplete: '<>',
@@ -82,6 +84,7 @@ test('AF EP5 parsing', () => {
                 currencyFormula: '3 x 360USD',
                 indemnity: 977.73,
                 error: false,
+                taxDate: '2025-10',
             },
             {
                 isComplete: '<>',
@@ -97,6 +100,7 @@ test('AF EP5 parsing', () => {
                 currencyFormula: '3 x 490USD',
                 indemnity: 1330.8,
                 error: false,
+                taxDate: '2025-10',
             },
         ],
     }]);
@@ -125,6 +129,7 @@ test('AF legacy EP5 parsing', () => {
                 currencyFormula: '3 x 360USD',
                 indemnity: 977.73,
                 error: false,
+                taxDate: '2025-07',
             },
             {
                 isComplete: '<>',
@@ -140,6 +145,7 @@ test('AF legacy EP5 parsing', () => {
                 currencyFormula: '3 x 137000XOF',
                 indemnity: 626.58,
                 error: false,
+                taxDate: '2025-07',
             },
         ],
     }]);
@@ -174,6 +180,7 @@ test('AF EP5 parsing — December carries over from the previous tax year', () =
                 currencyFormula: '',
                 indemnity: 0,
                 error: false,
+                taxDate: '2025-00',
             },
         ],
     }]);
@@ -208,6 +215,7 @@ test('AF EP5 parsing — January carries over to the previous tax year', () => {
                 currencyFormula: '',
                 indemnity: 0,
                 error: false,
+                taxDate: '2025-13',
             },
         ],
     }]);

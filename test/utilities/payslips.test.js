@@ -129,3 +129,21 @@ test("loadedMonths deduplicates months that appear multiple times", () => {
 
     expect(loadedMonths(items)).toEqual(new Set(['04']));
 });
+
+test("loadedMonths reads from a custom field via the optional getter", () => {
+    // Rotations carry their stamped tax-year month on `taxDate` rather
+    // than `date`, including boundary stamps "00" / "13".
+    expect(loadedMonths([
+        {taxDate: '2025-00'},
+        {taxDate: '2025-06'},
+        {taxDate: '2025-13'},
+    ], (r) => r.taxDate)).toEqual(new Set(['00', '06', '13']));
+});
+
+test("loadedMonths getter is consulted per item", () => {
+    // Sanity-check that the getter actually runs against each item rather
+    // than being baked into a closure over the first one.
+    const items = [{a: '2025-01'}, {a: '2025-02'}, {a: '2025-03'}];
+
+    expect(loadedMonths(items, (item) => item.a)).toEqual(new Set(['01', '02', '03']));
+});

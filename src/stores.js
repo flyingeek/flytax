@@ -71,15 +71,13 @@ const patchLog = () => {
 }
 
 export const log = patchLog();
-function isRegisterEmpty () {
-    return Object.keys(this).length === 2;
-}
-export const rotations = resettable({type: "rotations", isEmpty: isRegisterEmpty});
-export const paySlips = resettable({
-    type: "pay",
+const register = (type) => ({
+    type,
     items: [],
     isEmpty() { return this.items.length === 0; },
 });
+export const rotations = resettable(register("rotations"));
+export const paySlips = resettable(register("pay"));
 export const fraisHebergementInput = resettable();
 export const fraisHebergement = resettable();
 
@@ -104,7 +102,7 @@ export const pairings = derived(
     [rotations, taxYear, taxData, tzConverter],
     ([$rotations, $taxYear, $taxData, $tzConverter]) => {
         if ($taxData === undefined) return [];
-        return mergeRots($rotations, $taxYear, $taxData, $tzConverter);
+        return mergeRots($rotations.items, $taxYear, $taxData, $tzConverter);
     }
 );
 export const fraisDeMission = derived(pairings, $pairings => Object.values($pairings).reduce((a, c) => a + c.indemnity, 0).toFixed(0));
