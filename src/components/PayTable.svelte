@@ -1,34 +1,53 @@
 <script>
-    import {decimal2cents, cents2decimal} from '../utilities/numbers';
-    import {iso2FR} from '../utilities/dates';
-    import { taxYear, taxData, fraisDeMission, fraisHebergementInput, fraisHebergement, pairings} from '../stores';
-    import {months, monthsfr, localeCurrency} from './utils';
+    import { fade } from 'svelte/transition';
+    import { fraisDeMission, fraisHebergement, fraisHebergementInput, pairings, taxData, taxYear } from '../stores';
+    import { iso2FR } from '../utilities/dates';
+    import { cents2decimal, decimal2cents } from '../utilities/numbers';
+    import { groupByMonth } from '../utilities/payslips';
     import DownloadTablePDF from './DownloadTablePDF.svelte';
-    import {fade} from 'svelte/transition';
+    import { localeCurrency, months, monthsfr } from './utils';
 
     export let data;
     export let tableId="PayTable";
-    const computeTotalImposable = (data) => {
-        let total = 0;
-        for (const month of months) {
-            total += (data[month]) ? decimal2cents(data[month].imposable) : 0;
-        }
-        return cents2decimal(total);
+
+    /**
+     * Sum decimal-string fields across a list of bulletins, in cents.
+     *
+     * @example
+     *   sumOver(items, b => [b.imposable])                 // total imposable in cents
+     *   sumOver(items, b => [...b.repas, ...b.transport])  // frais d'emploi in cents
+     *   sumOver(items, b => b.decouchers_fpro)             // découchers in cents
+     *
+     * @param {Array<object>} bulletins
+     * @param {(bulletin: object) => Array<string>} getValues
+     * @returns {number}
+     */
+    const sumOver = (bulletins, getValues) => bulletins
+            .flatMap(getValues)
+            .reduce((acc, d) => acc + decimal2cents(d), 0);
+
+    /**
+     * The YTD cumul reported across `bulletins`, as a decimal string.
+     *
+     * @example
+     *   cumulOf([{cumul: '56644.85'}, {cumul: '0'}])  // → "56644.85"
+     *   cumulOf([{cumul: '0'}])                        // → undefined
+     *   cumulOf([])                                    // → undefined
+     *
+     * @param {Array<{cumul: string}>} bulletins
+     * @returns {string | undefined}
+     */
+    const cumulOf = (bulletins) => {
+        const cents = Math.max(
+            0,
+            ...bulletins.map(b => decimal2cents(b.cumul)),
+        );
+
+        return cents > 0
+            ? cents2decimal(cents)
+            : undefined;
     };
-    const computeTotalFrais = (data) => {
-        let total = 0;
-        for (const month of months) {
-            total += (data[month]) ? sumFrais(month) : 0;
-        }
-        return cents2decimal(total);
-    };
-    const computeTotalDecouchersFPRO = (data) => {
-        let total = 0;
-        for (const month of months) {
-            total += (data[month]) ? data[month].decouchers_fpro.map(decimal2cents).reduce((a, b) => a + b): 0;
-        }
-        return cents2decimal(total);
-    };
+
     const updateFraisHebergementInput = (real, estimated) => {
         if (real !== undefined) {
             $fraisHebergementInput = real;
@@ -37,9 +56,6 @@
         }
     }
 
-    const sumFrais = (month) => {
-        return data[month].repas.concat(data[month].transport).map(decimal2cents).reduce((a, b) => a + b);
-    };
     const roadTrips = (pairings, taxYear) => {
         if (!pairings || !taxYear) return '';
         const results = {'count': pairings.length, 'OUT': new Map(), 'IN': new Map()};
@@ -61,11 +77,12 @@
         return `À titre d'information, pour les frais de transport, les ${results.count} rotations représentent ${to.join(', ')} et ${from.join(', ')}.`;
     }
 
-    $: totalFrais = computeTotalFrais(data);
-    $: totalImposable = computeTotalImposable(data);
-    $: cumulImposable12 = (data["12"] && data["12"].cumul !== "0") ? cents2decimal(decimal2cents(data["12"].cumul)) : undefined;
+    $: byMonth = groupByMonth(data.items);
+    $: totalFrais = cents2decimal(sumOver(data.items, b => [...b.repas, ...b.transport]));
+    $: totalImposable = cents2decimal(sumOver(data.items, b => [b.imposable]));
+    $: cumulImposable12 = cumulOf(byMonth["12"] ?? []);
     $: abbattement = ($taxData && $taxData.maxForfait10) ? Math.min((cumulImposable12||totalImposable)*0.1, $taxData.maxForfait10) : 0;
-    $: totalDecouchersFPRO = computeTotalDecouchersFPRO(data);
+    $: totalDecouchersFPRO = cents2decimal(sumOver(data.items, b => b.decouchers_fpro));
     $: estimateRatio = ( parseInt($taxYear, 10)  >= 2021) ? 2.7 : 3.31;
     $: nightsCostEstimate = (Math.ceil(parseFloat(totalDecouchersFPRO) * estimateRatio/100) * 100).toFixed(0);
     $: updateFraisHebergementInput($fraisHebergement, nightsCostEstimate);
@@ -130,12 +147,14 @@
     </thead>
     <tbody>
         {#each months as month, i}
+            {@const bulletins = byMonth[month] ?? []}
+            {@const cumul = cumulOf(bulletins)}
             <tr>
                 <td>{monthsfr[i]}</td>
-                <td>{(data[month]) ? localeCurrency(data[month].imposable) : ""}</td>
-                <td>{(data[month]) ? localeCurrency(data[month].cumul) : ""}</td>
-                <td>{(data[month]) ? localeCurrency(cents2decimal(sumFrais(month))) : ""}</td>
-                <td>{(data[month]) ? localeCurrency(data[month].decouchers_fpro) : ""}</td>
+                <td>{bulletins.length ? localeCurrency(cents2decimal(sumOver(bulletins, b => [b.imposable]))) : ""}</td>
+                <td>{cumul ? localeCurrency(cumul) : ""}</td>
+                <td>{bulletins.length ? localeCurrency(cents2decimal(sumOver(bulletins, b => [...b.repas, ...b.transport]))) : ""}</td>
+                <td>{bulletins.length ? localeCurrency(cents2decimal(sumOver(bulletins, b => b.decouchers_fpro))) : ""}</td>
             </tr>
         {/each}
         <tr>

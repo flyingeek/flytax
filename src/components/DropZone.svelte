@@ -14,6 +14,7 @@
 <script>
     import { router } from '../parsers/router';
     import { base, rotations, paySlips, taxData, taxYear, tzConverter } from '../stores';
+    import { findIn, payslipSignature } from '../utilities/payslips';
     const acceptedType = 'application/pdf';
     let disabled = false; // locally during file processing
     let ready = new Deferred();
@@ -44,8 +45,8 @@
         await ready.promise.then(() => {
             const promises = [];
             const basename = (file) => file.name.split(/([\\/])/g).pop();
-            let batchPaySlips = {};
-            let batchRotations = {};
+            let batchPaySlips = [...$paySlips.items];
+            let batchRotations = [...$rotations.items];
             for (let i = 0; i < files.length; i++) {
                 const file = files[i];
                 if (file) {
@@ -74,9 +75,20 @@
                                         return;
                                     }
                                     if (result.type === "pay") {
-                                        Object.assign(batchPaySlips, {[month]: result}); // this method of saving result does not refresh svelte
+                                        if (findIn(batchPaySlips, result)) {
+                                            console.log(`%c${fileName}\n%ctype [pay] %cDoublon ignoré (${payslipSignature(result)})`, 'font-family: monospace;', 'color: black;', 'color: darkorange;');
+                                            return;
+                                        }
+                                        batchPaySlips.push(result);
                                     }else if (result.type === "rotations") {
-                                        Object.assign(batchRotations, {[month]: result}); // this method of saving result does not refresh svelte
+                                        // Replace any existing rotations stamped to the same
+                                        // tax-year month (re-importing an EP5 supersedes the
+                                        // previous one); flatten the envelope's rotations
+                                        // into the store.
+                                        batchRotations = [
+                                            ...batchRotations.filter(r => r.taxDate !== result.date),
+                                            ...result.rots,
+                                        ];
                                     }else if (result.type === "lodging") {
                                         $fraisHebergement = result.total;
                                     }
@@ -90,14 +102,8 @@
             const afterLoad = () => {
                 disabled = false;
                 if (target) target.value = null; // reset file input
-                paySlips.update((theStore) => {
-                    return Object.assign(theStore, batchPaySlips);
-                });
-                batchPaySlips = {};
-                rotations.update((theStore) => {
-                    return Object.assign(theStore, batchRotations);
-                });
-                batchRotations = {};
+                paySlips.update((theStore) => ({...theStore, items: batchPaySlips}));
+                rotations.update((theStore) => ({...theStore, items: batchRotations}));
             };
             Promise.all(promises)
                 .then(() => {

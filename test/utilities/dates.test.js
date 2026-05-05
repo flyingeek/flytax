@@ -1,6 +1,6 @@
 import {
     decimalHours2iso, diffHours, fr2iso, iso2AST, iso2FR, iso2TZ,
-    lastDayInMonthISO, numberOfDays,
+    lastDayInMonthISO, numberOfDays, tzOffset,
 } from '../../src/utilities/dates';
 
 test("lastDayInMonthISO", () => {
@@ -107,4 +107,23 @@ test("fr2iso", () => {
     // Round-trip with iso2FR
     expect(iso2FR(fr2iso("2025-03-19", "14:24"))).toBe("2025-03-19T14:24+01:00");
     expect(iso2FR(fr2iso("2025-07-19", "14:24"))).toBe("2025-07-19T14:24+02:00");
+});
+
+test("tzOffset extracts the offset from iso2FR (Paris, no DST in November)", () => {
+    expect(tzOffset(iso2FR)).toBe("+01:00");
+});
+
+test("tzOffset extracts the offset from iso2AST (PTP, year-round AST)", () => {
+    expect(tzOffset(iso2AST)).toBe("-04:00");
+});
+
+test("tzOffset works with a custom converter function", () => {
+    const utcConverter = (iso) => iso.replace("Z", "+00:00");
+
+    expect(tzOffset(utcConverter)).toBe("+00:00");
+});
+
+test("tzOffset falls back to '+01:00' when no converter is provided", () => {
+    expect(tzOffset(undefined)).toBe("+01:00");
+    expect(tzOffset(null)).toBe("+01:00");
 });

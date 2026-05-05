@@ -15,7 +15,7 @@ test('mergeRots', () => {
     let rots1 = buildRots(flights1, {"base": ["CDG", "ORY"], "tzConverter": iso2FR, "iataMap": iata2country});
     let rots2 = buildRots(flights2, {"base": ["CDG", "ORY"], "tzConverter": iso2FR, "iataMap": iata2country});
 
-    let rots = mergeRots([rots1, rots2], "2019", taxData, iso2FR);
+    let rots = mergeRots([rots1, rots2].flat(), "2019", taxData, iso2FR);
     expect(rots[0]).toEqual({
         isComplete: '<>',
         error: false,
@@ -69,7 +69,7 @@ test("2 ON SVO BOD straddling check not MC", () => {
     expect(rots2[0].arr).toBe('CDG');
     rots2 = addIndemnities("2019", rots2, taxData, iso2FR);
     
-    let rots = mergeRots([rots1, rots2], "2019", taxData, iso2FR);
+    let rots = mergeRots([rots1, rots2].flat(), "2019", taxData, iso2FR);
     expect(rots[0]).toEqual({
         isComplete: '<>',
         error: false,
@@ -103,7 +103,7 @@ test("attempts successive merge to check results does not change", () => {
     let rots2 = buildRots(flights2, {"base": ["CDG", "ORY"], "tzConverter": iso2FR, "iataMap": iata2country});
     rots2 = addIndemnities("2019", rots2, taxData, iso2FR);
     
-    let rots = mergeRots([rots1, rots2], "2019", taxData, iso2FR);
+    let rots = mergeRots([rots1, rots2].flat(), "2019", taxData, iso2FR);
     const expected = {
         isComplete: '<>',
         error: false,
@@ -123,7 +123,7 @@ test("attempts successive merge to check results does not change", () => {
     //
     // Try a second time, check that results are the same, otherwise there is a deep clone failure somewhere
     //
-    rots = mergeRots([rots1, rots2], "2019", taxData, iso2FR);
+    rots = mergeRots([rots1, rots2].flat(), "2019", taxData, iso2FR);
     expect(rots[0]).toEqual(expected);
 });
 
@@ -233,7 +233,7 @@ test("2 ON SVO BOD straddling years check not MC for 2020", () => {
     
     let rots2 = buildRots(flights2, {"base": ["CDG", "ORY"], "tzConverter": iso2FR, "iataMap": iata2country});
     rots2 = addIndemnities("2020", rots2, taxData, iso2FR);
-    let rots = mergeRots([rots1, rots2], "2020", taxData, iso2FR);
+    let rots = mergeRots([rots1, rots2].flat(), "2020", taxData, iso2FR);
     expect(rots[0]).toEqual({
         isComplete: '<>',
         error: false,
@@ -264,7 +264,7 @@ test("2 ON SVO BOD straddling years check for 2019", () => {
     
     let rots2 = buildRots(flights2, {"base": ["CDG", "ORY"], "tzConverter": iso2FR, "iataMap": iata2country});
     rots2 = addIndemnities("2019", rots2, taxData, iso2FR);
-    let rots = mergeRots([rots1, rots2], "2019", taxData, iso2FR);
+    let rots = mergeRots([rots1, rots2].flat(), "2019", taxData, iso2FR);
     expect(rots[0]).toEqual({
         isComplete: '<>',
         error: false,
@@ -325,7 +325,7 @@ test("7ON SVO du soir", () => {
     expect(rots2[0].dep).toBe(CONTINUATION_MARK);
     expect(rots2[0].arr).toBe('CDG');
 
-    let rots = mergeRots([rots1, rots2], "2019", taxData, iso2FR);
+    let rots = mergeRots([rots1, rots2].flat(), "2019", taxData, iso2FR);
     expect(rots.length).toBe(1);
     expect(rots[0]).toEqual({
         isComplete: '<>',
@@ -356,7 +356,7 @@ test("2ON SVO check 0,00 CDG straddling", () => {
     ];
     let rots1 = buildRots(flights1, {"base": ["CDG", "ORY"], "tzConverter": iso2FR, "iataMap": iata2country});
     let rots2 = buildRots(flights2, {"base": ["CDG", "ORY"], "tzConverter": iso2FR, "iataMap": iata2country});
-    let rots = mergeRots([rots1, rots2], "2019", taxData, iso2FR);
+    let rots = mergeRots([rots1, rots2].flat(), "2019", taxData, iso2FR);
     rots = addIndemnities("2019", rots, taxData, iso2FR);
     expect(rots.length).toBe(1);
     expect(rots[0]).toEqual({
@@ -388,7 +388,7 @@ test("2ON SVO check 0,00 SVO straddling", () => {
     ];
     let rots1 = buildRots(flights1, {"base": ["CDG", "ORY"], "tzConverter": iso2FR, "iataMap": iata2country});
     let rots2 = buildRots(flights2, {"base": ["CDG", "ORY"], "tzConverter": iso2FR, "iataMap": iata2country});
-    let rots = mergeRots([rots1, rots2], "2019", taxData, iso2FR);
+    let rots = mergeRots([rots1, rots2].flat(), "2019", taxData, iso2FR);
     rots = addIndemnities("2019", rots, taxData, iso2FR);
     expect(rots.length).toBe(1);
     expect(rots[0]).toEqual({
@@ -469,7 +469,7 @@ test("single day rotation, last straddling flight of an EP5 with a base arrival 
     expect(rots2[0].summary).toBe(CONTINUATION_MARK + 'BOD-CDG');
     expect(rots2[0].dep).toBe(CONTINUATION_MARK);
     expect(rots2[0].arr).toBe('CDG');
-    let rots = mergeRots([rots1, rots2], "2019", taxData, iso2FR);
+    let rots = mergeRots([rots1, rots2].flat(), "2019", taxData, iso2FR);
     expect(rots[0]).toEqual({
         isComplete: '<>',
         error: false,
@@ -522,6 +522,6 @@ test('ludovic 30on madrid', ()=> {
     ];
     let rots1 = buildRots(flights1, {"base": ["CDG", "ORY"], "tzConverter": iso2FR, "iataMap": iata2country});
     let rots2 = buildRots(flights2, {"base": ["CDG", "ORY"], "tzConverter": iso2FR, "iataMap": iata2country});
-    let rots = mergeRots([rots1, rots2], "2020", taxData, iso2FR);
+    let rots = mergeRots([rots1, rots2].flat(), "2020", taxData, iso2FR);
     expect(rots[0].days).toBe(2); // was 30
 });
