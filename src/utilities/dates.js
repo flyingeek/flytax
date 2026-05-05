@@ -107,6 +107,25 @@ export const iso2FR = iso2TZ.bind(null, "Europe/Paris");
 export const iso2AST = iso2TZ.bind(null, "America/Puerto_Rico");
 
 /**
+ * Extract the UTC offset string from a tz-converter function (e.g.
+ * {@link iso2FR} or {@link iso2AST}). Probes the converter with a
+ * northern-hemisphere winter date to avoid DST ambiguity.
+ *
+ * Falls back to `"+01:00"` (Paris winter) when no converter is given.
+ *
+ * @example
+ *   tzOffset(iso2FR)         // → "+01:00" (probe is Nov 1, no DST)
+ *   tzOffset(iso2AST)        // → "-04:00"
+ *   tzOffset(undefined)      // → "+01:00"
+ *
+ * @param {((iso: string) => string) | null | undefined} tzConverter
+ * @returns {string} Offset like `"+01:00"`, `"-04:00"`, or `"+00:00"`.
+ */
+export const tzOffset = (tzConverter) => tzConverter
+    ? tzConverter("2020-11-01T00:00Z").slice(-6)
+    : "+01:00";
+
+/**
  * Convert a Paris-local wall-clock time to a UTC ISO timestamp.
  * Inverse of {@link iso2FR} for typical inputs.
  *

@@ -46,7 +46,7 @@
             const promises = [];
             const basename = (file) => file.name.split(/([\\/])/g).pop();
             let batchPaySlips = [...$paySlips.items];
-            let batchRotations = {};
+            let batchRotations = [...$rotations.items];
             for (let i = 0; i < files.length; i++) {
                 const file = files[i];
                 if (file) {
@@ -81,7 +81,14 @@
                                         }
                                         batchPaySlips.push(result);
                                     }else if (result.type === "rotations") {
-                                        Object.assign(batchRotations, {[month]: result}); // this method of saving result does not refresh svelte
+                                        // Replace any existing rotations stamped to the same
+                                        // tax-year month (re-importing an EP5 supersedes the
+                                        // previous one); flatten the envelope's rotations
+                                        // into the store.
+                                        batchRotations = [
+                                            ...batchRotations.filter(r => r.taxDate !== result.date),
+                                            ...result.rots,
+                                        ];
                                     }else if (result.type === "lodging") {
                                         $fraisHebergement = result.total;
                                     }
@@ -96,10 +103,7 @@
                 disabled = false;
                 if (target) target.value = null; // reset file input
                 paySlips.update((theStore) => ({...theStore, items: batchPaySlips}));
-                rotations.update((theStore) => {
-                    return Object.assign(theStore, batchRotations);
-                });
-                batchRotations = {};
+                rotations.update((theStore) => ({...theStore, items: batchRotations}));
             };
             Promise.all(promises)
                 .then(() => {

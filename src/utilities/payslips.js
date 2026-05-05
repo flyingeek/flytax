@@ -59,15 +59,22 @@ export const findIn = (payslips, candidate) => {
 };
 
 /**
- * Set of period months (`"01"`–`"12"`) for which `items` carries at
- * least one entry — extracted from each item's `YYYY-MM` `date` field.
+ * Set of months for which `items` carries at least one entry — extracted
+ * from a `YYYY-MM…` field on each item via `getDate`.
+ *
+ * Defaults to reading each item's `date` field, used by paySlips
+ * (`"YYYY-MM"`, the period month). Rotations pass `r => r.taxDate` so
+ * they read the tax-year-stamped month (`"YYYY-00"`–`"YYYY-13"`) instead.
  *
  * @example
- *   loadedMonths([{date: '2025-11', ...}, {date: '2025-12', ...}, {date: '2025-11', ...}])
+ *   loadedMonths([{date: '2025-11'}, {date: '2025-12'}, {date: '2025-11'}])
  *   // → Set { "11", "12" }
+ *   loadedMonths([{taxDate: '2025-00'}], (r) => r.taxDate)
+ *   // → Set { "00" }
  *
- * @param {Array<{date: string}>} items
+ * @param {Array<object>} items
+ * @param {(item: object) => string} [getDate]
  * @returns {Set<string>}
  */
-export const loadedMonths = (items) =>
-    new Set(items.map((b) => b.date.split('-')[1]));
+export const loadedMonths = (items, getDate = (b) => b.date) =>
+    new Set(items.map((item) => getDate(item).split('-')[1]));

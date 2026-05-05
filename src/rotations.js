@@ -1,7 +1,7 @@
-import {localeFormat, months14} from "./components/utils";
-import {lastDayInMonthISO, numberOfDays, diffHours} from './utilities/dates';
-import {iata2country} from './utilities/iata';
-import {findAmountEuros, findAmount, AmountError} from './utilities/indemnity';
+import { localeFormat } from "./components/utils";
+import { diffHours, lastDayInMonthISO, numberOfDays } from './utilities/dates';
+import { iata2country } from './utilities/iata';
+import { AmountError, findAmount, findAmountEuros } from './utilities/indemnity';
 
 export const WITHIN_BASE_TEXT = "rotation sur base";
 export const NIGHT_OVERFLOW_TEXT = "Erreur: nuitées > nb de jours";
@@ -388,23 +388,6 @@ export const addIndemnities = (taxYear, rots, taxData, tzConverter, fileName) =>
     return results;
 };
 
-// Iterates rots stored in a {monthKey: {rots: [...]}} structure (months14-keyed).
-export function* monthsRotsIterator(data) {
-    for (const m of months14) {
-        const monthData = data[m];
-        if (monthData) {
-            yield* monthData.rots;
-        }
-    }
-}
-
-// In tests we pass rots as a plain array.
-export function* arrayRotsIterator(data) {
-    for (const a of data) {
-        yield* a;
-    }
-}
-
 export const mergeFlights = (flights1, flights2) => {
     const f1 = [...flights1];
     const f2 = [...flights2];
@@ -419,24 +402,71 @@ export const mergeFlights = (flights1, flights2) => {
     return f1.concat(f2);
 };
 
-// Merge rots without needing to copy the rotations/months structure.
-export const mergeRots = (data, taxYear, taxData, tzConverter) => {
-    const currentIt = Array.isArray(data) ? arrayRotsIterator(data) : monthsRotsIterator(data);
-    const nextIt = Array.isArray(data) ? arrayRotsIterator(data) : monthsRotsIterator(data);
-    nextIt.next();
-    const mergedRots = [];
-    for (const rot of currentIt) {
-        const next = nextIt.next().value;
-        if (next && rot.isComplete === '<' && next.isComplete === '>' && rot.end.substring(0, 7) === next.end.substring(0, 7)) {
-            const [merged] = buildRots(mergeFlights(rot.flights, next.flights), {base: rot.base, tzConverter, "iataMap": iata2country, "airline": rot.airline});
-            const [mergedWithIndemnities] = addIndemnities(taxYear, [merged], taxData, tzConverter);
-            mergedRots.push(mergedWithIndemnities);
-            // skip next
-            currentIt.next();
-            nextIt.next();
-        } else {
-            mergedRots.push(rot);
-        }
-    }
-    return mergedRots;
-};
+/**
+ * Determine whether two adjacent rotations are two halves of one straddler.
+ *
+ * @param {{isComplete: string, end: string} | undefined} rot
+ * @param {{isComplete: string, end: string} | undefined} next
+ * @returns {boolean}
+ */
+const mergeable = (rot, next) =>
+    rot
+    && next
+    && rot.isComplete === '<'
+    && next.isComplete === '>'
+    && rot.end.substring(0, 7) === next.end.substring(0, 7);
+
+/**
+ * Sort rotations chronologically by `start` and `isComplete`.
+ *
+ * Returns a new array; the input is not mutated.
+ *
+ * @example
+ *   sortRots([
+ *     {start: '2025-10-31T23:59+01:00', isComplete: '>'},
+ *     {start: '2025-10-31T23:59+01:00', isComplete: '<'},
+ *   ])
+ *   // → [<-half first, >-half second]
+ *
+ * @param {Array<{start: string, isComplete: string}>} rots
+ * @returns {Array<object>}
+ */
+export const sortRots = (rots) => [...rots].sort((a, b) => {
+    const c = a.start.localeCompare(b.start);
+    return c !== 0 ? c : a.isComplete.localeCompare(b.isComplete);
+});
+
+/**
+ * Reunite rotations split across month boundaries.
+ *
+ * Implementation note: the reduce is a forward pass that looks backward
+ * at what was just emitted. When the previous entry's tail can mate with
+ * the current item, the previous entry is replaced by the merged
+ * rotation rather than the current one being pushed — so the second half
+ * is implicitly absorbed. The merged result is `<>` (complete), so
+ * subsequent iterations never re-merge it.
+ *
+ * @param {Array<object>} rots - Flat array of rotations, any order.
+ * @param {string} taxYear - 4-digit year of the declaration, e.g. `"2025"`.
+ * @param {object} taxData
+ * @param {function} tzConverter
+ * @returns {Array<object>}
+ */
+export const mergeRots = (rots, taxYear, taxData, tzConverter) =>
+    sortRots(rots).reduce((acc, rot) => {
+        const prevRot = acc[acc.length - 1];
+
+        if (!mergeable(prevRot, rot)) return [...acc, rot];
+
+        const [withIndemnities] = addIndemnities(
+            taxYear,
+            buildRots(
+                mergeFlights(prevRot.flights, rot.flights),
+                {base: prevRot.base, tzConverter, iataMap: iata2country, airline: prevRot.airline},
+            ),
+            taxData,
+            tzConverter,
+        );
+
+        return [...acc.slice(0, -1), withIndemnities];
+    }, []);

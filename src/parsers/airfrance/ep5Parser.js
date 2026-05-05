@@ -87,7 +87,7 @@ const parseEP5Modern = (text, ctx) => {
         });
     }
 
-    result.rots = buildAFRotations(flights, ctx);
+    result.rots = buildAFRotations(flights, ctx, result.date);
 
     return result;
 };
@@ -137,7 +137,7 @@ const parseEP5Legacy = (text, ctx) => {
         });
     }
 
-    result.rots = buildAFRotations(flights, ctx);
+    result.rots = buildAFRotations(flights, ctx, result.date);
 
     return result;
 };
@@ -154,7 +154,7 @@ const sortFlights = (flights) => flights.sort((a, b) => {
     return c === 0 ? a.end.localeCompare(b.end) : c;
 });
 
-const buildAFRotations = (flights, ctx) => {
+const buildAFRotations = (flights, ctx, taxDate) => {
     const rots = buildRots(
         sortFlights(flights),
         {
@@ -165,7 +165,8 @@ const buildAFRotations = (flights, ctx) => {
         },
     );
 
-    return addIndemnities(ctx.taxYear, rots, ctx.taxData, ctx.tzConverter, ctx.fileName);
+    return addIndemnities(ctx.taxYear, rots, ctx.taxData, ctx.tzConverter, ctx.fileName)
+        .map((rot) => ({...rot, taxDate}));
 };
 
 /**
