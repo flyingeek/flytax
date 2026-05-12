@@ -27,21 +27,42 @@
             .reduce((acc, d) => acc + decimal2cents(d), 0);
 
     /**
-     * The YTD cumul reported across `bulletins`, as a decimal string.
+     * The YTD cumul across `bulletins`, as a decimal string.
+     *
+     * Each payslip's `cumul` field reports its own airline's YTD only,
+     * so in the case of payslips from different airlines — which carry
+     * separate YTD totals — the correct year-end figure is the **sum of
+     * each airline's largest reported cumul**.
+     *
+     * Returns undefined when no bulletin reports a usable cumul.
      *
      * @example
-     *   cumulOf([{cumul: '56644.85'}, {cumul: '0'}])  // → "56644.85"
-     *   cumulOf([{cumul: '0'}])                        // → undefined
-     *   cumulOf([])                                    // → undefined
+     *   // Single airline, full year:  max(cumul) = December cumul
+     *   cumulOf([
+     *     {airline: 'AF', cumul: '40000.00'},  // earlier month
+     *     {airline: 'AF', cumul: '56644.85'},  // December
+     *   ])  // → "56644.85"
      *
-     * @param {Array<{cumul: string}>} bulletins
+     *   // Multiple airlines: each airline's largest cumul, summed
+     *   cumulOf([
+     *     {airline: 'TO', cumul: '12000.00'},  // TO's last cumul (e.g. May)
+     *     {airline: 'AF', cumul: '44000.00'},  // AF's last cumul (e.g. December)
+     *   ])  // → "56000.00"
+     *
+     *   cumulOf([{airline: 'AF', cumul: '0'}])  // → undefined
+     *   cumulOf([])                              // → undefined
+     *
+     * @param {Array<{airline: string, cumul: string}>} bulletins
      * @returns {string | undefined}
      */
     const cumulOf = (bulletins) => {
-        const cents = Math.max(
-            0,
-            ...bulletins.map(b => decimal2cents(b.cumul)),
-        );
+        const maxByAirline = {};
+
+        for (const b of bulletins) {
+            maxByAirline[b.airline] = Math.max(maxByAirline[b.airline] ?? 0, decimal2cents(b.cumul));
+        }
+
+        const cents = Object.values(maxByAirline).reduce((sum, c) => sum + c, 0);
 
         return cents > 0
             ? cents2decimal(cents)
@@ -85,8 +106,10 @@
     $: byMonth = groupByMonth(data.items);
     $: totalFrais = cents2decimal(sumOver(data.items, b => [...b.repas, ...b.transport]));
     $: totalImposable = cents2decimal(sumOver(data.items, b => [b.imposable]));
-    $: cumulImposable12 = cumulOf(byMonth["12"] ?? []);
-    $: abbattement = ($taxData && $taxData.maxForfait10) ? Math.min((cumulImposable12||totalImposable)*0.1, $taxData.maxForfait10) : 0;
+    // Prefer the bulletin-reported cumul over summing imposable amounts;
+    // fall back to totalImposable when no cumul is loaded.
+    $: cumulImposable = cumulOf(data.items);
+    $: abbattement = ($taxData && $taxData.maxForfait10) ? Math.min((cumulImposable||totalImposable)*0.1, $taxData.maxForfait10) : 0;
     $: totalDecouchersFPRO = cents2decimal(sumOver(data.items, b => b.decouchers_fpro));
     $: estimateRatio = ( parseInt($taxYear, 10)  >= 2021) ? 2.7 : 3.31;
     $: nightsCostEstimate = (Math.ceil(parseFloat(totalDecouchersFPRO) * estimateRatio/100) * 100).toFixed(0);
