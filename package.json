@@ -1,6 +1,6 @@
 {
   "name": "flytax",
-  "version": "1.4.9",
+  "version": "2.0.0",
   "type": "module",
   "scripts": {
     "build": "rollup -c",
