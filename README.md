@@ -271,29 +271,45 @@ puis Réglages/Informations/Réglage des certificats, activer la confiance pour 
 
 `.github/workflows/release.yml` se déclenche automatiquement lorsqu'un tag `release/X.Y.Z` est poussé. Il vérifie la cohérence des versions, lance le build et les tests, déploie le site sur la branche `gh-pages` et crée une release GitHub à partir de l'entrée correspondante du CHANGELOG.
 
+> [!IMPORTANT]
+> La branche `main` étant protégée, la publication passe par un PR dédié pour le bump de version, puis par la création du tag une fois le PR fusionné.
+
 Pour publier une nouvelle version :
 
-1. Mettre à jour la version dans `package.json`.
+1. Créer une branche dédiée depuis `main` :
 
-2. Mettre à jour `package-lock.json` :
+   ```bash
+   git checkout main && git pull --ff-only origin main
+   git checkout -b release/vX.Y.Z
+   ```
+
+2. Mettre à jour la version dans `package.json`.
+
+3. Mettre à jour `package-lock.json` :
 
    ```bash
    npm install --package-lock-only
    ```
 
-3. Ajouter une nouvelle entrée en haut de `CHANGELOG.md` au format `## [X.Y.Z] - YYYY-MM-DD`.
+4. Ajouter une nouvelle entrée en haut de `CHANGELOG.md` au format `## [X.Y.Z] - YYYY-MM-DD`.
 
-4. Créer un commit sur `main` :
+5. Créer le commit puis pousser la branche :
 
    ```bash
    git commit -am "chore: Bump version X.Y.Z"
+   git push -u origin release/vX.Y.Z
    ```
 
-5. Tagger et pousser :
+6. Ouvrir un PR, le faire valider et fusionner.
+
+7. Une fois le PR fusionné, tagger le commit du merge sur `main` et pousser le tag :
 
    ```bash
+   git checkout main && git pull --ff-only origin main
    git tag release/X.Y.Z
    git push origin main release/X.Y.Z
    ```
 
-La version de `package.json`, la dernière entrée du CHANGELOG et le tag doivent tous correspondre, sinon le build échoue avec une annotation indiquant la divergence.
+   Le tag est nommé `release/X.Y.Z` sans préfixe `v`, même si la branche de release l'inclut pour la lisibilité — c'est cette forme que le workflow compare à `package.json`.
+
+La version de `package.json`, celle de `package-lock.json`, la dernière entrée du CHANGELOG et le tag doivent tous correspondre, sinon le build échoue avec une annotation indiquant la divergence.
