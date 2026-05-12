@@ -12,16 +12,17 @@
     <DownloadTablePDF tableIds={[tableId, tableIndemnitiesId]} filename={`fraisdemission${$taxYear}.pdf`}/>
     <table id="{tableId}" class="data">
         <thead>
-            <tr><th colspan="5">Frais de Mission {$taxYear} : <strong>{$fraisDeMission} €</strong></th></tr>
+            <tr><th colspan="6">Frais de Mission {$taxYear} : <strong>{$fraisDeMission} €</strong></th></tr>
             {#if $taxYear !== $taxData.year}
-                <tr class="warning"><th colspan="5">Attention les montants sont basés sur les données fiscales de {$taxData.year}</th></tr>
+                <tr class="warning"><th colspan="6">Attention les montants sont basés sur les données fiscales de {$taxData.year}</th></tr>
             {/if}
-            <tr><th>Date</th><th>Type</th><th>Description</th><th>Formule</th><th>Montant</th></tr>
+            <tr><th>Date</th><th>Compagnie</th><th>Type</th><th>Description</th><th>Formule</th><th>Montant</th></tr>
         </thead>
         <tbody>
             {#each $pairings as rot}
                 <tr>
                     <td>{rot.start.substring(8,10)}/{rot.start.substring(5,7)}</td>
+                    <td class="airline">{#if rot.airline}<span class="airline-tag">{rot.airline}</span>{/if}</td>
                     <td>{rot.days.toString().padStart(2, ' ')} ON</td>
                     <td>{rot.summary}</td>
                     <!-- Do not change markup below without editing DownloadTablePDF.svelte -->
@@ -32,7 +33,7 @@
         </tbody>
         <tfoot>
             {#if $pairings.reduce((a,c) => a | c.formula.includes(REFNOTE1), false)}
-                <tr><td colspan="5">1. formule tronquée pour respecter l'année fiscale</td></tr>
+                <tr><td colspan="6">1. formule tronquée pour respecter l'année fiscale</td></tr>
             {/if}
         </tfoot>
     </table>
@@ -49,9 +50,22 @@
 
 <style>
 
-td:nth-child(5), th:nth-child(5){
+td:last-child, th:last-child {
     text-align: right;
     white-space: nowrap;
+}
+td.airline {
+    text-align: center;
+    width: 1%;
+    white-space: nowrap;
+}
+.airline-tag {
+    display: inline-block;
+    padding: 1px 6px;
+    border-radius: 3px;
+    background-color: rgba(0, 0, 0, 0.06);
+    font-family: monospace;
+    font-size: 0.9em;
 }
 details[open] summary{
     margin-bottom: 2px;
