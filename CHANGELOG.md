@@ -3,6 +3,26 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.0] - 2026-05-05
+
+### Added
+
+- Ajout du support multi-compagnies : le modèle de données, la déduplication et l'interface gèrent désormais des documents provenant de compagnies différentes au sein d'une même année fiscale. Seule AF est analysée à ce stade ; les parseurs TO arriveront en version 2.1 ([@clarkewing](https://github.com/clarkewing))
+- Prise en charge de plusieurs bulletins de paie sur un même mois (embauche, stagiaire, régularisation, transition entre compagnies), avec déduplication automatique en cas de ré-import ([@clarkewing](https://github.com/clarkewing))
+- Affichage de plusieurs bulletins de paie par mois avec une colonne « Compagnie » dans le tableau « Détails des salaires » ([@clarkewing](https://github.com/clarkewing))
+- Ajout de la colonne « Compagnie » dans le tableau « Détails des activités » ([@clarkewing](https://github.com/clarkewing))
+- Ajout d'un document `CONTRIBUTING.md` pour les contributeurs ([@flyingeek](https://github.com/flyingeek))
+
+### Changed
+
+- Calcul du cumul imposable annuel : somme du cumul du dernier mois présent par compagnie, pour un abattement correct chez les utilisateurs en transition entre compagnies ([@clarkewing](https://github.com/clarkewing))
+
+### Security
+
+- Mise à niveau de `got` à la version 15 ([@clarkewing](https://github.com/clarkewing))
+- Mise à jour transitive de la chaîne `workbox-build` → `@rollup/plugin-terser` → `serialize-javascript` (patch des failles REDoS et RCE) ([@clarkewing](https://github.com/clarkewing))
+- Vérification automatisée que la version dans `package-lock.json` correspond au tag de release ([@clarkewing](https://github.com/clarkewing))
+
 ## [1.4.9] - 2026-04-29
 
 ### Changed
