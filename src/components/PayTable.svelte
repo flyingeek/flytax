@@ -48,6 +48,11 @@
             : undefined;
     };
 
+    const sortBulletins = (bulletins) => bulletins.slice().sort((a, b) =>
+        a.paymentDate.localeCompare(b.paymentDate)
+        || a.airline.localeCompare(b.airline)
+        || decimal2cents(a.cumul) - decimal2cents(b.cumul));
+
     const updateFraisHebergementInput = (real, estimated) => {
         if (real !== undefined) {
             $fraisHebergementInput = real;
@@ -142,35 +147,40 @@
 {/if}
 <table class="data" id={tableId}>
     <thead>
-        <tr><th colspan="5">Détails des salaires {$taxYear}</th></tr>
-        <tr><th>Mois</th><th>Montant imposable</th><th>Cumul imposable</th><th>Frais d’emploi ¹</th><th>Découchers F PRO ²</th></tr>
+        <tr><th colspan="6">Détails des salaires {$taxYear}</th></tr>
+        <tr><th>Mois</th><th>Compagnie</th><th>Montant imposable</th><th>Cumul imposable</th><th>Frais d’emploi ¹</th><th>Découchers F PRO ²</th></tr>
     </thead>
     <tbody>
         {#each months as month, i}
-            {@const bulletins = byMonth[month] ?? []}
-            {@const cumul = cumulOf(bulletins)}
-            <tr>
-                <td>{monthsfr[i]}</td>
-                <td>{bulletins.length ? localeCurrency(cents2decimal(sumOver(bulletins, b => [b.imposable]))) : ""}</td>
-                <td>{cumul ? localeCurrency(cumul) : ""}</td>
-                <td>{bulletins.length ? localeCurrency(cents2decimal(sumOver(bulletins, b => [...b.repas, ...b.transport]))) : ""}</td>
-                <td>{bulletins.length ? localeCurrency(cents2decimal(sumOver(bulletins, b => b.decouchers_fpro))) : ""}</td>
-            </tr>
+            {@const bulletins = sortBulletins(byMonth[month] ?? [])}
+            {@const rows = bulletins.length ? bulletins : [null]}
+            {#each rows as b, j}
+                <tr class:december={month === '12'} class:month-alt={i % 2 === 1}>
+                    {#if j === 0}
+                        <td rowspan={rows.length}>{monthsfr[i]}</td>
+                    {/if}
+                    <td class="airline">{#if b}<span class="airline-tag">{b.airline}</span>{/if}</td>
+                    <td>{b ? localeCurrency(b.imposable) : ""}</td>
+                    <td>{b && decimal2cents(b.cumul) > 0 ? localeCurrency(b.cumul) : ""}</td>
+                    <td>{b ? localeCurrency(cents2decimal(sumOver([b], x => [...x.repas, ...x.transport]))) : ""}</td>
+                    <td>{b ? localeCurrency(cents2decimal(sumOver([b], x => x.decouchers_fpro))) : ""}</td>
+                </tr>
+            {/each}
         {/each}
+    </tbody>
+    <tfoot>
         <tr>
-            <th>Total</th>
+            <th colspan="2">Total</th>
             <th>{localeCurrency(totalImposable)}</th>
             <th></th>
             <th>{localeCurrency(totalFrais)}</th>
             <th>{localeCurrency(totalDecouchersFPRO)}</th>
         </tr>
-    </tbody>
-    <tfoot>
         <tr>
-            <td colspan="5">1. Les Frais d’emploi comprennent les lignes IND.REPAS, INDEMNITE REPAS, IR.FIN ANNEE DOUBL, IND. TRANSPORT, IND. TRANSPORT EXO, FRAIS REELS TRANSP, R. FRAIS DE TRANSPORT, IR EXONEREES, IR NON EXONEREES du bulletin de paye.</td>
+            <td colspan="6">1. Les Frais d’emploi comprennent les lignes IND.REPAS, INDEMNITE REPAS, IR.FIN ANNEE DOUBL, IND. TRANSPORT, IND. TRANSPORT EXO, FRAIS REELS TRANSP, R. FRAIS DE TRANSPORT, IR EXONEREES, IR NON EXONEREES du bulletin de paye.</td>
         </tr>
         <tr>
-            <td colspan="5">2. Cette colonne reprend la ligne I.DECOUCHERS F.PRO, elle est utilisée pour l’estimation. Pour les impôts, c’est uniquement l’attestation des nuitées AF qui doit être prise en compte.</td>
+            <td colspan="6">2. Cette colonne reprend la ligne I.DECOUCHERS F.PRO, elle est utilisée pour l’estimation. Pour les impôts, c’est uniquement l’attestation des nuitées AF qui doit être prise en compte.</td>
         </tr>
     </tfoot>
 </table>
@@ -263,17 +273,36 @@
         -webkit-text-fill-color: var(--green);
         opacity: 0.85; /*ios*/
     }
-    tbody th { /* Total bottom line */
+    tfoot th { /* Total bottom line */
         font-family: monospace;
         font-size: 1.3rem;
     }
-    td:not(:nth-child(1)), th:not(:nth-child(1)){
+    td:nth-last-child(-n+4):not([colspan]), th:nth-last-child(-n+4):not([colspan]) {
         text-align: right;
     }
-    td:not(:nth-child(1)) {
+    td:nth-last-child(-n+4):not([colspan]) {
         white-space: nowrap;
     }
-    tbody > tr:nth-child(12) > td:nth-child(3){ /*cumul mois 12 */
+    tbody > tr {
+        background-color: var(--table-background-color);
+    }
+    tbody > tr.month-alt {
+        background-color: var(--table-highlight-color);
+    }
+    td.airline {
+        text-align: center;
+        width: 1%;
+        white-space: nowrap;
+    }
+    .airline-tag {
+        display: inline-block;
+        padding: 1px 6px;
+        border-radius: 3px;
+        background-color: rgba(0, 0, 0, 0.06);
+        font-family: monospace;
+        font-size: 0.9em;
+    }
+    tbody > tr.december > td:nth-last-child(3) { /* cumul mois 12 */
         font-weight: bold;
     }
 </style>
