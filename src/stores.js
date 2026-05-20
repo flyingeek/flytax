@@ -3,7 +3,9 @@ import { mergeRots } from './rotations';
 import { iso2AST, iso2FR } from './utilities/dates';
 
 export const BASES = [
+    {label: "Lyon", selected: false, value: ['LYS'], tzConverter: iso2FR},
     {label: "Marseille", selected: false, value: ['MRS'], tzConverter: iso2FR},
+    {label: "Nantes", selected: false, value: ['NTE'], tzConverter: iso2FR},
     {label: "Nice", selected: false, value: ['NCE'], tzConverter: iso2FR},
     {label: "Paris", selected: true, value: ['CDG', 'ORY'], tzConverter: iso2FR},
     {label: "Toulouse", selected: false, value: ['TLS'], tzConverter: iso2FR},
