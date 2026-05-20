@@ -1,6 +1,16 @@
+import { addIndemnities } from '../rotations';
 import { airfranceDetectors } from './airfrance';
 
 const detectors = [...airfranceDetectors];
+
+const decorate = (ctx) => (envelope) => {
+    if (envelope.type !== 'rotations' || !envelope.rots) return envelope;
+    return {
+        ...envelope,
+        rots: addIndemnities(ctx.taxYear, envelope.rots, ctx.taxData, ctx.tzConverter, ctx.fileName)
+            .map((rot) => ({...rot, taxDate: envelope.date})),
+    };
+};
 
 /**
  * Dispatch a piece of extracted PDF text to the first matching parser.
@@ -26,7 +36,7 @@ export const router = (text, fileName, fileOrder, taxYear, taxData, base, tzConv
     const ctx = { fileName, fileOrder, taxYear, taxData, base, tzConverter };
 
     for (const { match, parse } of detectors) {
-        if (match(text, ctx)) return parse(text, ctx);
+        if (match(text, ctx)) return parse(text, ctx).map(decorate(ctx));
     }
 
     return [{
