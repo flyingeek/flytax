@@ -57,3 +57,20 @@ export const matchLast = (text, re, bydefault) => {
     if (bydefault === undefined) throw new Error(`No match found for ${re}`);
     return bydefault;
 };
+
+/**
+ * Escape regex metacharacters in `text` so it can be embedded as a
+ * literal inside a `new RegExp(...)` pattern. Useful when building
+ * regexes from data (e.g. rubrique libellés on payslips) — the caller
+ * writes plain strings and this helper makes them regex-safe.
+ *
+ * Matches the conventional JS name (cf. lodash's `_.escapeRegExp`,
+ * MDN's "Escaping" example) and the built-in `RegExp` casing.
+ *
+ * @example
+ *   new RegExp(`^${escapeRegExp('Indemn. Repas')}_`)  // matches "Indemn. Repas_" only
+ *
+ * @param {string} text
+ * @returns {string}
+ */
+export const escapeRegExp = (text) => text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
