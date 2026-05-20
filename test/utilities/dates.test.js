@@ -1,6 +1,6 @@
 import {
-    decimalHours2iso, diffHours, fr2iso, iso2AST, iso2FR, iso2TZ,
-    lastDayInMonthISO, numberOfDays, tzOffset,
+    decimalHours2iso, diffHours, fr2iso, hhmmToMin, iso2AST, iso2FR, iso2TZ,
+    lastDayInMonthISO, minToHHMM, numberOfDays, offsetDay, tzOffset,
 } from '../../src/utilities/dates';
 
 test("lastDayInMonthISO", () => {
@@ -142,4 +142,61 @@ test("tzOffset works with a custom converter function", () => {
 test("tzOffset falls back to '+01:00' when no converter is provided", () => {
     expect(tzOffset(undefined)).toBe("+01:00");
     expect(tzOffset(null)).toBe("+01:00");
+});
+
+test("offsetDay returns the same day for an offset of 0", () => {
+    expect(offsetDay("2025", "03", "19", 0))
+        .toEqual({year: "2025", month: "03", day: "19"});
+});
+
+test("offsetDay advances within the same month", () => {
+    expect(offsetDay("2025", "03", "19", 1))
+        .toEqual({year: "2025", month: "03", day: "20"});
+    expect(offsetDay("2025", "03", "19", 5))
+        .toEqual({year: "2025", month: "03", day: "24"});
+});
+
+test("offsetDay rolls into the next month and year", () => {
+    expect(offsetDay("2025", "03", "31", 1))
+        .toEqual({year: "2025", month: "04", day: "01"});
+    expect(offsetDay("2025", "12", "31", 32))
+        .toEqual({year: "2026", month: "02", day: "01"});
+});
+
+test("offsetDay walks backwards with a negative offset", () => {
+    expect(offsetDay("2025", "01", "01", -1))
+        .toEqual({year: "2024", month: "12", day: "31"});
+    expect(offsetDay("2025", "03", "01", -1))
+        .toEqual({year: "2025", month: "02", day: "28"});
+});
+
+test("offsetDay handles leap years", () => {
+    expect(offsetDay("2024", "02", "28", 1))
+        .toEqual({year: "2024", month: "02", day: "29"});
+    expect(offsetDay("2024", "02", "29", 1))
+        .toEqual({year: "2024", month: "03", day: "01"});
+    expect(offsetDay("2025", "02", "28", 1))
+        .toEqual({year: "2025", month: "03", day: "01"});
+});
+
+test("hhmmToMin converts an HH:MM clock string to minutes since midnight", () => {
+    expect(hhmmToMin("00:00")).toBe(0);
+    expect(hhmmToMin("00:30")).toBe(30);
+    expect(hhmmToMin("01:00")).toBe(60);
+    expect(hhmmToMin("14:30")).toBe(14 * 60 + 30);
+    expect(hhmmToMin("23:59")).toBe(23 * 60 + 59);
+});
+
+test("minToHHMM converts minutes since midnight back to an HH:MM clock string", () => {
+    expect(minToHHMM(0)).toBe("00:00");
+    expect(minToHHMM(30)).toBe("00:30");
+    expect(minToHHMM(60)).toBe("01:00");
+    expect(minToHHMM(14 * 60 + 30)).toBe("14:30");
+    expect(minToHHMM(23 * 60 + 59)).toBe("23:59");
+});
+
+test("hhmmToMin and minToHHMM round-trip", () => {
+    for (const s of ["00:00", "07:29", "12:00", "14:24", "21:31", "23:59"]) {
+        expect(minToHHMM(hhmmToMin(s))).toBe(s);
+    }
 });
