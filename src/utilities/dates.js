@@ -130,16 +130,22 @@ export const tzOffset = (tzConverter) => tzConverter
  * Inverse of {@link iso2FR} for typical inputs.
  *
  * @example
- *   fr2iso("2025-03-19", "14:24")  // → "2025-03-19T13:24Z" (UTC+1)
+ *   fr2iso("2025-03-19", "14:24")  // → "2025-03-19T13:24Z" (UTC+1, winter)
  *   fr2iso("2025-07-19", "14:24")  // → "2025-07-19T12:24Z" (UTC+2, DST)
+ *   fr2iso("2025-03-30", "00:02")  // → "2025-03-29T23:02Z" (DST day, pre-switch — still UTC+1)
  *
  * @param {string} dateStr - ISO date "YYYY-MM-DD".
  * @param {string} timeStr - 24-hour clock time "HH:MM".
  * @returns {string} UTC ISO timestamp suffixed with `Z`.
  */
 export const fr2iso = (dateStr, timeStr) => {
-    // Probe iso2FR at noon to get the UTC offset for this date (avoids DST edge cases).
-    const probeLocal = iso2FR(`${dateStr}T12:00Z`);
+    // Probe iso2FR at the requested time (treated as a UTC instant) to
+    // get the offset that applies at that wall-clock — not at noon.
+    // On DST switchover days, the offset is not constant across the
+    // day, so probing at noon would give the wrong answer for times
+    // outside noon's regime (e.g. 00:02 on March 30 is still UTC+1
+    // even though noon is already UTC+2).
+    const probeLocal = iso2FR(`${dateStr}T${timeStr}Z`);
     let offsetMinutes = 0;
     const offsetMatch = probeLocal.match(/([+-])(\d{2}):(\d{2})$/);
     if (offsetMatch) {

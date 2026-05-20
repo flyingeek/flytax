@@ -109,6 +109,22 @@ test("fr2iso", () => {
     expect(iso2FR(fr2iso("2025-07-19", "14:24"))).toBe("2025-07-19T14:24+02:00");
 });
 
+test("fr2iso uses the actual time's offset on DST switchover days", () => {
+    // Spring forward: 30 Mar 2025, clocks jump 02:00 → 03:00 local.
+    // Pre-switch (00:02): still UTC+1 (winter). Post-switch (14:24): UTC+2.
+    expect(fr2iso("2025-03-30", "00:02")).toBe("2025-03-29T23:02Z");
+    expect(fr2iso("2025-03-30", "14:24")).toBe("2025-03-30T12:24Z");
+    expect(iso2FR(fr2iso("2025-03-30", "00:02"))).toBe("2025-03-30T00:02+01:00");
+    expect(iso2FR(fr2iso("2025-03-30", "14:24"))).toBe("2025-03-30T14:24+02:00");
+
+    // Fall back: 26 Oct 2025, clocks fall 03:00 → 02:00 local.
+    // Pre-switch (00:30): still UTC+2 (DST). Post-switch (14:24): UTC+1.
+    expect(fr2iso("2025-10-26", "00:30")).toBe("2025-10-25T22:30Z");
+    expect(fr2iso("2025-10-26", "14:24")).toBe("2025-10-26T13:24Z");
+    expect(iso2FR(fr2iso("2025-10-26", "00:30"))).toBe("2025-10-26T00:30+02:00");
+    expect(iso2FR(fr2iso("2025-10-26", "14:24"))).toBe("2025-10-26T14:24+01:00");
+});
+
 test("tzOffset extracts the offset from iso2FR (Paris, no DST in November)", () => {
     expect(tzOffset(iso2FR)).toBe("+01:00");
 });
