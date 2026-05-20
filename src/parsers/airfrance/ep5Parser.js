@@ -1,4 +1,4 @@
-import { addIndemnities, buildRots } from '../../rotations';
+import { buildRots } from '../../rotations';
 import { decimalHours2iso } from '../../utilities/dates';
 import { iata2country } from '../../utilities/iata';
 import { isInTaxYearWindow, stampForTaxYear } from '../../utilities/taxYear';
@@ -87,7 +87,7 @@ const parseEP5Modern = (text, ctx) => {
         });
     }
 
-    result.rots = buildAFRotations(flights, ctx, result.date);
+    result.rots = buildAFRotations(flights, ctx);
 
     return result;
 };
@@ -137,7 +137,7 @@ const parseEP5Legacy = (text, ctx) => {
         });
     }
 
-    result.rots = buildAFRotations(flights, ctx, result.date);
+    result.rots = buildAFRotations(flights, ctx);
 
     return result;
 };
@@ -154,20 +154,15 @@ const sortFlights = (flights) => flights.sort((a, b) => {
     return c === 0 ? a.end.localeCompare(b.end) : c;
 });
 
-const buildAFRotations = (flights, ctx, taxDate) => {
-    const rots = buildRots(
-        sortFlights(flights),
-        {
-            tzConverter: ctx.tzConverter,
-            base: ctx.base,
-            iataMap: iata2country,
-            airline: 'AF',
-        },
-    );
-
-    return addIndemnities(ctx.taxYear, rots, ctx.taxData, ctx.tzConverter, ctx.fileName)
-        .map((rot) => ({...rot, taxDate}));
-};
+const buildAFRotations = (flights, ctx) => buildRots(
+    sortFlights(flights),
+    {
+        tzConverter: ctx.tzConverter,
+        base: ctx.base,
+        iataMap: iata2country,
+        airline: 'AF',
+    },
+);
 
 /**
  * Locate the month/year header in an EP5 document.
