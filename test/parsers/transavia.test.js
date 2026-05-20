@@ -468,3 +468,84 @@ test('TO PV with MEP = 0 but deadhead legs present falls back to even distributi
     ]);
 });
 
+
+// --- Payslip coverage ------------------------------------------------
+
+const loadPayFixture = (name) => ({
+    flat: loadFixture(`test/fixtures/${name}.txt`),
+    rows: loadFixture(`test/fixtures/${name}.rows.txt`),
+});
+const routePay = (name, fileName) => {
+    const {flat, rows} = loadPayFixture(name);
+    return router(flat, rows, fileName, 0, '2025', taxData, ['CDG', 'ORY'], iso2FR);
+};
+
+test('TO payslip — IKV bulletin (September 2025)', () => {
+    const [result] = routePay('to-payslip-ikv', 'to-payslip-ikv.pdf');
+
+    expect(result).toMatchObject({
+        type: 'pay',
+        airline: 'TO',
+        fileName: 'to-payslip-ikv.pdf',
+        fileOrder: 0,
+        date: '2025-09',
+        paymentDate: '2025-09-30',
+        errors: [],
+    });
+    expect(String(result.imposable)).toBe('7663.06');
+    expect(String(result.cumul)).toBe('62481.41');
+    // 4566 (105,87) + 21014 (322,28)
+    expect(result.repas.map(String)).toEqual(['105.87', '322.28']);
+    // 4567 (34,53) + 21013 (188,01)
+    expect(result.transport.map(String)).toEqual(['34.53', '188.01']);
+    expect(result.decouchers_fpro.map(String)).toEqual(['0.00']);
+});
+
+test('TO payslip — Navigo bulletin populates transport from 21010', () => {
+    const [result] = routePay('to-payslip-navigo', 'to-payslip-navigo.pdf');
+
+    expect(result.date).toBe('2025-03');
+    expect(result.paymentDate).toBe('2025-03-31');
+    expect(String(result.imposable)).toBe('8447.28');
+    // 4568 (20,35) Soumis + 21010 (61,05) Navigo exo
+    expect(result.transport.map(String)).toEqual(['20.35', '61.05']);
+    // 4566 (58,44) + 21014 (400,69)
+    expect(result.repas.map(String)).toEqual(['58.44', '400.69']);
+});
+
+test('TO payslip — train bulletin populates transport from 4568/4569/21011', () => {
+    const [result] = routePay('to-payslip-train', 'to-payslip-train.pdf');
+
+    expect(result.date).toBe('2025-08');
+    expect(result.paymentDate).toBe('2025-08-31');
+    expect(String(result.imposable)).toBe('8775.15');
+    // 4568 (7,27) + 4569 (258,92) Soumis + 21011 (21,81) exo
+    expect(result.transport.map(String)).toEqual(['7.27', '258.92', '21.81']);
+    // 4566 (70,48) + 21014 (443,00)
+    expect(result.repas.map(String)).toEqual(['70.48', '443.00']);
+});
+
+test('TO payslip detector wins over PV detector when both markers present', () => {
+    // A pathological text carrying both BULLETIN DE PAIE + TRANSAVIA FRANCE
+    // and the PV "RELEVE D'ACTIVITE REMUNEREE" string should route to the
+    // payslip parser, not the PV parser.
+    const text = '_BULLETIN DE PAIE_TRANSAVIA FRANCE_RELEVE D\'ACTIVITE REMUNEREE_Licensed to Transavia France_';
+    const [result] = router(text, text, 'pathological.pdf', 0, '2025', taxData, ['CDG', 'ORY'], iso2FR);
+
+    expect(result.type).toBe('error'); // date not found → fatal in payParser
+    expect(result.msg).toBe('Date non trouvée');
+});
+
+test('TO payslip detector does not match AF bulletins', () => {
+    const afText = loadFixture('test/fixtures/af-payslip.txt');
+    const [result] = router(afText, undefined, 'af-payslip.pdf', 0, '2025', taxData, ['CDG', 'ORY'], iso2FR);
+
+    expect(result.airline).toBe('AF');
+});
+
+test('AF payslip detector does not match TO bulletins', () => {
+    const {flat, rows} = loadPayFixture('to-payslip-ikv');
+    const [result] = router(flat, rows, 'to-payslip-ikv.pdf', 0, '2025', taxData, ['CDG', 'ORY'], iso2FR);
+
+    expect(result.airline).toBe('TO');
+});
