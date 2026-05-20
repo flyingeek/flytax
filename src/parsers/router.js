@@ -27,7 +27,11 @@ const decorate = (ctx) => (envelope) => {
  * Each parser returns an array of result objects so the same call can
  * yield both a primary result and accompanying warnings.
  *
- * @param {string} text - Extracted PDF text.
+ * Detectors always match against the flat `text` (cheap, consistent).
+ * Parsers that need the row-aware extraction read it from `ctx.textByRows`.
+ *
+ * @param {string} text - Flat-extracted PDF text (PDF.js natural emission order).
+ * @param {string} [textByRows] - Row-aware extracted text (items grouped by Y baseline).
  * @param {string} fileName
  * @param {number} fileOrder - Position in the upload batch.
  * @param {string} taxYear - 4-digit year of the declaration.
@@ -36,8 +40,8 @@ const decorate = (ctx) => (envelope) => {
  * @param {Function} tzConverter - Time-zone converter.
  * @returns {Array<object>}
  */
-export const router = (text, fileName, fileOrder, taxYear, taxData, base, tzConverter) => {
-    const ctx = { fileName, fileOrder, taxYear, taxData, base, tzConverter };
+export const router = (text, textByRows, fileName, fileOrder, taxYear, taxData, base, tzConverter) => {
+    const ctx = { textByRows, fileName, fileOrder, taxYear, taxData, base, tzConverter };
 
     for (const { match, parse } of detectors) {
         if (match(text, ctx)) return parse(text, ctx).map(decorate(ctx));

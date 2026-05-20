@@ -27,7 +27,7 @@ const pv = (
 test('TO PV parsing', () => {
     const text = loadFixture('test/fixtures/to-activities.txt');
 
-    expect(router(text, 'to-activities.pdf', 0, '2025', taxData, ['CDG', 'ORY'], iso2FR)).toEqual([{
+    expect(router(text, undefined, 'to-activities.pdf', 0, '2025', taxData, ['CDG', 'ORY'], iso2FR)).toEqual([{
         type: 'rotations',
         fileName: 'to-activities.pdf',
         fileOrder: 0,
@@ -104,7 +104,7 @@ test('TO PV parsing', () => {
 // --- Error handling -------------------------------------------
 
 test('TO PV outside the tax year is recognized but not parsed', () => {
-    expect(router(pv('June', '2025'), 'to-activities.pdf', 0, '2024', taxData, ['CDG', 'ORY'], iso2FR)).toEqual([{
+    expect(router(pv('June', '2025'), undefined, 'to-activities.pdf', 0, '2024', taxData, ['CDG', 'ORY'], iso2FR)).toEqual([{
         type: 'rotations',
         fileName: 'to-activities.pdf',
         fileOrder: 0,
@@ -118,7 +118,7 @@ test('TO PV with an unknown airport in the chain flags the rotation as error: tr
         '2025',
         '_15_ORY-ZZZ_12:00_20:00_12:00_20:00_8_8_1_8_11:00_20:30_',
     );
-    const parsedPv = router(text, 'to-err.pdf', 0, '2025', taxData, ['CDG', 'ORY'], iso2FR)[0];
+    const parsedPv = router(text, undefined, 'to-err.pdf', 0, '2025', taxData, ['CDG', 'ORY'], iso2FR)[0];
     const rot = parsedPv.rots[0];
 
     expect(rot.error).toBe(true);
@@ -130,13 +130,13 @@ test('TO PV with an unknown airport in the chain flags the rotation as error: tr
 // --- Tax-year boundary stamping --------------------------------------
 
 test('TO PV December is stamped as taxYear-00', () => {
-    const parsedPv = router(pv('December', '2024'), 'to-dec.pdf', 0, '2025', taxData, ['CDG', 'ORY'], iso2FR)[0];
+    const parsedPv = router(pv('December', '2024'), undefined, 'to-dec.pdf', 0, '2025', taxData, ['CDG', 'ORY'], iso2FR)[0];
 
     expect(parsedPv.date).toEqual('2025-00');
 });
 
 test('TO PV January is stamped as taxYear-13', () => {
-    const parsedPv = router(pv('January', '2026'), 'to-jan.pdf', 0, '2025', taxData, ['CDG', 'ORY'], iso2FR)[0];
+    const parsedPv = router(pv('January', '2026'), undefined, 'to-jan.pdf', 0, '2025', taxData, ['CDG', 'ORY'], iso2FR)[0];
 
     expect(parsedPv.date).toEqual('2025-13');
 });
@@ -147,7 +147,7 @@ test('TO PV December boundary stamps taxDate 2025-00 on the surviving rotation',
         '2024',
         '_31_ORY-LIS_14:00_18:00_14:00_18:00_4_4_1_4_13:00_18:30_',
     );
-    const parsedPv = router(text, 'to-dec-rot.pdf', 0, '2025', taxData, ['CDG', 'ORY'], iso2FR)[0];
+    const parsedPv = router(text, undefined, 'to-dec-rot.pdf', 0, '2025', taxData, ['CDG', 'ORY'], iso2FR)[0];
 
     expect(parsedPv.rots[0].taxDate).toBe('2025-00');
 });
@@ -158,7 +158,7 @@ test('TO PV with a flight straddling Dec 31 → Jan 1 is kept by the tax-year fi
         '2024',
         '_31_ORY-BER-ORY-PGF_14:30_21:10_14:24_21:32_4.9_5.75_1.09_6.26_13:24_22:02_8.63_5.26_1_8_6.26_9.76_0.52_11.03',
     );
-    const parsedPv = router(text, 'to-straddle.pdf', 0, '2025', taxData, ['CDG', 'ORY'], iso2FR)[0];
+    const parsedPv = router(text, undefined, 'to-straddle.pdf', 0, '2025', taxData, ['CDG', 'ORY'], iso2FR)[0];
 
     expect(parsedPv.date).toBe('2025-00');
     expect(parsedPv.rots.length).toBeGreaterThan(0);
@@ -173,7 +173,7 @@ test('TO PV with a non-flight row (no HV/MEP times) emits no rotation', () => {
         '2025',
         '_03_Blanc suite à un swap vol contre blanc_00:00_23:59',
     );
-    const parsedPv = router(text, 'to-other.pdf', 0, '2025', taxData, ['CDG', 'ORY'], iso2FR)[0];
+    const parsedPv = router(text, undefined, 'to-other.pdf', 0, '2025', taxData, ['CDG', 'ORY'], iso2FR)[0];
 
     // Non-flight days in real PVs (JOUR OFF, Blanc, Conges Annuels, …)
     // carry only the prog HH:MM pair (00:00 / 23:59 placeholders) and no
@@ -188,7 +188,7 @@ test('TO PV row whose Affectation lacks a chain emits no rotation', () => {
         '2025',
         '_03_Blanc suite à un swap_12:00_22:00_12:00_22:00_4_4_1_4_11:00_22:30_',
     );
-    const parsedPv = router(text, 'to-non-chain.pdf', 0, '2025', taxData, ['CDG', 'ORY'], iso2FR)[0];
+    const parsedPv = router(text, undefined, 'to-non-chain.pdf', 0, '2025', taxData, ['CDG', 'ORY'], iso2FR)[0];
 
     // A synthetic row with the full PV column shape (4 HH:MM + tail +
     // anchor) but whose Affectation column doesn't contain a route chain.
@@ -206,7 +206,7 @@ test('TO PV with same-day mixed deadhead + operated chain returning to base prod
         '2025',
         '_15_ORY*GPM*GNT*NTE-LIS-ORY_11:50_22:05_11:50_22:19_4.63_5.08_1_3.12_6.64_10:50_22:49_11.98_8.26_1_4_8.26_8.26_0.91_9.34_',
     );
-    const parsedPv = router(text, 'to-dhd.pdf', 0, '2025', taxData, ['CDG', 'ORY'], iso2FR)[0];
+    const parsedPv = router(text, undefined, 'to-dhd.pdf', 0, '2025', taxData, ['CDG', 'ORY'], iso2FR)[0];
 
     expect(parsedPv.rots).toEqual([
         {
@@ -243,7 +243,7 @@ test('TO PV with operated segments chain emits one flight per leg sized from HV 
         // Ground = window − HV = 6 h (split across 3 inter-leg gaps → 2 h each)
         '_10_NTE-MRS-BES-MRS-NTE_12:00_22:00_12:00_22:00_4_4_1_4_11:00_22:30_',
     );
-    const parsedPv = router(text, 'to-operated.pdf', 0, '2025', taxData, ['CDG', 'ORY'], iso2FR)[0];
+    const parsedPv = router(text, undefined, 'to-operated.pdf', 0, '2025', taxData, ['CDG', 'ORY'], iso2FR)[0];
 
     expect(parsedPv.rots[0].flights).toEqual([
         {stop: '', dep: 'NTE', arr: 'MRS', start: '2025-03-10T11:00Z', end: '2025-03-10T12:00Z'}, // 1 hour, 2 hour gap
@@ -263,7 +263,7 @@ test('TO PV with deadhead segments chain emits one flight per leg sized from MEP
         // Ground = window − MEP = 6 h (split across 2 inter-leg gaps → 3 h each)
         '_24_MRS*MRS*ORY*ORY_12:00_21:00_12:00_21:00_3_3_11:00_21:30_',
     );
-    const parsedPv = router(text, 'to-deadhead.pdf', 0, '2025', taxData, ['CDG', 'ORY'], iso2FR)[0];
+    const parsedPv = router(text, undefined, 'to-deadhead.pdf', 0, '2025', taxData, ['CDG', 'ORY'], iso2FR)[0];
 
     expect(parsedPv.rots[0].flights).toEqual([
         {stop: '', dep: 'MRS', arr: 'MRS', start: '2025-03-24T11:00Z', end: '2025-03-24T12:00Z'}, // 1 hour, 3 hour gap
@@ -283,7 +283,7 @@ test('TO PV with mixed operated/deadhead segments chain sizes each leg by its ty
         // Ground = window − HV − MEP = 3 h (split across 4 inter-leg gaps → 45 min each)
         '_15_ORY*GPM*GNT*NTE-LIS-NTE_12:00_22:00_12:00_22:00_4_4_1_3_7_10:45_22:30_',
     );
-    const parsedPv = router(text, 'to-mixed.pdf', 0, '2025', taxData, ['CDG', 'ORY'], iso2FR)[0];
+    const parsedPv = router(text, undefined, 'to-mixed.pdf', 0, '2025', taxData, ['CDG', 'ORY'], iso2FR)[0];
 
     expect(parsedPv.rots[0].flights).toEqual([
         {stop: '', dep: 'ORY', arr: 'GPM', start: '2025-03-15T11:00Z', end: '2025-03-15T12:00Z'}, // 1 hour, 45 minute gap
@@ -301,7 +301,7 @@ test('TO PV with a prefix before the chain still emits the flight', () => {
         // Ground-course morning followed by an actual operated flight ORY-BCN.
         '_15_E learning refresh APRS-ORY-BCN_06:00_20:00_06:00_20:00_2.13_2.13_1_2.13_05:00_20:30_15.5_2_1_2_1_',
     );
-    const parsedPv = router(text, 'to-elearn.pdf', 0, '2025', taxData, ['CDG', 'ORY'], iso2FR)[0];
+    const parsedPv = router(text, undefined, 'to-elearn.pdf', 0, '2025', taxData, ['CDG', 'ORY'], iso2FR)[0];
     const rot = parsedPv.rots[0];
 
     expect(rot.isComplete).toBe('<');
@@ -321,7 +321,7 @@ test('TO PV with a suffix after the chain still emits the flight', () => {
         '2025',
         '_15_BCN-ORY-E learning refresh APRS_06:00_20:00_06:00_20:00_2.13_2.13_1_2.13_05:00_20:30_15.5_2_1_2_1_',
     );
-    const parsedPv = router(text, 'to-suffix.pdf', 0, '2025', taxData, ['CDG', 'ORY'], iso2FR)[0];
+    const parsedPv = router(text, undefined, 'to-suffix.pdf', 0, '2025', taxData, ['CDG', 'ORY'], iso2FR)[0];
     const rot = parsedPv.rots[0];
 
     expect(rot.isComplete).toBe('>');
@@ -343,7 +343,7 @@ test('TO PV multi-day rotation closes correctly when the return leg is pure posi
         '_23_TUN-NCE-TUN-MRS_15:50_22:35_15:41_22:37_4.5_5.67_1.14_6.45_14:41_23:07_8.43_5.14_1_6.45_1.06_' +
         '_24_MRS*MRS*ORY*ORY_12:40_16:00_12:40_16:00_2.08_1.04_11:40_16:30_4.83_2.95_1_2.95_',
     );
-    const parsedPv = router(text, 'to-multi.pdf', 0, '2025', taxData, ['CDG', 'ORY'], iso2FR)[0];
+    const parsedPv = router(text, undefined, 'to-multi.pdf', 0, '2025', taxData, ['CDG', 'ORY'], iso2FR)[0];
 
     expect(parsedPv.rots).toEqual([
         {
@@ -378,7 +378,7 @@ test('TO PV with a flight crossing midnight (Arr réel < Dpt réel)', () => {
         // flight.end's ISO date is the following calendar day.
         '_14_ORY-TLV_22:00_02:00_22:00_02:00_4_4_1_4_21:00_02:30_',
     );
-    const parsedPv = router(text, 'to-midnight.pdf', 0, '2025', taxData, ['CDG', 'ORY'], iso2FR)[0];
+    const parsedPv = router(text, undefined, 'to-midnight.pdf', 0, '2025', taxData, ['CDG', 'ORY'], iso2FR)[0];
 
     expect(parsedPv.rots[0].flights[0]).toEqual(
         {stop: '', dep: 'ORY', arr: 'TLV', start: '2025-01-14T21:00Z', end: '2025-01-15T01:00Z'},
@@ -393,7 +393,7 @@ test('TO PV on a DST transition day (last Sunday of March / October)', () => {
         '_29_BIQ-ORY-BIQ_17:45_21:30_17:44_21:16_2.77_3.25_1.19_3.85_16:44_21:46_5.03_3.5_1_3.85_0.38' +
         '_30_BIQ-ORY_17:45_19:15_17:45_19:07_1.37_1.67_1.19_1.99_16:45_19:37_2.87_3.5_1_3.5',
     );
-    const parsedPv = router(text, 'to-dst.pdf', 0, '2025', taxData, ['CDG', 'ORY'], iso2FR)[0];
+    const parsedPv = router(text, undefined, 'to-dst.pdf', 0, '2025', taxData, ['CDG', 'ORY'], iso2FR)[0];
     const rot = parsedPv.rots[0];
 
     // Expect: rotation start has one offset, end has the other.
@@ -407,7 +407,7 @@ test('TO PV day 1 starting at a non-base airport surfaces an incomplete > rotati
         '2025',
         '_01_BIQ-ORY_17:45_19:15_17:45_19:07_1.37_1.67_1.19_1.99_16:45_19:37_2.87_3.5_1_3.5',
     );
-    const parsedPv = router(text, 'to-day1.pdf', 0, '2025', taxData, ['CDG', 'ORY'], iso2FR)[0];
+    const parsedPv = router(text, undefined, 'to-day1.pdf', 0, '2025', taxData, ['CDG', 'ORY'], iso2FR)[0];
 
     expect(parsedPv.rots[0].isComplete).toBe('>');
 });
@@ -422,7 +422,7 @@ test('TO PV with HV + MEP exceeding the day window falls back to even distributi
         // Fallback: each leg = window / leg count = 1 h 30 min, no inter-leg gap
         '_12_ORY*ORY*BER-ORY-PGF_12:00_18:00_12:00_18:00_4_4_1_4_8_11:00_18:30_',
     );
-    const parsedPv = router(text, 'to-overflow.pdf', 0, '2025', taxData, ['CDG', 'ORY'], iso2FR)[0];
+    const parsedPv = router(text, undefined, 'to-overflow.pdf', 0, '2025', taxData, ['CDG', 'ORY'], iso2FR)[0];
 
     expect(parsedPv.rots[0].flights).toEqual([
         {stop: '', dep: 'ORY', arr: 'ORY', start: '2025-03-12T11:00Z', end: '2025-03-12T12:30Z'},
@@ -442,7 +442,7 @@ test('TO PV with HV = 0 but operated legs present falls back to even distributio
         // Fallback: single leg fills the whole window
         '_22_ORY-TUN_18:00_20:00_18:00_20:00_0_0_1_0_17:00_20:30_',
     );
-    const parsedPv = router(text, 'to-zero-hv.pdf', 0, '2025', taxData, ['CDG', 'ORY'], iso2FR)[0];
+    const parsedPv = router(text, undefined, 'to-zero-hv.pdf', 0, '2025', taxData, ['CDG', 'ORY'], iso2FR)[0];
 
     expect(parsedPv.rots[0].flights).toEqual([
         {stop: '', dep: 'ORY', arr: 'TUN', start: '2025-03-22T17:00Z', end: '2025-03-22T19:00Z'},
@@ -459,7 +459,7 @@ test('TO PV with MEP = 0 but deadhead legs present falls back to even distributi
         // Fallback: each leg = window / leg count = 2 h, no inter-leg gap
         '_24_MRS*MRS*ORY*ORY_12:00_18:00_12:00_18:00_0_0_11:00_18:30_',
     );
-    const parsedPv = router(text, 'to-zero-mep.pdf', 0, '2025', taxData, ['CDG', 'ORY'], iso2FR)[0];
+    const parsedPv = router(text, undefined, 'to-zero-mep.pdf', 0, '2025', taxData, ['CDG', 'ORY'], iso2FR)[0];
 
     expect(parsedPv.rots[0].flights).toEqual([
         {stop: '', dep: 'MRS', arr: 'MRS', start: '2025-03-24T11:00Z', end: '2025-03-24T13:00Z'},
@@ -467,3 +467,4 @@ test('TO PV with MEP = 0 but deadhead legs present falls back to even distributi
         {stop: '', dep: 'ORY', arr: 'ORY', start: '2025-03-24T15:00Z', end: '2025-03-24T17:00Z'},
     ]);
 });
+
