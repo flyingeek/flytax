@@ -90,7 +90,8 @@ export const payParser = (text, ctx) => {
     }
 
     result.repas = matchAll(text, REPAS_RE, "0").map(decimal);
-    result.transport = matchAll(text, TRANSPORT_RE, "0").map(decimal);
+    result.ikv = matchAll(text, IKV_RE, "0").map(decimal);
+    result.transit = matchAll(text, TRANSIT_RE, "0").map(decimal);
     result.decouchers_fpro = matchAll(text, DECOUCHERS_FPRO_RE, "0").map(decimal);
 
     // Surface each soft failure as its own envelope so DropZone can log it.
@@ -112,5 +113,6 @@ const NET_RE = /_Mensuel_[\-0-9, ]+_{1,2}([\-0-9, ]+)_/g;
 const CUMUL_RE = /_Annuel_[\-0-9, ]+_{1,2}([\-0-9, ]+)_/g;
 const REPAS_RE = /(?:IND\.REPAS_+|INDEMNITE REPAS_+|IR\.FIN ANNEE DOUBL_+|IR EXONEREES_+|IR NON EXONEREES_+)([\-0-9, ]+)/g;
 // Allows for optional quantity and rate before amount
-const TRANSPORT_RE = /(?:IND\. TRANSPORT EXO_+|IND\. TRANSPORT_+|FRAIS REELS TRANSP_+|R\. FRAIS DE TRANSPORT_+)(?:[\-0-9, ]+_[\-0-9, ]+_)?([\-0-9, ]+)/g;
+const IKV_RE = /(?:IND\. TRANSPORT EXO_+|IND\. TRANSPORT_+)(?:[\-0-9, ]+_[\-0-9, ]+_)?([\-0-9, ]+)/g;
+const TRANSIT_RE = /(?:FRAIS REELS TRANSP_+|R\. FRAIS DE TRANSPORT_+|REMB\.CARTE NAVIGO_+)(?:[\-0-9, ]+_[\-0-9, ]+_)?([\-0-9, ]+)/g;
 const DECOUCHERS_FPRO_RE = /(?:_I.DECOUCHERS F.PRO_+)([\-0-9, ]+)/g;

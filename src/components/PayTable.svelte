@@ -14,9 +14,10 @@
      * Sum decimal-string fields across a list of bulletins, in cents.
      *
      * @example
-     *   sumOver(items, b => [b.imposable])                 // total imposable in cents
-     *   sumOver(items, b => [...b.repas, ...b.transport])  // frais d'emploi in cents
-     *   sumOver(items, b => b.decouchers_fpro)             // découchers in cents
+     *   sumOver(items, b => [b.imposable])             // total imposable in cents
+     *   sumOver(items, b => [...b.repas, ...b.ikv])    // frais d'emploi in cents
+     *   sumOver(items, b => b.transit)                 // public-transit in cents
+     *   sumOver(items, b => b.decouchers_fpro)         // découchers in cents
      *
      * @param {Array<object>} bulletins
      * @param {(bulletin: object) => Array<string>} getValues
@@ -104,7 +105,9 @@
     }
 
     $: byMonth = groupByMonth(data.items);
-    $: totalFrais = cents2decimal(sumOver(data.items, b => [...b.repas, ...b.transport]));
+    $: totalFrais = cents2decimal(sumOver(data.items, b => [...b.repas, ...b.ikv]));
+    $: totalTransit = cents2decimal(sumOver(data.items, b => b.transit));
+    $: hasTransit = decimal2cents(totalTransit) > 0;
     $: totalImposable = cents2decimal(sumOver(data.items, b => [b.imposable]));
     // Prefer the bulletin-reported cumul over summing imposable amounts;
     // fall back to totalImposable when no cumul is loaded.
@@ -163,6 +166,11 @@
     <tr>
         <td colspan="3">{roadTripInformation}</td>
     </tr>
+    {#if hasTransit}
+    <tr>
+        <td colspan="3">Vos bulletins indiquent <b>{localeCurrency(totalTransit)}</b> de remboursements de transports en commun (Navigo / train), non inclus dans le calcul ci-dessus. Si vous incluez le coût de votre abonnement dans votre déclaration aux frais réels, n’oubliez pas d’en soustraire ce montant.</td>
+    </tr>
+    {/if}
 </tfoot>
 </table>
 {:else}
@@ -171,7 +179,7 @@
 <table class="data" id={tableId}>
     <thead>
         <tr><th colspan="6">Détails des salaires {$taxYear}</th></tr>
-        <tr><th>Mois</th><th>Compagnie</th><th>Montant imposable</th><th>Cumul imposable</th><th>Frais d’emploi ¹</th><th>Découchers F PRO ²</th></tr>
+        <tr><th>Mois</th><th>Compagnie</th><th>Montant imposable</th><th>Cumul imposable</th><th>Frais d’emploi ¹{#if hasTransit}&nbsp;³{/if}</th><th>Découchers F PRO ²</th></tr>
     </thead>
     <tbody>
         {#each months as month, i}
@@ -185,7 +193,7 @@
                     <td class="airline">{#if b}<span class="airline-tag">{b.airline}</span>{/if}</td>
                     <td>{b ? localeCurrency(b.imposable) : ""}</td>
                     <td>{b && decimal2cents(b.cumul) > 0 ? localeCurrency(b.cumul) : ""}</td>
-                    <td>{b ? localeCurrency(cents2decimal(sumOver([b], x => [...x.repas, ...x.transport]))) : ""}</td>
+                    <td>{b ? localeCurrency(cents2decimal(sumOver([b], x => [...x.repas, ...x.ikv]))) : ""}</td>
                     <td>{b ? localeCurrency(cents2decimal(sumOver([b], x => x.decouchers_fpro))) : ""}</td>
                 </tr>
             {/each}
@@ -200,11 +208,16 @@
             <th>{localeCurrency(totalDecouchersFPRO)}</th>
         </tr>
         <tr>
-            <td colspan="6">1. Les Frais d’emploi comprennent les lignes IND.REPAS, INDEMNITE REPAS, IR.FIN ANNEE DOUBL, IND. TRANSPORT, IND. TRANSPORT EXO, FRAIS REELS TRANSP, R. FRAIS DE TRANSPORT, IR EXONEREES, IR NON EXONEREES du bulletin de paye.</td>
+            <td colspan="6">1. Les Frais d’emploi comprennent les lignes IND.REPAS, INDEMNITE REPAS, IR.FIN ANNEE DOUBL, IND. TRANSPORT, IND. TRANSPORT EXO, IR EXONEREES, IR NON EXONEREES du bulletin de paye.</td>
         </tr>
         <tr>
             <td colspan="6">2. Cette colonne reprend la ligne I.DECOUCHERS F.PRO, elle est utilisée pour l’estimation. Pour les impôts, c’est uniquement l’attestation des nuitées AF qui doit être prise en compte.</td>
         </tr>
+        {#if hasTransit}
+        <tr>
+            <td colspan="6">3. Vos bulletins indiquent <b>{localeCurrency(totalTransit)}</b> de remboursements de transports en commun (Navigo / train). Ces montants ne sont pas inclus dans les Frais d’emploi ci-dessus. Si vous incluez le coût de votre abonnement dans votre déclaration aux frais réels, n’oubliez pas d’en soustraire ce montant.</td>
+        </tr>
+        {/if}
     </tfoot>
 </table>
 {:else}
