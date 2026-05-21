@@ -7,7 +7,7 @@
 ## Préambule
 
 Cette application a été conçue pour le PilotPad. Elle nécessite des navigateurs récents pour fonctionner&#8239;: Safari iOS13+/ Mac(Mojave/Catalina/Big Sur/Monterey), Firefox 86+, Chrome 87+ et Microsoft Edge 87+ sont compatibles.
-Les PDF utilisés ne transitent sur aucun serveur, tout est calculé localement dans votre navigateur. L’app ne collecte aucune donnée. Tout est __100 % SECURE__.
+Les PDF utilisés ne transitent sur aucun serveur, tout est calculé localement dans votre navigateur. L’app ne collecte aucune donnée. Tout est __100 % SECURE__.
 
 ## Objectifs
 
@@ -17,14 +17,14 @@ Calculer rapidement, facilement, et sans partage de données&#8239;:
 
 - le décompte des frais de mission, conformément à la méthodologie et aux conventions de calcul du SNPL
 - les frais d’emploi des PN qui doivent s’ajouter aux revenus
-- une estimation du montant des nuitées payées par AF
-- la différence entre (Frais de Mission - Nuitées - Frais d’emploi) et un abattement de 10 % plafonné
+- pour Air&nbsp;France, une estimation du montant des nuitées payées par l’employeur
+- la différence entre (Frais de Mission - Frais d’hébergement - Frais d’emploi) et un abattement de 10 % plafonné
 
-__{@html htmlLogo}__ fonctionne aussi pour les pilotes basés en province. (lire au préalable "Choix de la base").
+__{@html htmlLogo}__ fonctionne pour les PN Air&nbsp;France et Transavia, basés à Paris ou en province (lire au préalable "Choix de la base").
 
 ## Utilisation sur l'iPad
 
-Sur MyPeopleDoc, commencez par sélectionner les bulletins de salaire de l'année N, et les ep4-ep5 de décembre N-1 à février N+1. Puis, en cliquant sur téléchargement, vous recevrez un lien par email. Dans votre dossier de téléchargement sur l'iPad, cliquez sur l'archive téléchargée, elle va se décompresser. Ensuite, après avoir vérifié que l'année N est bien sélectionnée en haut à droite de  __{@html htmlLogo}__, deux solutions:
+Sur MyPeopleDoc, commencez par sélectionner les bulletins de salaire de l'année N, et vos relevés d’activité (EP5 pour Air&nbsp;France, Relevé d’activité rémunérée PV pour Transavia) de décembre N-1 à février N+1. Puis, en cliquant sur téléchargement, vous recevrez un lien par email. Dans votre dossier de téléchargement sur l'iPad, cliquez sur l'archive téléchargée, elle va se décompresser. Ensuite, après avoir vérifié que l'année N est bien sélectionnée en haut à droite de  __{@html htmlLogo}__, deux solutions:
 
 - Soit, vous cliquez dans la zone de la page Frais de Mission ou de la page Salaire, puis vous choisissez le dossier des fichiers décompressés, puis vous cliquez sur "Sélectionner", puis "Tout select." et enfin, "Ouvrir"
 - Soit, vous utilisez le mode Slide Over, ou le mode SplitView, avec l'application Fichiers, et vous faites glisser le dossier des fichiers décompressés dans la zone de la page Frais de Mission ou de la page Salaire
@@ -43,20 +43,27 @@ Si vous le souhaitez, l’application peut être installée sur l’écran d’a
 
 En cas d’anomalie, le pictogramme <svg style="width: 1em; display: inline-block; height: 1em; vertical-align: text-top; fill:red"><use xlink:href="#alert"/></svg> apparaîtra en haut à droite, le cliquer affichera les détails. Si un message d’erreur apparaissait dans la table des résultats, merci de me contacter.
 
-- L'alerte "absence d'EP5" est normale sur les fichiers ep4-ep5 de régularisation ou les mois sans vols (lire la rubrique "Activités sol/simulateur & QT"). Un mois sans vol reste bleu
-- L'erreur "fichier non reconnu" est normale pour un PDF ne contenant ni un bulletin de salaire, ni un EP5, ni une attestation de nuitées
+- L'alerte "absence d'EP5" (Air&nbsp;France) est normale sur les fichiers EP4-EP5 de régularisation ou les mois sans vols (lire la rubrique "Activités sol/simulateur & QT") — un mois sans vol reste bleu
+- L'erreur "fichier non reconnu" est normale pour un PDF ne contenant ni un bulletin de salaire, ni un relevé d’activité (EP5 ou Relevé d’activité rémunérée PV), ni une attestation de nuitées
 - En cas de message "Erreur: nuitées > nb de jours", si vous êtes basé en province, assurez-vous d'avoir lu la rubrique "Choix de la base"
 
 __Avertissement&#8239;:__ L’application est une aide au calcul des frais professionels sous licence GPLv3.0, les PN restents seuls responsables face à l’administration pour justifier l’exactitude de leur déclaration.
 
-## Attestation des nuitées AF
+## Frais d’hébergement
 
-Air France fournit cette attestation dans l’EP4 de février de l'année n + 1, mais un correctif est susceptible d’être diffusé jusqu’en avril dans un fichier annexe. En attendant ce document, __{@html htmlLogo}__ estime le montant ce qui permet de donner un ordre de grandeur. L’estimation utilise la colonne Découchers F PRO et elle est modifiable. Une fois votre attestation reçue, vous pouvez soit indiquer son montant directement, soit glisser l’attestation dans la zone de dépôt. Merci pour vos retours concernant la fiabilité de l’estimation.
+Le champ "Frais d’hébergement" du comparatif correspond au montant total des nuitées d’hôtel payées par l’employeur sur l’année. Il est utilisé pour le calcul des frais réels.
+
+__Air&nbsp;France__ fournit une attestation des nuitées dans l’EP4 de février de l'année N&nbsp;+&nbsp;1, mais un correctif est susceptible d’être diffusé jusqu’en avril dans un fichier annexe.\
+En attendant ce document, __{@html htmlLogo}__ estime le montant ce qui permet de donner un ordre de grandeur (basé sur la ligne I.DECOUCHERS F.PRO du bulletin de paie). L’estimation est modifiable.\
+Une fois l’attestation reçue, vous pouvez soit indiquer son montant directement, soit glisser l’attestation dans la zone de dépôt. Merci pour vos retours concernant la fiabilité de l’estimation.
+
+__Transavia__ ne fournit pas d’attestation récapitulative, mais publie un barème indiquant le coût d’une nuitée par escale et hôtel. Le total annuel se calcule donc à la main&#8239;: pour chaque escale, multipliez le coût d’une nuitée par le nombre de découchers, puis additionnez l’ensemble. Le montant obtenu doit être saisi manuellement dans le champ "Frais d’hébergement" du comparatif.\
+Le récapitulatif des découchers sur la page Frais de Mission liste vos nuitées par escale et facilite ce calcul.
 
 ## Choix de la base
 
-La base peut être modifiée chaque mois&#8239;: on choisit une base, on dépose les EP5 de cette base&#8239;;
-on change de base et l’on peut déposer les EP5 pour cette nouvelle base. En cas d’erreur, il est possible de changer de base et de recharger les EP5.
+La base peut être modifiée chaque mois&#8239;: on choisit une base, on dépose les relevés d’activité (EP5 ou PV) de cette base&#8239;;
+on change de base et l’on peut déposer les relevés pour cette nouvelle base. En cas d’erreur, il est possible de changer de base et de recharger les relevés.
 
 Le choix de la base se fait au-dessus de la zone de dépôt sur la page Frais de mission.
 

@@ -27,10 +27,10 @@
         
         <DropZone>
             <div slot="top">
-                Déposez vos <strong>EP5</strong> dans la zone ou Cliquez
+                Déposez vos <strong>relevés d’activité</strong> (AF&#8239;: EP5 / TO&#8239;: Relevé d’activité rémunérée PV) dans la zone ou Cliquez
             </div>
             <div slot="bottom">
-            <MonthStatus data={$rotations} name="EP5" />
+            <MonthStatus data={$rotations} name="Relevés d’activité" />
             </div>
         </DropZone>
         <MissionActivities />

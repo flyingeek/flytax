@@ -33,7 +33,7 @@
             </svg>
 
             <ol slot="content">
-                <li>Récupérez vos EP4/EP5 et vos bulletins de salaire sur <Link href="https://www.mypeopledoc.com">MyPeopleDoc</Link></li>
+                <li>Récupérez vos relevés d’activité et vos bulletins de salaire sur <Link href="https://www.mypeopledoc.com">MyPeopleDoc</Link></li>
                 <li>Choisissez l’année en haut à droite sur <b>{@html htmlLogo}</b></li>
                 <li>Déposez vos fichiers dans <a href="#/mission" >Frais de Mission</a>
                     ou dans <a href="#/pay" >Salaire</a></li>
