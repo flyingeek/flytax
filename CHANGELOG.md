@@ -3,6 +3,12 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.1] - 2026-05-21
+
+### Fixed
+
+- Correction de la rubrique « Utilisation sur l'iPad » de l'aide : les relevés d'activité sont à télécharger de décembre N-1 à __janvier__ N+1 (et non février N+1). Le document de février N+1 mentionné précédemment était en réalité l'EP4-EP5 contenant l'attestation des nuitées Air&nbsp;France, désormais référencée séparément ([@clarkewing](https://github.com/clarkewing))
+
 ## [2.1.0] - 2026-05-21
 
 ### Added

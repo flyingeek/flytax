@@ -24,7 +24,7 @@ __{@html htmlLogo}__ fonctionne pour les PN Air&nbsp;France et Transavia, basés
 
 ## Utilisation sur l'iPad
 
-Sur MyPeopleDoc, commencez par sélectionner les bulletins de salaire de l'année N, et vos relevés d’activité (EP5 pour Air&nbsp;France, Relevé d’activité rémunérée PV pour Transavia) de décembre N-1 à février N+1. Puis, en cliquant sur téléchargement, vous recevrez un lien par email. Dans votre dossier de téléchargement sur l'iPad, cliquez sur l'archive téléchargée, elle va se décompresser. Ensuite, après avoir vérifié que l'année N est bien sélectionnée en haut à droite de  __{@html htmlLogo}__, deux solutions:
+Sur MyPeopleDoc, commencez par sélectionner les bulletins de salaire de l'année N, et vos relevés d’activité (EP5 pour Air&nbsp;France, Relevé d’activité rémunérée PV pour Transavia) de décembre N-1 à janvier N+1. Air&nbsp;France publie également en février N+1 l'attestation des nuitées (voir la rubrique « Frais d’hébergement »). Puis, en cliquant sur téléchargement, vous recevrez un lien par email. Dans votre dossier de téléchargement sur l'iPad, cliquez sur l'archive téléchargée, elle va se décompresser. Ensuite, après avoir vérifié que l'année N est bien sélectionnée en haut à droite de  __{@html htmlLogo}__, deux solutions:
 
 - Soit, vous cliquez dans la zone de la page Frais de Mission ou de la page Salaire, puis vous choisissez le dossier des fichiers décompressés, puis vous cliquez sur "Sélectionner", puis "Tout select." et enfin, "Ouvrir"
 - Soit, vous utilisez le mode Slide Over, ou le mode SplitView, avec l'application Fichiers, et vous faites glisser le dossier des fichiers décompressés dans la zone de la page Frais de Mission ou de la page Salaire
