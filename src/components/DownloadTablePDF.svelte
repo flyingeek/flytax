@@ -82,6 +82,32 @@
                     e.parentNode.parentNode.innerText = e.innerText;
                 });
             }
+            // PayTable footnotes use <ol> + <details> reveals. autoTable
+            // flattens both: list-item numbering and line breaks are
+            // lost, and `includeHiddenHtml: true` includes the details
+            // body anyway. Replace the <ol> with a flat <div> of
+            // numbered <p>s (details stripped) during PDF generation
+            // and restore the original afterwards.
+            const paytableOlBackups = [];
+            if (tableIds.includes('PayTable')) {
+                const table = document.getElementById('PayTable');
+                table.querySelectorAll('ol.footnotes').forEach(ol => {
+                    const placeholder = document.createComment('paytable-ol');
+                    ol.parentNode.insertBefore(placeholder, ol);
+                    // autoTable flattens block-level elements (<p>, <li>)
+                    // when extracting cell text, so use explicit <br><br>
+                    // separators between items — those it respects.
+                    const flatHTML = [...ol.children].map((li, i) => {
+                        const clone = li.cloneNode(true);
+                        clone.querySelectorAll('details').forEach(d => d.remove());
+                        return `${i + 1}. ${clone.innerHTML.trim()}`;
+                    }).join('<br><br>');
+                    const flat = document.createElement('div');
+                    flat.innerHTML = flatHTML;
+                    ol.parentNode.replaceChild(flat, ol);
+                    paytableOlBackups.push({original: ol, flat, placeholder});
+                });
+            }
             for (const tableId of tableIds) {
                 const table = document.getElementById(tableId);
                 table.classList.add("print");
@@ -110,6 +136,10 @@
                     e.innerHTML = `<details><summary>${e.innerText}</summary>${e.title}</details>`;
                 });
             }
+            paytableOlBackups.forEach(({original, flat, placeholder}) => {
+                flat.parentNode.replaceChild(original, flat);
+                placeholder.parentNode.removeChild(placeholder);
+            });
             for (const tableId of tableIds) {
                 const table = document.getElementById(tableId);
                 table.classList.remove("print");
