@@ -13,7 +13,7 @@ const loadFixture = (path) => readFileSync(path, 'utf8');
 // AF payslip — net imposable, frais d'emploi, découchers F.PRO
 test('AF payslip parsing', () => {
     const text = loadFixture('test/fixtures/af-payslip.txt');
-    expect(router(text, 'af-payslip.pdf', 0, '2025', taxData, ['CDG', 'ORY'], iso2FR)).toEqual([{
+    expect(router(text, undefined, 'af-payslip.pdf', 0, '2025', taxData, ['CDG', 'ORY'], iso2FR)).toEqual([{
         type: 'pay',
         airline: 'AF',
         fileName: 'af-payslip.pdf',
@@ -33,7 +33,7 @@ test('AF payslip parsing', () => {
 // AF carnet de vol — modern EP5 layout (header rendered as `_CARNET DE VOL -  EP5_`)
 test('AF EP5 parsing', () => {
     const text = loadFixture('test/fixtures/af-ep4ep5.txt');
-    expect(router(text, 'af-ep4ep5.pdf', 0, '2025', taxData, ['CDG', 'ORY'], iso2FR)).toEqual([{
+    expect(router(text, undefined, 'af-ep4ep5.pdf', 0, '2025', taxData, ['CDG', 'ORY'], iso2FR)).toEqual([{
         type: 'rotations',
         fileName: 'af-ep4ep5.pdf',
         fileOrder: 0,
@@ -110,7 +110,7 @@ test('AF EP5 parsing', () => {
 // AF carnet de vol — legacy EP5 layout (header rendered as `CARNET _DE _VOL _- _EP _5`)
 test('AF legacy EP5 parsing', () => {
     const text = loadFixture('test/fixtures/af-ep4ep5-legacy.txt');
-    expect(router(text, 'af-ep4ep5-legacy.pdf', 0, '2025', taxData, ['CDG', 'ORY'], iso2FR)).toEqual([{
+    expect(router(text, undefined, 'af-ep4ep5-legacy.pdf', 0, '2025', taxData, ['CDG', 'ORY'], iso2FR)).toEqual([{
         type: 'rotations',
         fileName: 'af-ep4ep5-legacy.pdf',
         fileOrder: 0,
@@ -155,7 +155,7 @@ test('AF legacy EP5 parsing', () => {
 // AF EP5 December previous year — prev-year boundary
 test('AF EP5 parsing — December carries over from the previous tax year', () => {
     const text = loadFixture('test/fixtures/af-ep4ep5-dec.txt');
-    expect(router(text, 'af-ep4ep5-dec.pdf', 0, '2025', taxData, ['CDG', 'ORY'], iso2FR)).toEqual([{
+    expect(router(text, undefined, 'af-ep4ep5-dec.pdf', 0, '2025', taxData, ['CDG', 'ORY'], iso2FR)).toEqual([{
         type: 'rotations',
         fileName: 'af-ep4ep5-dec.pdf',
         fileOrder: 0,
@@ -190,7 +190,7 @@ test('AF EP5 parsing — December carries over from the previous tax year', () =
 // AF EP5 January next year — next-year boundary
 test('AF EP5 parsing — January carries over to the previous tax year', () => {
     const text = loadFixture('test/fixtures/af-ep4ep5-jan.txt');
-    expect(router(text, 'af-ep4ep5-jan.pdf', 0, '2025', taxData, ['CDG', 'ORY'], iso2FR)).toEqual([{
+    expect(router(text, undefined, 'af-ep4ep5-jan.pdf', 0, '2025', taxData, ['CDG', 'ORY'], iso2FR)).toEqual([{
         type: 'rotations',
         fileName: 'af-ep4ep5-jan.pdf',
         fileOrder: 0,
@@ -225,7 +225,7 @@ test('AF EP5 parsing — January carries over to the previous tax year', () => {
 // AF EP5 from a different tax year — returns early without rotations
 test('AF EP5 outside the tax year is recognized but not parsed', () => {
     const text = loadFixture('test/fixtures/af-ep4ep5.txt');
-    expect(router(text, 'af-ep4ep5.pdf', 0, '2020', taxData, ['CDG', 'ORY'], iso2FR)).toEqual([{
+    expect(router(text, undefined, 'af-ep4ep5.pdf', 0, '2020', taxData, ['CDG', 'ORY'], iso2FR)).toEqual([{
         type: 'rotations',
         fileName: 'af-ep4ep5.pdf',
         fileOrder: 0,
@@ -236,7 +236,7 @@ test('AF EP5 outside the tax year is recognized but not parsed', () => {
 // EP4 fallback in tax-year window — no EP5 contained in EP4EP5
 test('AF EP4 without EP5 surfaces an "absence d\'EP5" warning', () => {
     const text = loadFixture('test/fixtures/af-ep4.txt');
-    expect(router(text, 'af-ep4.pdf', 0, '2025', taxData, ['CDG', 'ORY'], iso2FR)).toEqual([{
+    expect(router(text, undefined, 'af-ep4.pdf', 0, '2025', taxData, ['CDG', 'ORY'], iso2FR)).toEqual([{
         type: 'ep4',
         warning: "absence d'EP5",
         fileName: 'af-ep4.pdf',
@@ -248,7 +248,7 @@ test('AF EP4 without EP5 surfaces an "absence d\'EP5" warning', () => {
 // EP4 fallback outside the tax-year window — passthrough with date stamp, no warning
 test('AF EP4 outside the tax year passes through silently', () => {
     const text = loadFixture('test/fixtures/af-ep4.txt');
-    expect(router(text, 'af-ep4.pdf', 0, '2020', taxData, ['CDG', 'ORY'], iso2FR)).toEqual([{
+    expect(router(text, undefined, 'af-ep4.pdf', 0, '2020', taxData, ['CDG', 'ORY'], iso2FR)).toEqual([{
         type: 'ep4',
         date: '2025-10',
         fileName: 'af-ep4.pdf',
@@ -260,7 +260,7 @@ test('AF EP4 outside the tax year passes through silently', () => {
 // EP4 fallback in tax-year window — no EP5 contained in EP4EP5
 test('AF legacy EP4 without EP5 surfaces an "absence d\'EP5" warning', () => {
     const text = loadFixture('test/fixtures/af-ep4-legacy.txt');
-    expect(router(text, 'af-ep4-legacy.pdf', 0, '2025', taxData, ['CDG', 'ORY'], iso2FR)).toEqual([{
+    expect(router(text, undefined, 'af-ep4-legacy.pdf', 0, '2025', taxData, ['CDG', 'ORY'], iso2FR)).toEqual([{
         type: 'ep4',
         warning: "absence d'EP5",
         fileName: 'af-ep4-legacy.pdf',
@@ -272,7 +272,7 @@ test('AF legacy EP4 without EP5 surfaces an "absence d\'EP5" warning', () => {
 // EP4 fallback outside the tax-year window — passthrough with date stamp, no warning
 test('AF legacy EP4 outside the tax year passes through silently', () => {
     const text = loadFixture('test/fixtures/af-ep4-legacy.txt');
-    expect(router(text, 'af-ep4-legacy.pdf', 0, '2020', taxData, ['CDG', 'ORY'], iso2FR)).toEqual([{
+    expect(router(text, undefined, 'af-ep4-legacy.pdf', 0, '2020', taxData, ['CDG', 'ORY'], iso2FR)).toEqual([{
         type: 'ep4',
         date: '2025-06',
         fileName: 'af-ep4-legacy.pdf',
@@ -284,7 +284,7 @@ test('AF legacy EP4 outside the tax year passes through silently', () => {
 // AF nuitées attestation — annual lodging total paid by the company
 test('AF nuitées attestation parsing', () => {
     const text = loadFixture('test/fixtures/af-nuitees.txt');
-    expect(router(text, 'af-nuitees.pdf', 0, '2025', taxData, ['CDG', 'ORY'], iso2FR)).toEqual([{
+    expect(router(text, undefined, 'af-nuitees.pdf', 0, '2025', taxData, ['CDG', 'ORY'], iso2FR)).toEqual([{
         type: 'lodging',
         fileName: 'af-nuitees.pdf',
         fileOrder: 0,
@@ -297,7 +297,7 @@ test('AF nuitées attestation parsing', () => {
 // AF legacy nuitées attestation — older layout for the same document type
 test('AF legacy nuitées attestation parsing', () => {
     const text = loadFixture('test/fixtures/af-nuitees-legacy.txt');
-    expect(router(text, 'af-nuitees-legacy.pdf', 0, '2024', taxData, ['CDG', 'ORY'], iso2FR)).toEqual([{
+    expect(router(text, undefined, 'af-nuitees-legacy.pdf', 0, '2024', taxData, ['CDG', 'ORY'], iso2FR)).toEqual([{
         type: 'lodging',
         fileName: 'af-nuitees-legacy.pdf',
         fileOrder: 0,
@@ -310,7 +310,7 @@ test('AF legacy nuitées attestation parsing', () => {
 // AF nuitées attestation for a different tax year — surfaced as an error
 test('AF nuitées attestation for the wrong year surfaces an error', () => {
     const text = loadFixture('test/fixtures/af-nuitees.txt');
-    expect(router(text, 'af-nuitees.pdf', 0, '2020', taxData, ['CDG', 'ORY'], iso2FR)).toEqual([{
+    expect(router(text, undefined, 'af-nuitees.pdf', 0, '2020', taxData, ['CDG', 'ORY'], iso2FR)).toEqual([{
         type: 'lodging',
         error: 'année ≠ 2020',
         fileName: 'af-nuitees.pdf',
@@ -321,7 +321,7 @@ test('AF nuitées attestation for the wrong year surfaces an error', () => {
 
 // Unrecognized file — bottom of the router fallthrough
 test('unrecognized file content yields a "fichier non reconnu" error', () => {
-    expect(router('hello world, no markers here', 'random.pdf', 0, '2025', taxData, ['CDG', 'ORY'], iso2FR)).toEqual([{
+    expect(router('hello world, no markers here', undefined, 'random.pdf', 0, '2025', taxData, ['CDG', 'ORY'], iso2FR)).toEqual([{
         type: 'error',
         msg: 'fichier non reconnu',
         fileName: 'random.pdf',

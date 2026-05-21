@@ -1,7 +1,7 @@
 <script context="module">
     import { onMount } from "svelte";
     import { fraisHebergement } from '../stores';
-    import { getPDFTextFromFile, setPdfjsLib } from '../utilities/pdf';
+    import { getPDFTextFromFile, getPDFTextByRowsFromFile, setPdfjsLib } from '../utilities/pdf';
     import loader from "./async-script-loader.js";
     import { Deferred } from "./utils.js";
     const pdfjsWorkerSrc = "CONF_PDFJS_WORKER_JS";
@@ -35,9 +35,18 @@
     }
     class Warning extends Error {};
 
+    // Extract both flat and row-aware text. AF parsers and the TO PV parser
+    // consume the flat text (PDF.js natural emission order); the TO payslip
+    // parser needs the row-aware version because its bulletin layout is
+    // column-based and the rubrique / amount pairs only line up when items
+    // are grouped by Y baseline. Both extractions share the PDF.js document
+    // parse — the second pass only re-iterates the cached page items.
     const getPDF = (file, fileName) =>
-        getPDFTextFromFile(file).then(
-            (text) => text || Promise.reject(new Warning(`%c${fileName}\n%cabsence de texte dans le PDF`)),
+        Promise.all([getPDFTextFromFile(file), getPDFTextByRowsFromFile(file)]).then(
+            ([text, textByRows]) =>
+                text
+                    ? [text, textByRows]
+                    : Promise.reject(new Warning(`%c${fileName}\n%cabsence de texte dans le PDF`)),
             () => Promise.reject(new Warning(`%c${fileName}\n%cfichier illisible !`)),
         );
     async function processFiles(files, target) {
@@ -52,8 +61,8 @@
                 if (file) {
                     const fileName = basename(file);
                     promises.push(
-                        getPDF(file, fileName).then((text) => {
-                            const results = router(text, fileName, i + seqOrder, $taxYear, $taxData, $base, $tzConverter);
+                        getPDF(file, fileName).then(([text, textByRows]) => {
+                            const results = router(text, textByRows, fileName, i + seqOrder, $taxYear, $taxData, $base, $tzConverter);
                             results.forEach(result => {
                                 if (result.type === 'error') {
                                     console.log(`%c${fileName}\n%c${result.msg}`, 'font-family: monospace;', 'color: red;');
