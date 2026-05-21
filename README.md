@@ -1,8 +1,18 @@
 # ![FLYTAX](https://github.com/flyingeek/flytax/blob/main/assets/flytax-icons/72px.png?raw=true)
 
-Une aide au calcul des impôts pour les PNT AF qui ne transfère aucune données sur Internet. L'app calcule notamment les frais réels à partir des EP4/EP5.
+Une aide au calcul des impôts pour les PN qui ne transfère aucune données sur Internet. L'app calcule notamment les frais réels à partir des EP4/EP5.
 
 Rendez-vous sur [FLYTAX](https://flyingeek.github.io/flytax/) pour utiliser l'app. Mais continuez à lire si vous êtes un développeur ou si vous souhaitez accèder aux données brutes.
+
+
+## Compagnies supportées
+
+| Compagnie | Documents reconnus |
+| --- | --- |
+| AF | EP4 / EP5 (carnet de vol mensuel), Attestation de décompte des nuitées, Bulletin de paie |
+| TO | Relevé d'activité rémunérée (mensuel), Bulletin de paie |
+
+Les PDF sont déposés dans l'interface (drag-and-drop) et restent **strictement** en local : aucun fichier ni aucune donnée n'est transmis à un serveur. Le calcul SNPL (frais réels) repose sur les rotations reconstruites à partir de l'activité mensuelle, identiquement pour l'ensemble des compagnies supportées.
 
 ## Installation [![Gitpod ready-to-code](https://img.shields.io/badge/Gitpod-ready--to--code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/flyingeek/flytax)
 
