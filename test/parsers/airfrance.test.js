@@ -24,7 +24,8 @@ test('AF payslip parsing', () => {
         imposable: '8811.55',
         cumul: '56644.85',
         repas: ['526.36'],
-        transport: ['0.00'],
+        ikv: ['0.00'],
+        transit: ['20.35', '61.05'],
         decouchers_fpro: ['253.20'],
     }]);
 });
