@@ -3,6 +3,38 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.0] - 2026-05-21
+
+### Added
+
+- Parseur Transavia France pour les relevés d'activité rémunérée (PV) : produit des rotations taguées `airline: 'TO'`, avec gestion des activités sol/MEP et des trajets en train (TGV) ([@clarkewing](https://github.com/clarkewing))
+- Parseur Transavia France pour les bulletins de paie : extraction du net imposable, du cumul, de la date de paiement, des indemnités repas et IKV, et des remboursements de transports en commun (Navigo / train) ([@clarkewing](https://github.com/clarkewing))
+- Ajout de Nantes (NTE) et Lyon (LYS) dans le sélecteur de base ([@clarkewing](https://github.com/clarkewing))
+- Prise en compte des codes IATA des principales gares TGV françaises (GPM, GPL, GPE, GST, GNT, GBO, GLI, GLY, GMA, GRN, GTL) pour les mises en place ([@clarkewing](https://github.com/clarkewing))
+- Capture de la ligne `REMB.CARTE NAVIGO` sur les bulletins Air France (auparavant ignorée silencieusement) ([@clarkewing](https://github.com/clarkewing))
+- Note conditionnelle dans le tableau des salaires indiquant le montant total des remboursements de transports en commun (Navigo / train) lorsque détectés, pour aider à la déclaration aux frais réels ([@clarkewing](https://github.com/clarkewing))
+- Rappel automatique pour les pilotes Transavia leur demandant de calculer manuellement leurs frais d'hébergement (Transavia ne fournissant pas d'attestation des nuitées) ([@clarkewing](https://github.com/clarkewing))
+- Utilitaire `escapeRegExp` dans `src/utilities/regex.js` ([@clarkewing](https://github.com/clarkewing))
+
+### Changed
+
+- Le champ `transport` des bulletins de paie est désormais scindé en `ikv` (indemnités kilométriques versées par l'employeur) et `transit` (remboursements de transports en commun). Seul `ikv` alimente automatiquement le calcul des « Frais d'emploi » ; `transit` est affiché séparément avec une note explicative ([@clarkewing](https://github.com/clarkewing))
+- La colonne « Nuitées AF » du comparatif devient « Frais d'hébergement » ([@clarkewing](https://github.com/clarkewing))
+- Le champ « Frais d'hébergement » reste modifiable même lorsque l'attestation des nuitées AF est chargée, pour permettre aux pilotes AF + TO d'ajouter leurs nuitées TO à ce montant ([@clarkewing](https://github.com/clarkewing))
+- Les notes de bas de tableau de PayTable sont restructurées en `<ol>` avec un volet `<details>` listant les rubriques prises en compte par compagnie ([@clarkewing](https://github.com/clarkewing))
+- Mise en gras du dernier cumul imposable par compagnie (auparavant uniquement décembre, ce qui ne fonctionnait plus en cas de transition entre compagnies en cours d'année) ([@clarkewing](https://github.com/clarkewing))
+- Les références à « EP4 / EP5 » sont remplacées par « relevés d'activité » dans l'interface et l'aide, avec mention explicite du nom du document attendu pour chaque compagnie (`EP5` pour AF, `Relevé d'activité rémunérée PV` pour TO) ([@clarkewing](https://github.com/clarkewing))
+- Le routeur de parseurs accepte désormais un second flux de texte extrait par lignes (`textByRows`), nécessaire pour les bulletins Transavia dont la mise en page est en colonnes ([@clarkewing](https://github.com/clarkewing))
+
+### Removed
+
+- Suppression de la colonne « Découchers F PRO » du tableau des salaires (la valeur n'était qu'une estimation indirecte des nuitées AF et ne reflétait rien pour Transavia). Le calcul d'estimation reste utilisé pour pré-remplir le champ « Frais d'hébergement » des pilotes AF sans attestation ([@clarkewing](https://github.com/clarkewing))
+
+### Fixed
+
+- Correction d'un décalage d'une heure sur les vols aux abords du changement d'heure (`fr2iso` calculait l'offset UTC à midi, ce qui ne reflète pas l'heure réelle de la journée le 30 mars et le 26 octobre) ([@clarkewing](https://github.com/clarkewing))
+- L'export PDF de PayTable préserve désormais la numérotation et les sauts de ligne des notes de bas de tableau (`jsPDF autoTable` aplatissait précédemment la structure `<ol>` en un seul paragraphe illisible) ([@clarkewing](https://github.com/clarkewing))
+
 ## [2.0.0] - 2026-05-05
 
 ### Added
