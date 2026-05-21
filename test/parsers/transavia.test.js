@@ -496,31 +496,36 @@ test('TO payslip — IKV bulletin (September 2025)', () => {
     expect(String(result.cumul)).toBe('62481.41');
     // 4566 (105,87) + 21014 (322,28)
     expect(result.repas.map(String)).toEqual(['105.87', '322.28']);
-    // 4567 (34,53) + 21013 (188,01)
-    expect(result.transport.map(String)).toEqual(['34.53', '188.01']);
+    // 4567 (34,53) + 21013 (188,01) — both IKV rubriques
+    expect(result.ikv.map(String)).toEqual(['34.53', '188.01']);
+    // No public transport on the IKV bulletin
+    expect(result.transit.map(String)).toEqual([]);
     expect(result.decouchers_fpro.map(String)).toEqual(['0.00']);
 });
 
-test('TO payslip — Navigo bulletin populates transport from 21010', () => {
+test('TO payslip — Navigo bulletin populates transit from 21010', () => {
     const [result] = routePay('to-payslip-navigo', 'to-payslip-navigo.pdf');
 
     expect(result.date).toBe('2025-03');
     expect(result.paymentDate).toBe('2025-03-31');
     expect(String(result.imposable)).toBe('8447.28');
+    // No IKV on the Navigo bulletin
+    expect(result.ikv.map(String)).toEqual([]);
     // 4568 (20,35) Soumis + 21010 (61,05) Navigo exo
-    expect(result.transport.map(String)).toEqual(['20.35', '61.05']);
+    expect(result.transit.map(String)).toEqual(['20.35', '61.05']);
     // 4566 (58,44) + 21014 (400,69)
     expect(result.repas.map(String)).toEqual(['58.44', '400.69']);
 });
 
-test('TO payslip — train bulletin populates transport from 4568/4569/21011', () => {
+test('TO payslip — train bulletin populates transit from 4568/4569/21011', () => {
     const [result] = routePay('to-payslip-train', 'to-payslip-train.pdf');
 
     expect(result.date).toBe('2025-08');
     expect(result.paymentDate).toBe('2025-08-31');
     expect(String(result.imposable)).toBe('8775.15');
+    expect(result.ikv.map(String)).toEqual([]);
     // 4568 (7,27) + 4569 (258,92) Soumis + 21011 (21,81) exo
-    expect(result.transport.map(String)).toEqual(['7.27', '258.92', '21.81']);
+    expect(result.transit.map(String)).toEqual(['7.27', '258.92', '21.81']);
     // 4566 (70,48) + 21014 (443,00)
     expect(result.repas.map(String)).toEqual(['70.48', '443.00']);
 });

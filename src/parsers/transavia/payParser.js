@@ -81,8 +81,9 @@ export const payParser = (text, ctx) => {
         });
     }
 
-    result.repas     = extractAmounts(src, REPAS_RUBRIQUES).map(decimal);
-    result.transport = extractAmounts(src, TRANSPORT_RUBRIQUES).map(decimal);
+    result.repas   = extractAmounts(src, REPAS_RUBRIQUES).map(decimal);
+    result.ikv     = extractAmounts(src, IKV_RUBRIQUES).map(decimal);
+    result.transit = extractAmounts(src, TRANSIT_RUBRIQUES).map(decimal);
 
     // Transavia payslips don't itemize découchés frais professionnels.
     result.decouchers_fpro = ['0'].map(decimal);
@@ -146,15 +147,18 @@ const REPAS_RUBRIQUES = [
     ['21014', 'Indemnité repas'],
 ];
 
-const TRANSPORT_RUBRIQUES = [
+const IKV_RUBRIQUES = [
     ['4567',  'Ind.IKV Soumis'],
+    ['21013', 'Indemnités IKV'],
+    ['21020', 'Indemnité Transport'],       // Legacy flat indemnity
+    ['21038', 'Indemnité Transport Sup.'],  // Legacy flat indemnity
+];
+
+const TRANSIT_RUBRIQUES = [
     ['4568',  'Remb.Transport Soumis'],
     ['4569',  'Remb.Transport Soumis'],
     ['21010', 'Rembt Ind Trsprt/Navigo/Velib'],
     ['21011', 'Remb.Transport'],
-    ['21013', 'Indemnités IKV'],
-    ['21020', 'Indemnité Transport'],
-    ['21038', 'Indemnité Transport Sup.'],
 ];
 
 
