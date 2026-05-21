@@ -108,16 +108,26 @@
     $: totalFrais = cents2decimal(sumOver(data.items, b => [...b.repas, ...b.ikv]));
     $: totalTransit = cents2decimal(sumOver(data.items, b => b.transit));
     $: hasTransit = decimal2cents(totalTransit) > 0;
+    $: hasAFPayslips = data.items.some(b => b.airline === 'AF');
+    $: hasTOPayslips = data.items.some(b => b.airline === 'TO');
     $: totalImposable = cents2decimal(sumOver(data.items, b => [b.imposable]));
     // Prefer the bulletin-reported cumul over summing imposable amounts;
     // fall back to totalImposable when no cumul is loaded.
     $: cumulImposable = cumulOf(data.items);
+    $: lastBulletinByAirline = data.items.reduce((acc, b) => {
+        if (!acc[b.airline] || b.paymentDate > acc[b.airline].paymentDate) acc[b.airline] = b;
+        return acc;
+    }, {});
     $: abbattement = ($taxData && $taxData.maxForfait10) ? Math.min((cumulImposable||totalImposable)*0.1, $taxData.maxForfait10) : 0;
     $: totalDecouchersFPRO = cents2decimal(sumOver(data.items, b => b.decouchers_fpro));
     $: estimateRatio = ( parseInt($taxYear, 10)  >= 2021) ? 2.7 : 3.31;
     $: nightsCostEstimate = (Math.ceil(parseFloat(totalDecouchersFPRO) * estimateRatio/100) * 100).toFixed(0);
     $: updateFraisHebergementInput($fraisHebergement, nightsCostEstimate);
-    $: fraisReels = parseFloat($fraisDeMission) - parseFloat($fraisHebergement || $fraisHebergementInput || nightsCostEstimate) - parseFloat(totalFrais);
+    // User input wins so a pilot with mixed AF + TO can edit the
+    // attestation-loaded value to add their TO hotel costs on top.
+    // `$fraisHebergement` (AF attestation total) becomes informational
+    // and only feeds the math as a fallback when the input is empty.
+    $: fraisReels = parseFloat($fraisDeMission) - parseFloat($fraisHebergementInput || $fraisHebergement || nightsCostEstimate) - parseFloat(totalFrais);
     $: roadTripInformation = roadTrips($pairings, $taxYear);
 
 </script>
@@ -132,15 +142,17 @@
     <tr>
         <th colspan="3">
             Comparatif {$taxYear}
-            {#if (!$fraisHebergementInput || $fraisHebergementInput == nightsCostEstimate)}
-                <div class="estimate" transition:fade|local><small>basé sur une estimation des nuitées à ±20%</small></div>
+            {#if $fraisHebergement}
+                <div class="estimate" transition:fade|local><small>L’attestation Air&nbsp;France indique {localeCurrency($fraisHebergement, 0)}</small></div>
+            {:else if hasAFPayslips && (!$fraisHebergementInput || $fraisHebergementInput == nightsCostEstimate)}
+                <div class="estimate" transition:fade|local><small>basé sur une estimation des nuitées AF à ±20%</small></div>
             {/if}
         </th>
     </tr>
     <tr>
-        <th>Nuitées AF</th>
-        <th>Frais&nbsp;de&nbsp;Mission -&nbsp;Nuitées -&nbsp;Frais&nbsp;d’emploi</th>
-        <th>Abattement de 10% plafonné</th>
+        <th>Frais d’hébergement</th>
+        <th>Frais&nbsp;de&nbsp;Mission -&nbsp;Frais&nbsp;d’hébergement -&nbsp;Frais&nbsp;d’emploi</th>
+        <th>Abattement de 10&#8239;% plafonné</th>
     </tr>
     {#if $taxYear !== $taxData.year}
     <tr class="warning"><th colspan="3">Attention les montants sont basés sur les données fiscales de {$taxData.year}</th></tr>
@@ -149,20 +161,25 @@
 <tbody>
     <tr>
         <td>
-            <input name="nuitees" type="number" disabled={!!$fraisHebergement} bind:value="{$fraisHebergementInput}" min="0" step="100" placeholder="{($fraisHebergement) ? $fraisHebergement : nightsCostEstimate}"/>
+            <input name="nuitees" type="number" bind:value="{$fraisHebergementInput}" min="0" step="100" placeholder="{$fraisHebergement || nightsCostEstimate}"/>
         </td>
-        <td>{$fraisDeMission} - {parseFloat($fraisHebergement || $fraisHebergementInput || nightsCostEstimate).toFixed(0)} - {parseFloat(totalFrais).toFixed(0)} = {fraisReels.toFixed(0)} €</td>
-        <td>{abbattement.toFixed(0)} €</td>
+        <td>{$fraisDeMission} - {parseFloat($fraisHebergementInput || $fraisHebergement || nightsCostEstimate).toFixed(0)} - {parseFloat(totalFrais).toFixed(0)} = {fraisReels.toFixed(0)}&#8239;€</td>
+        <td>{abbattement.toFixed(0)}&#8239;€</td>
     </tr>
 </tbody>
 <tfoot>
     <tr>
         {#if (fraisReels >= abbattement)}
-        <td colspan="3">Sans tenir compte de vos autres frais, vous serez déjà gagnant de <b>{(fraisReels - abbattement).toFixed(0)} €</b> en passant aux frais réels.</td>
+        <td colspan="3">Sans tenir compte de vos autres frais, vous serez déjà gagnant de <b>{(fraisReels - abbattement).toFixed(0)}&#8239;€</b> en passant aux frais réels.</td>
         {:else}
-        <td colspan="3">Il faudra que vos autres frais atteignent <b>{(abbattement - fraisReels).toFixed(0)} €</b> pour qu'une déclaration aux frais réels soit plus avantageuse.</td>
+        <td colspan="3">Il faudra que vos autres frais atteignent <b>{(abbattement - fraisReels).toFixed(0)}&#8239;€</b> pour qu'une déclaration aux frais réels soit plus avantageuse.</td>
         {/if}
     </tr>
+    {#if hasTOPayslips}
+    <tr>
+        <td colspan="3">⚠️ Pensez à ajouter vos <b>frais d’hébergement Transavia</b> au champ ci-dessus&#8239;: ils ne sont pas calculés automatiquement (cf. l’aide pour le détail du calcul).</td>
+    </tr>
+    {/if}
     <tr>
         <td colspan="3">{roadTripInformation}</td>
     </tr>
@@ -174,12 +191,12 @@
 </tfoot>
 </table>
 {:else}
-<p>Merci de charger vos EP4/EP5 pour afficher le comparatif</p>
+<p>Merci de charger vos relevés d’activité (AF&#8239;: EP5 / TO&#8239;: Relevé d’activité rémunérée PV) pour afficher le comparatif</p>
 {/if}
 <table class="data" id={tableId}>
     <thead>
-        <tr><th colspan="6">Détails des salaires {$taxYear}</th></tr>
-        <tr><th>Mois</th><th>Compagnie</th><th>Montant imposable</th><th>Cumul imposable</th><th>Frais d’emploi ¹{#if hasTransit}&nbsp;³{/if}</th><th>Découchers F PRO ²</th></tr>
+        <tr><th colspan="5">Détails des salaires {$taxYear}</th></tr>
+        <tr><th>Mois</th><th>Compagnie</th><th>Montant imposable</th><th>Cumul imposable</th><th>Frais d’emploi ¹{#if hasTransit}&nbsp;²{/if}</th></tr>
     </thead>
     <tbody>
         {#each months as month, i}
@@ -192,9 +209,8 @@
                     {/if}
                     <td class="airline">{#if b}<span class="airline-tag">{b.airline}</span>{/if}</td>
                     <td>{b ? localeCurrency(b.imposable) : ""}</td>
-                    <td>{b && decimal2cents(b.cumul) > 0 ? localeCurrency(b.cumul) : ""}</td>
+                    <td class:cumul-max={b && b === lastBulletinByAirline[b.airline] && decimal2cents(b.cumul) > 0}>{b && decimal2cents(b.cumul) > 0 ? localeCurrency(b.cumul) : ""}</td>
                     <td>{b ? localeCurrency(cents2decimal(sumOver([b], x => [...x.repas, ...x.ikv]))) : ""}</td>
-                    <td>{b ? localeCurrency(cents2decimal(sumOver([b], x => x.decouchers_fpro))) : ""}</td>
                 </tr>
             {/each}
         {/each}
@@ -205,19 +221,71 @@
             <th>{localeCurrency(totalImposable)}</th>
             <th></th>
             <th>{localeCurrency(totalFrais)}</th>
-            <th>{localeCurrency(totalDecouchersFPRO)}</th>
         </tr>
         <tr>
-            <td colspan="6">1. Les Frais d’emploi comprennent les lignes IND.REPAS, INDEMNITE REPAS, IR.FIN ANNEE DOUBL, IND. TRANSPORT, IND. TRANSPORT EXO, IR EXONEREES, IR NON EXONEREES du bulletin de paye.</td>
+            <td colspan="5">
+                <ol class="footnotes">
+                    <li>
+                        Les Frais d’emploi comprennent vos indemnités de repas et indemnités kilométriques (IKV).
+                        <details>
+                            <summary>Voir les lignes prises en compte</summary>
+                            <ul class="rubriques">
+                                <li><b>Air&nbsp;France</b>
+                                    <ul>
+                                        <li>IND.REPAS</li>
+                                        <li>INDEMNITE REPAS</li>
+                                        <li>IR.FIN ANNEE DOUBL</li>
+                                        <li>IR EXONEREES</li>
+                                        <li>IR NON EXONEREES</li>
+                                        <li>IND. TRANSPORT</li>
+                                        <li>IND. TRANSPORT EXO</li>
+                                    </ul>
+                                </li>
+                                <li><b>Transavia</b>
+                                    <ul>
+                                        <li>4169 Indemnité de nettoyage</li>
+                                        <li>4170 Indemnité de repas Etranger</li>
+                                        <li>4171 Indemnité de repas France</li>
+                                        <li>4566 Indemn. Repas Soumise</li>
+                                        <li>4566 Indemnité repas soumise</li>
+                                        <li>4567 Ind.IKV Soumis</li>
+                                        <li>21013 Indemnités IKV</li>
+                                        <li>21014 Indemnité repas</li>
+                                        <li>21020 Indemnité Transport</li>
+                                        <li>21038 Indemnité Transport Sup.</li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </details>
+                    </li>
+                    {#if hasTransit}
+                    <li>
+                        Vos bulletins indiquent <b>{localeCurrency(totalTransit)}</b> de remboursements de transports en commun (Navigo / train). Ces montants ne sont pas inclus dans les Frais d’emploi ci-dessus. Si vous incluez le coût de votre abonnement dans votre déclaration aux frais réels, n’oubliez pas d’en soustraire ce montant.
+                        <details>
+                            <summary>Voir les lignes prises en compte</summary>
+                            <ul class="rubriques">
+                                <li><b>Air&nbsp;France</b>
+                                    <ul>
+                                        <li>REMB.CARTE NAVIGO</li>
+                                        <li>FRAIS REELS TRANSP</li>
+                                        <li>R. FRAIS DE TRANSPORT</li>
+                                    </ul>
+                                </li>
+                                <li><b>Transavia</b>
+                                    <ul>
+                                        <li>4568 Remb.Transport Soumis</li>
+                                        <li>4569 Remb.Transport Soumis</li>
+                                        <li>21010 Rembt Ind Trsprt/Navigo/Velib</li>
+                                        <li>21011 Remb.Transport</li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </details>
+                    </li>
+                    {/if}
+                </ol>
+            </td>
         </tr>
-        <tr>
-            <td colspan="6">2. Cette colonne reprend la ligne I.DECOUCHERS F.PRO, elle est utilisée pour l’estimation. Pour les impôts, c’est uniquement l’attestation des nuitées AF qui doit être prise en compte.</td>
-        </tr>
-        {#if hasTransit}
-        <tr>
-            <td colspan="6">3. Vos bulletins indiquent <b>{localeCurrency(totalTransit)}</b> de remboursements de transports en commun (Navigo / train). Ces montants ne sont pas inclus dans les Frais d’emploi ci-dessus. Si vous incluez le coût de votre abonnement dans votre déclaration aux frais réels, n’oubliez pas d’en soustraire ce montant.</td>
-        </tr>
-        {/if}
     </tfoot>
 </table>
 {:else}
@@ -274,7 +342,7 @@
         font-size: initial;
     }
     .col1 {
-        width: 140px;
+        width: 180px;
     }
     .col2 {
         width: 50%;
@@ -302,7 +370,8 @@
     }
     td input {
         margin-bottom: 0;
-        width: 130px;
+        width: 100%;
+        box-sizing: border-box;
     }
     td input:disabled {
         color: var(--green);
@@ -313,10 +382,10 @@
         font-family: monospace;
         font-size: 1.3rem;
     }
-    td:nth-last-child(-n+4):not([colspan]), th:nth-last-child(-n+4):not([colspan]) {
+    td:nth-last-child(-n+3):not([colspan]), th:nth-last-child(-n+3):not([colspan]) {
         text-align: right;
     }
-    td:nth-last-child(-n+4):not([colspan]) {
+    td:nth-last-child(-n+3):not([colspan]) {
         white-space: nowrap;
     }
     tbody > tr {
@@ -338,7 +407,35 @@
         font-family: monospace;
         font-size: 0.9em;
     }
-    tbody > tr.december > td:nth-last-child(3) { /* cumul mois 12 */
+    tbody > tr > td.cumul-max { /* last cumul row, per airline */
         font-weight: bold;
+    }
+    /* Footnotes: keep numeric counter aligned with content; let text
+       wrap under the content, not under the number. */
+    ol.footnotes {
+        padding-left: 1.5em;
+        margin: 0;
+    }
+    ol.footnotes > li {
+        padding-left: 0.25em;
+    }
+    ol.footnotes > li + li {
+        margin-top: 0.5em;
+    }
+    ol.footnotes details {
+        margin-top: 0.25em;
+    }
+    ul.rubriques {
+        margin: 0.25em 0 0 0;
+        padding-left: 1.5em;
+    }
+    ul.rubriques > li {
+        margin: 0.15em 0;
+    }
+    ul.rubriques ul {
+        margin: 0.15em 0 0.4em 0;
+        padding-left: 1.25em;
+        font-family: monospace;
+        font-size: 1em;
     }
 </style>
