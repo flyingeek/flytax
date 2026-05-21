@@ -158,3 +158,65 @@ export const fr2iso = (dateStr, timeStr) => {
     const pad = (n) => n.toString().padStart(2, '0');
     return `${d.getUTCFullYear()}-${pad(d.getUTCMonth() + 1)}-${pad(d.getUTCDate())}T${pad(d.getUTCHours())}:${pad(d.getUTCMinutes())}Z`;
 };
+
+/**
+ * Convert an "HH:MM" 24-hour clock string to minutes since midnight.
+ *
+ * @example
+ *   hhmmToMin("00:00")  // → 0
+ *   hhmmToMin("14:30")  // → 870
+ *
+ * @param {string} hhmm
+ * @returns {number}
+ */
+export const hhmmToMin = (hhmm) => {
+    const [h, m] = hhmm.split(':').map((s) => parseInt(s, 10));
+    return h * 60 + m;
+};
+
+/**
+ * Convert minutes since midnight to an "HH:MM" 24-hour clock string.
+ *
+ * @example
+ *   minToHHMM(0)    // → "00:00"
+ *   minToHHMM(870)  // → "14:30"
+ *
+ * @param {number} mins - Minutes in `[0, 24 * 60)`.
+ * @returns {string}
+ */
+export const minToHHMM = (mins) => {
+    const h = Math.floor(mins / 60).toString().padStart(2, '0');
+    const m = (mins % 60).toString().padStart(2, '0');
+    return `${h}:${m}`;
+};
+
+/**
+ * Walk `dayOffset` calendar days from a (year, month, day) triple. Negative
+ * offsets walk backwards. Relies on `Date.UTC` normalising overflowing day
+ * arguments (e.g. `Date.UTC(2025, 2, 32)` → 2025-04-01,
+ * `Date.UTC(2025, 0, 0)` → 2024-12-31).
+ *
+ * @example
+ *   offsetDay("2025", "03", "31", 1)   // → {year: "2025", month: "04", day: "01"}
+ *   offsetDay("2025", "01", "01", -1)  // → {year: "2024", month: "12", day: "31"}
+ *   offsetDay("2024", "02", "28", 1)   // → {year: "2024", month: "02", day: "29"} (leap)
+ *
+ * @param {string} year - 4-digit year.
+ * @param {string} month - 2-digit month "01"–"12".
+ * @param {string} day - 2-digit day "01"–"31".
+ * @param {number} dayOffset - Number of calendar days to advance (may be negative).
+ * @returns {{year: string, month: string, day: string}}
+ */
+export const offsetDay = (year, month, day, dayOffset) => {
+    const d = new Date(Date.UTC(
+        parseInt(year, 10),
+        parseInt(month, 10) - 1,
+        parseInt(day, 10) + dayOffset,
+    ));
+    const pad = (n) => n.toString(10).padStart(2, '0');
+    return {
+        year: d.getUTCFullYear().toString(10),
+        month: pad(d.getUTCMonth() + 1),
+        day: pad(d.getUTCDate()),
+    };
+};

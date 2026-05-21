@@ -1,7 +1,11 @@
 import { addIndemnities } from '../rotations';
 import { airfranceDetectors } from './airfrance';
+import { transaviaDetectors } from './transavia';
 
-const detectors = [...airfranceDetectors];
+const detectors = [
+    ...airfranceDetectors,
+    ...transaviaDetectors,
+];
 
 const decorate = (ctx) => (envelope) => {
     if (envelope.type !== 'rotations' || !envelope.rots) return envelope;
