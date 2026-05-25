@@ -66,18 +66,24 @@ export const payParser = (text, ctx) => {
     }
 
     try {
-        const match = SUMMARY_RE.exec(src);
-        if (!match) throw new Error('Summary table not found');
-
-        result.imposable = decimal(match[2]);
-        result.cumul = decimal(match[5]);
+        result.imposable = decimal(IMPOSABLE_RE.exec(src)[2]);
     } catch (err) {
-        result.imposable = '0';
-        result.cumul = '0';
+        result.imposable = decimal('0');
 
         result.errors.push({
             type: 'error',
-            message: 'Net imposable non trouvé',
+            message: 'Net imposable du mois non trouvé',
+        });
+    }
+
+    try {
+        result.cumul = decimal(CUMUL_RE.exec(src)[2]);
+    } catch (err) {
+        result.cumul = decimal('0');
+
+        result.errors.push({
+            type: 'error',
+            message: 'Cumul net imposable non trouvé',
         });
     }
 
@@ -127,8 +133,20 @@ const PERIOD_RE = /Période de paie du\s+\d{1,2}\/\d{2}\/\d{4}\s+au\s+\d{1,2}\/(
 // Every value is *duplicated* in the row-mode extraction — backreferences
 // enforce the doubling so the regex bails loudly if the format ever changes.
 //
-// Net imposable is the 4th column → capture group 2 on Mois, group 5 on Cumul.
-const SUMMARY_RE = /Mois_(?:([\-\d,]+)_\1_){3}(?:([\-\d,]+)_\2_)(?:([\-\d,]+)_\3_){2,3}\s+Cumul_(?:([\-\d,]+)_\4_){3}(?:([\-\d,]+)_\5_)(?:([\-\d,]+)_\6_){2,3}/;
+// The two rows are matched by independent regexes so that an unexpected
+// shape on one row doesn't lose us the other.
+
+const IMPOSABLE_RE  = buildSummaryRowRe('Mois');
+const CUMUL_RE = buildSummaryRowRe('Cumul');
+
+function buildSummaryRowRe(label) {
+    return new RegExp(
+        // <label>_<3 doubled cells: Brut, Charges Sal, Charges Pat>_<Net imposable doubled>
+        `${label}_` +
+        String.raw`(?:([\-\d,]+)_\1_){3}` +
+        String.raw`([\-\d,]+)_\2`,
+    );
+}
 
 
 // --- Internal: rubrique inventory ------------------------------------
