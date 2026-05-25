@@ -3,6 +3,13 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.2] - 2026-05-25
+
+### Fixed
+
+- Parseur PV Transavia : reconnaissance des relevés d'activité dont les cellules d'une ligne sont regroupées dans un même item PDF séparées par des espaces (plutôt qu'un item par cellule). Auparavant ces relevés étaient acceptés silencieusement sans produire aucune rotation ([@clarkewing](https://github.com/clarkewing))
+- Parseur bulletins de paie Transavia : tolérance des cellules vides en fin de ligne Mois du tableau récapitulatif (Plafond S.S., Allèg. Cotis. Employeur). Les bulletins concernés ne renvoient plus l'erreur « Net imposable non trouvé ». Les erreurs des lignes Mois et Cumul sont désormais distinguées ([@clarkewing](https://github.com/clarkewing))
+
 ## [2.1.1] - 2026-05-21
 
 ### Fixed
