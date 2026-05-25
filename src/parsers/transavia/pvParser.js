@@ -80,6 +80,10 @@ const HEADER_DATE_RE = new RegExp(
 // carries two HH:MM pairs (prog then réel) followed by a variable-
 // width tail of decimal columns and then the next HH:MM (Dpt TSV).
 //
+// Within a row, fields may be separated by `_` or by runs of
+// whitespace. We accept `[_\s]+` between every inner field so both
+// layouts parse identically.
+//
 // The tail layout depends on what the day contains, because empty
 // cells are dropped from the pdf.js token stream:
 //   - Pure commercial (4 decimals): HV, HV100, Cmt, HCv
@@ -95,7 +99,7 @@ const HEADER_DATE_RE = new RegExp(
 //   (n.c.): Arr prog (HH:MM)
 //  Group 3: Dpt réel (HH:MM)
 //  Group 4: Arr réel (HH:MM)
-//  Group 5: trailing decimals, `_`-separated
+//  Group 5: trailing decimals, separated by `_` or whitespace
 // (anchor): Dpt TSV (HH:MM) — only matched to bound the tail
 //
 // The `[A-Z]` start gate keeps decimals like `_3.5_` from matching as
@@ -103,7 +107,7 @@ const HEADER_DATE_RE = new RegExp(
 // carry only one HH:MM pair (the prog pair, with placeholder 00:00 /
 // 23:59) and so don't match — that's fine because we skip them via
 // isFlightLine.
-const DAY_LINE_RE = /_(\d{2})_([A-Z][^_]+)_(?:\d{2}:\d{2})_(?:\d{2}:\d{2})_(\d{2}:\d{2})_(\d{2}:\d{2})_((?:[\d.]+_)+[\d.]+)_(?=\d{2}:\d{2})/g;
+const DAY_LINE_RE = /_(\d{2})_([A-Z][^_]+)_(?:\d{2}:\d{2})[_\s]+(?:\d{2}:\d{2})[_\s]+(\d{2}:\d{2})[_\s]+(\d{2}:\d{2})[_\s]+((?:[\d.]+[_\s]+)+[\d.]+)[_\s]+(?=\d{2}:\d{2})/g;
 
 // Match a route chain anywhere in the Affectation column value: at
 // least two 3-letter codes separated by "-" (commercial) or "*" (MEP),
@@ -202,7 +206,7 @@ const parseRouteChainStops = (str) => {
  * @returns {{operatedHours: number, deadheadHours: number}}
  */
 const splitTail = (tail) => {
-    const cols = tail.split('_').map(parseFloat);
+    const cols = tail.split(/[_\s]+/).map(parseFloat);
 
     switch (cols.length) {
         case 4:  return {operatedHours: cols[0], deadheadHours: 0};        // commercial
