@@ -530,6 +530,17 @@ test('TO payslip — train bulletin populates transit from 4568/4569/21011', () 
     expect(result.repas.map(String)).toEqual(['70.48', '443.00']);
 });
 
+test('TO payslip — Mois row with blank Plafond S.S. column', () => {
+    // On this bulletin the Mois row's Plafond S.S. and Allèg. Cotis. cells are blank.
+    const [result] = routePay('to-payslip-minimal-mois', 'to-payslip-minimal-mois.pdf');
+
+    expect(result.errors).toEqual([]);
+    expect(result.date).toBe('2025-06');
+    expect(result.paymentDate).toBe('2025-06-30');
+    expect(String(result.imposable)).toBe('3575.55');
+    expect(String(result.cumul)).toBe('46844.54');
+});
+
 test('TO payslip detector wins over PV detector when both markers present', () => {
     // A pathological text carrying both BULLETIN DE PAIE + TRANSAVIA FRANCE
     // and the PV "RELEVE D'ACTIVITE REMUNEREE" string should route to the
