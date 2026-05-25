@@ -101,6 +101,23 @@ test('TO PV parsing', () => {
     }]);
 });
 
+test('TO PV with multi-space grouped cells still parses rotations', () => {
+    // Some Transavia PV exports emit one pdf.js text item per row segment
+    // (e.g. "20:45    23:40    20:41    23:28    2.78") instead of one item
+    // per cell.
+    const text = loadFixture('test/fixtures/to-activities-multispace.txt');
+
+    const [parsed] = router(text, undefined, 'to-multispace.pdf', 0, '2025', taxData, ['CDG', 'ORY'], iso2FR);
+
+    expect(parsed.type).toBe('rotations');
+    expect(parsed.date).toBe('2025-09');
+    expect(parsed.rots.map((r) => r.summary)).toEqual([
+        'ORY-DJE-PMO-ORY',
+        'ORY-LYS-JED...',
+    ]);
+});
+
+
 // --- Error handling -------------------------------------------
 
 test('TO PV outside the tax year is recognized but not parsed', () => {
